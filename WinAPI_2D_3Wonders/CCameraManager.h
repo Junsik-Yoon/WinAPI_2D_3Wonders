@@ -11,7 +11,12 @@ enum class CAM_EFFECT
 	NONE,
 };
 
-
+struct tCamEffect
+{
+	CAM_EFFECT m_eEffect;
+	float fDuration;
+	float fCurTime;
+};
 class CCameraManager
 {
 	SINGLETON(CCameraManager);
@@ -31,11 +36,8 @@ private:
 	float m_fAccel;				// 타겟을 따라가는 등가속도
 	float m_fAccDir = 1.f;		// 등가속도의 증감
 
-	CAM_EFFECT m_eEffect;
-	CTexture* m_pTex;
-
-	float m_fEffectDuration;
-	float m_fCurTime;
+	list<tCamEffect> m_listCamEffect;
+	CTexture* m_pImg;
 
 private:
 	void CalDiff();

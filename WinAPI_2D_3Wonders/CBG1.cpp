@@ -17,7 +17,7 @@ void CBG1::update()
 
 }
 
-void CBG1::render(HDC hDC)
+void CBG1::render()
 {
 	m_pTex;
 	int iWidth = (int)m_pTex->GetBmpWidth();
@@ -46,13 +46,19 @@ void CBG1::render(HDC hDC)
 	///////////////////////////
 	// bitblt로 통으로 그릴 시//
 	///////////////////////////
-	BitBlt(hDC,
-		(int)vPos.x,
-		(int)vPos.y,
-		iWidth,
-		iHeight,
-		m_pTex->GetDC(),
-		0, 0,
-		SRCCOPY);
+	//BitBlt(hDC,
+	//	(int)vPos.x,
+	//	(int)vPos.y,
+	//	iWidth,
+	//	iHeight,
+	//	m_pTex->GetDC(),
+	//	0, 0,
+	//	SRCCOPY);
+	CRenderManager::getInst()->RenderRectangle(
+		vPos.x - GetScale().x / 2.f,
+		vPos.y - GetScale().y / 2.f,
+		vPos.x + GetScale().x / 2.f,
+		vPos.y + GetScale().y / 2.f,
+		RGB(255,255,255));
 
 }

@@ -17,11 +17,11 @@ private:
 public:
 	virtual void update();
 	virtual void finalupdate();
-	virtual void render(HDC hDC);
+	virtual void render();
 
 	void update_child();
 	void finalupdate_child();
-	void render_child(HDC hDC);
+	void render_child();
 
 	virtual void MouseOn();
 	virtual void MouseLbtnDown();//클릭만으로는 그자리에서 클릭하고 클릭해제하는것밖에 감지할수없음
@@ -31,6 +31,8 @@ public:
 public:
 	Vec2 GetFinalPos() { return m_fptFinalPos; }
 	CUI* GetParent() { return m_pParentUI; }
+
+	void AddChild(CUI* pUI);
 	const vector<CUI*>& GetChildUI();//모든자식반환
 
 	void SetCameraAffected(bool affected)
@@ -46,7 +48,7 @@ public:
 	bool IsLbtnDown() { return m_bLbtnDown; }
 
 
-	void AddChild(CUI* pUI);
+
 private:
 	void MouseOnCheck();
 

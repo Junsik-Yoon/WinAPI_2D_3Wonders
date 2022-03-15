@@ -17,9 +17,9 @@ public:
 	CGameObject* GetObj() { return m_pOwner; }
 
 	void update();
-	void render(HDC hDC);
+	void render();
 
-	void CreateAnimation(const wstring& strName, CTexture* tex,
+	void CreateAnimation(const wstring& strName, CD2DImage* Img,
 		Vec2 lt, Vec2 slice, Vec2 step, float duration, UINT frmCount);
 	CAnimation* FindAnimation(const wstring& strName);
 	void Play(const wstring& strName);

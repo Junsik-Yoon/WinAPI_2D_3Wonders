@@ -1,7 +1,7 @@
 #pragma once
 #include "CGameObject.h"
 
-class CTexture;
+class CD2DImage;
 
 class CLou :
     public CGameObject
@@ -9,7 +9,7 @@ class CLou :
     static float sCountTime;//¹ü¿ë
     bool m_counter_toggle;
 private:
-    CTexture* m_pTex;
+    CD2DImage* m_pImg;
     UINT m_floor;
     UINT m_wall;
     float m_velocity;
@@ -25,7 +25,7 @@ public:
     virtual void OnCollisionExit(CCollider* _pOther);
 public:
     virtual void update();
-    virtual void render(HDC hDC);
+    virtual void render();
 
 public:
     CLou();

@@ -17,7 +17,7 @@ private:
 public:
 
 	void update();
-	void render(HDC hDC);
+	void render();
 	void init();
 
 	CScene* GetCurScene() { return m_pCurScene; };

@@ -12,10 +12,10 @@ class CScene
 public:
 	virtual void update();
 	virtual void finalupdate();
-	virtual void render(HDC hDC);
+	virtual void render();
 
-	void render_tile(HDC hDC);
-	void render_background(HDC hDC);
+	void render_tile();
+	void render_background();
 
 	virtual void Enter() = 0;
 	virtual void Exit() = 0;

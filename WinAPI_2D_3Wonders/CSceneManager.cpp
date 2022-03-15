@@ -36,9 +36,9 @@ void CSceneManager::update()
 	m_pCurScene->finalupdate();
 }
 
-void CSceneManager::render(HDC hDC)
+void CSceneManager::render()
 {
-	m_pCurScene->render(hDC); //ÇöÀç ¼±ÅÃµÈ ¾À ·»´õ 
+	m_pCurScene->render(); //ÇöÀç ¼±ÅÃµÈ ¾À ·»´õ 
 }
 
 void CSceneManager::init()

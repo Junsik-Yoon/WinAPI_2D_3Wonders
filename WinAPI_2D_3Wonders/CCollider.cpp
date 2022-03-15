@@ -2,8 +2,6 @@
 #include "CCollider.h"
 #include "CGameObject.h"
 
-#include "SelectGDI.h"
-
 UINT CCollider::s_iID = 0;
 
 CCollider::CCollider()
@@ -76,24 +74,22 @@ void CCollider::finalupdate()
 	m_fptFinalPos = fptObjectPos + m_fptOffsetPos;
 }
 
-void CCollider::render(HDC hDC)
+void CCollider::render()
 {
-	TYPE_PEN typePen;
+	COLORREF rgb = RGB(0, 0, 0);
 	if (m_iColCount)
-		typePen = TYPE_PEN::RED;
+		rgb = RGB(255, 0, 0);
 	else
-		typePen = TYPE_PEN::GREEN;
-
-	SelectGDI brush(hDC, TYPE_BRUSH::HOLLOW);
-	SelectGDI pen(hDC, typePen);
+		rgb = RGB(0, 255, 0);
 
 	Vec2 fptRenderPos = CCameraManager::getInst()->GetRenderPos(m_fptFinalPos);
 
-	Rectangle(hDC,
-		(int)(fptRenderPos.x - m_fptScale.x / 2.f),
-		(int)(fptRenderPos.y - m_fptScale.y / 2.f),
-		(int)(fptRenderPos.x + m_fptScale.x / 2.f),
-		(int)(fptRenderPos.y + m_fptScale.y / 2.f));
+	CRenderManager::getInst()->RenderRectangle(
+		fptRenderPos.x - m_fptScale.x / 2.f,
+		fptRenderPos.y - m_fptScale.y / 2.f,
+		fptRenderPos.x + m_fptScale.x / 2.f,
+		fptRenderPos.y + m_fptScale.y / 2.f,
+		rgb);
 }
 
 void CCollider::OnCollision(CCollider* pOther)

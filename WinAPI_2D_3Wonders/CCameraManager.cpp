@@ -18,7 +18,7 @@ CCameraManager::CCameraManager()
 	m_fAccel = 0;										// 타겟을 따라가는 등가속도
 	m_fAccDir = 1.f;									// 등가속도의 증감
 
-
+	m_pImg = nullptr;
 }
 
 CCameraManager::~CCameraManager()
@@ -28,7 +28,7 @@ CCameraManager::~CCameraManager()
 
 void CCameraManager::init()
 {
-	m_pTex = CResourceManager::getInst()->CreateTexture(L"CameraTex", WINSIZEX, WINSIZEY);
+	m_pImg = CResourceManager::getInst()->CreateTexture(L"CameraTex", WINSIZEX, WINSIZEY);
 }
 
 void CCameraManager::update()
@@ -51,53 +51,47 @@ void CCameraManager::update()
 
 void CCameraManager::render(HDC hDC)
 {
-	//Rectangle(m_pTex->GetDC(), 0, 0, 500, 500);
-
-	if (CAM_EFFECT::NONE == m_eEffect)
-		return;
-
-	m_fCurTime += fDT;
-	if (m_fEffectDuration < m_fCurTime)
+	if (m_listCamEffect.empty())
 	{
-		m_eEffect = CAM_EFFECT::NONE;
 		return;
 	}
-	float fRatio = m_fCurTime / m_fEffectDuration;
-	int iAlpha = (int)(255.f * fRatio);
-	if (CAM_EFFECT::FADE_OUT == m_eEffect)
-	{
-		iAlpha = (int)(255.f * (1 - fRatio));
-	}
-	else if (CAM_EFFECT::FADE_IN == m_eEffect)
-	{
-		iAlpha = (int)(255.f * (1 - fRatio));
-	}
+	tCamEffect& effect = m_listCamEffect.front();
+	effect.fCurTime += fDT;
 
+	float fRatio = 0.f;
+	fRatio = effect.fCurTime / effect.fDuration;
+	if (fRatio < 0.f)
+		fRatio = 0.f;
+	else if (fRatio > 1.f)
+		fRatio = 1.f;
+
+	int iAlpha = 0;
+	if (CAM_EFFECT::FADE_OUT == effect.m_eEffect)
+		iAlpha = (int)(255.f * fRatio);
+	else if (CAM_EFFECT::FADE_IN == effect.m_eEffect)
+		iAlpha = (int)(255.f * (1.f - fRatio));
 
 	BLENDFUNCTION bf = {};
 
 	bf.BlendOp = AC_SRC_OVER;
 	bf.BlendFlags = 0;
 	bf.AlphaFormat = 0;
-	bf.SourceConstantAlpha = 127; //0~255까지 조절 가능
+	bf.SourceConstantAlpha = iAlpha;
 
 	AlphaBlend(hDC
 		, 0, 0
-		, (int)(m_pTex->GetBmpWidth())
-		, (int)(m_pTex->GetBmpHeight())
-		, m_pTex->GetDC()
+		, (int)(m_pImg->GetBmpWidth())
+		, (int)(m_pImg->GetBmpHeight())
+		, m_pImg->GetDC()
 		, 0, 0
-		, (int)(m_pTex->GetBmpWidth())
-		, (int)(m_pTex->GetBmpHeight())
+		, (int)(m_pImg->GetBmpWidth())
+		, (int)(m_pImg->GetBmpHeight())
 		, bf);
 
-	//BitBlt(hDC, 0, 0,
-	//	(int)(m_pTex->GetBmpWidth()),
-	//	(int)(m_pTex->GetBmpHeight()),
-	//	m_pTex->GetDC(),
-	//	0,
-	//	0,
-	//	SRCCOPY);
+	if (effect.fDuration < effect.fCurTime)
+	{
+		m_listCamEffect.pop_front();
+	}
 }
 
 
@@ -130,13 +124,32 @@ void CCameraManager::Scroll(Vec2 vec, float velocity)
 
 void CCameraManager::FadeIn(float duration)
 {
-	m_eEffect = CAM_EFFECT::FADE_IN;
-	m_fEffectDuration = duration;
-	m_fCurTime = 0.f;
+	tCamEffect ef = {};
+	ef.m_eEffect = CAM_EFFECT::FADE_IN;
+	ef.fDuration = duration;
+	ef.fCurTime = 0.f;
+
+	m_listCamEffect.push_back(ef);
+
+	if (0.f == duration)
+	{
+		assert(nullptr);
+	}
 }
 
 void CCameraManager::FadeOut(float duration)
 {
+	tCamEffect ef = {};
+	ef.m_eEffect = CAM_EFFECT::FADE_OUT;
+	ef.fDuration = duration;
+	ef.fCurTime = 0.f;
+
+	m_listCamEffect.push_back(ef);
+
+	if (0.f == duration)
+	{
+		assert(nullptr);
+	}
 }
 
 

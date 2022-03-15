@@ -1,5 +1,3 @@
-
-
 #include "pch.h"
 #include "CAnimator.h"
 #include "CAnimation.h"
@@ -30,15 +28,15 @@ void CAnimator::update()
 	}
 }
 
-void CAnimator::render(HDC hDC)
+void CAnimator::render()
 {
 	if (nullptr != m_pCurAni)
 	{
-		m_pCurAni->render(hDC);
+		m_pCurAni->render();
 	}
 }
 
-void CAnimator::CreateAnimation(const wstring& strName, CTexture* tex, Vec2 lt, Vec2 slice, Vec2 step, float duration, UINT frmCount)
+void CAnimator::CreateAnimation(const wstring& strName, CD2DImage* Img, Vec2 lt, Vec2 slice, Vec2 step, float duration, UINT frmCount)
 {
 	CAnimation* pAni = FindAnimation(strName);
 	assert(nullptr == pAni);
@@ -47,7 +45,7 @@ void CAnimator::CreateAnimation(const wstring& strName, CTexture* tex, Vec2 lt, 
 
 	pAni->SetName(strName);
 	pAni->m_pAnimator = this;
-	pAni->Create(tex, lt, slice, step, duration, frmCount);
+	pAni->Create(Img, lt, slice, step, duration, frmCount);
 
 	m_mapAni.insert(make_pair(strName, pAni));
 }

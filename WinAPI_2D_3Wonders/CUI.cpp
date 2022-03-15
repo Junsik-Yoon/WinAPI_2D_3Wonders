@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "CUI.h"
-#include "SelectGDI.h"
 #include "CGameObject.h"
 
 CUI::CUI()
@@ -77,7 +76,7 @@ void CUI::finalupdate_child()
 }
 
 
-void CUI::render(HDC hDC)
+void CUI::render()
 {
 	Vec2 fptPos = GetFinalPos();
 	Vec2 fptScale = GetScale();
@@ -89,30 +88,31 @@ void CUI::render(HDC hDC)
 
 	if (m_bLbtnDown)//클릭시색변경
 	{
-		SelectGDI green(hDC, TYPE_PEN::GREEN);
-		Rectangle(hDC,
-			(int)(fptPos.x),
-			(int)(fptPos.y),
-			(int)(fptPos.x + fptScale.x),
-			(int)(fptPos.y + fptScale.y));
+		CRenderManager::getInst()->RenderRectangle(
+			fptPos.x,
+			fptPos.y,
+			fptPos.x + fptScale.x,
+			fptPos.y + fptScale.y,
+			RGB(0, 255, 0));
 	}
 	else
 	{
-		Rectangle(hDC,
-			(int)(fptPos.x),
-			(int)(fptPos.y),
-			(int)(fptPos.x + fptScale.x),
-			(int)(fptPos.y + fptScale.y));
+		CRenderManager::getInst()->RenderRectangle(
+			fptPos.x,
+			fptPos.y,
+			fptPos.x + fptScale.x,
+			fptPos.y + fptScale.y,
+			RGB(0, 0, 0));
 	}
-	render_child(hDC);
+	render_child();
 }
 
 
-void CUI::render_child(HDC hDC)
+void CUI::render_child()
 {
 	for (UINT i = 0; i < m_vecChildUI.size(); ++i)
 	{
-		m_vecChildUI[i]->render(hDC);
+		m_vecChildUI[i]->render();
 	}
 }
 

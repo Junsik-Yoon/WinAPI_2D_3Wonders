@@ -55,15 +55,15 @@ void CGameObject::finalupdate()
 	}
 }
 
-void CGameObject::component_render(HDC hDC)
+void CGameObject::component_render()
 {
 	if (nullptr != m_pCollider)
 	{
-		m_pCollider->render(hDC);
+		m_pCollider->render();
 	}
 	if (nullptr != m_pAnimator)
 	{
-		m_pAnimator->render(hDC);
+		m_pAnimator->render();
 	}
 }
 

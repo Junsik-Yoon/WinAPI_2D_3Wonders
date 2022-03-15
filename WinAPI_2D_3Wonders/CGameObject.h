@@ -22,8 +22,8 @@ private:
 public:
 	virtual void update() = 0;
 	virtual void finalupdate();
-	virtual void render(HDC hDC) = 0;
-	virtual void component_render(HDC hDC);
+	virtual void render() = 0;
+	virtual void component_render();
 
 	void SetPos(Vec2 pos) { m_fptPos = pos; }
 	void SetScale(Vec2 scale) { m_fptScale = scale; }

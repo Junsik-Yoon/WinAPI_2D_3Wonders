@@ -24,7 +24,7 @@ CLou::CLou()
 	m_counter_toggle = false;
 
 	SetName(L"Lou");
-	m_pTex = CResourceManager::getInst()->LoadTexture(L"PlayerTex", L"texture\\Animation\\Animation_Lou.bmp");
+	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"PlayerImg", L"texture\\Animation\\Animation_Lou.bmp");
 	CreateCollider();
 	SetScale(Vec2(60.f, 80.f));
 	GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
@@ -32,18 +32,18 @@ CLou::CLou()
 
 	CreateAnimator();
 	//¿Ê ÀÔÀ½
-	GetAnimator()->CreateAnimation(L"Idle_Right", m_pTex, Vec2(0.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.5f, 4);
-	GetAnimator()->CreateAnimation(L"Idle_Left", m_pTex, Vec2(106.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.5f, 4);
+	GetAnimator()->CreateAnimation(L"Idle_Right", m_pImg, Vec2(0.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.5f, 4);
+	GetAnimator()->CreateAnimation(L"Idle_Left", m_pImg, Vec2(106.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.5f, 4);
 
-	GetAnimator()->CreateAnimation(L"Move_Right", m_pTex, Vec2(0.f, 424.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6);
-	GetAnimator()->CreateAnimation(L"Move_Left", m_pTex, Vec2(106.f, 424.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6);
+	GetAnimator()->CreateAnimation(L"Move_Right", m_pImg, Vec2(0.f, 424.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6);
+	GetAnimator()->CreateAnimation(L"Move_Left", m_pImg, Vec2(106.f, 424.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6);
 	
-	GetAnimator()->CreateAnimation(L"Jump_Right_U", m_pTex, Vec2(212.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
-	GetAnimator()->CreateAnimation(L"Jump_Left_U", m_pTex, Vec2(318.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
-	GetAnimator()->CreateAnimation(L"Jump_Right_D", m_pTex, Vec2(212.f, 106.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
-	GetAnimator()->CreateAnimation(L"Jump_Left_D", m_pTex, Vec2(318.f, 106.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
-	GetAnimator()->CreateAnimation(L"Jump_Right_Onland", m_pTex, Vec2(318.f, 212.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
-	GetAnimator()->CreateAnimation(L"Jump_Left_Onland", m_pTex, Vec2(318.f, 318.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
+	GetAnimator()->CreateAnimation(L"Jump_Right_U", m_pImg, Vec2(212.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
+	GetAnimator()->CreateAnimation(L"Jump_Left_U", m_pImg, Vec2(318.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
+	GetAnimator()->CreateAnimation(L"Jump_Right_D", m_pImg, Vec2(212.f, 106.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
+	GetAnimator()->CreateAnimation(L"Jump_Left_D", m_pImg, Vec2(318.f, 106.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
+	GetAnimator()->CreateAnimation(L"Jump_Right_Onland", m_pImg, Vec2(318.f, 212.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
+	GetAnimator()->CreateAnimation(L"Jump_Left_Onland", m_pImg, Vec2(318.f, 318.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
 	//Å»ÀÇ
 
 	GetAnimator()->Play(L"Idle_Right");
@@ -171,9 +171,9 @@ void CLou::OnCollisionExit(CCollider* _pOther)
 	}
 }
 
-void CLou::render(HDC hDC)
+void CLou::render()
 {
-	component_render(hDC);
+	component_render();
 }
 
 

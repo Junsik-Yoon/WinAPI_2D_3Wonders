@@ -5,18 +5,10 @@
 CCore::CCore()
 {
 	m_hDC = 0;
-
-	m_arrPen[0] = 0;
-	m_arrBrush[0] = 0;
 }
 CCore::~CCore()
 {
-	ReleaseDC(hWnd, m_hDC);
 
-	for (int i = 0; i < (int)TYPE_PEN::SIZE; i++)
-	{
-		DeleteObject(m_arrPen[i]);
-	}
 }
 
 void CCore::update()
@@ -33,47 +25,34 @@ void CCore::update()
 
 void CCore::render()
 {
-	Rectangle(m_pMemTex->GetDC(), -1, -1, WINSIZEX + 1, WINSIZEY + 1);
-
-	CSceneManager::getInst()->render(m_pMemTex->GetDC());
-	CCameraManager::getInst()->render(m_pMemTex->GetDC());
+	//Rectangle(m_pMemTex->GetDC(), -1, -1, WINSIZEX + 1, WINSIZEY + 1);
+	CRenderManager::getInst()->GetRenderTarget()->BeginDraw();
+	CRenderManager::getInst()->RenderFillRectangle(-1, -1, WINSIZEX + 1, WINSIZEY + 1, RGB(255, 255, 255));
+	CSceneManager::getInst()->render();
+	//CCameraManager::getInst()->render();
 
 	//fps
 	WCHAR strFPS[6];
 	swprintf_s(strFPS, L"%d", CTimeManager::getInst()->GetFPS());
-	TextOutW(m_pMemTex->GetDC(), WINSIZEX - 50, 10, strFPS, 5);
-	//SetWindowTextW(hWnd, strFPS);
+	CRenderManager::getInst()->RenderText(strFPS, WINSIZEX - 50, 10, WINSIZEX, 50, 12, RGB(0, 0, 0));
 
-	BitBlt(m_hDC, 0, 0, WINSIZEX, WINSIZEY, m_pMemTex->GetDC(), 0, 0, SRCCOPY);
+	CRenderManager::getInst()->GetRenderTarget()->EndDraw();
+
 }
 
 void CCore::init()
 {
-	// GDI
-	CreateBrushPen();
-	m_hDC = GetDC(hWnd);
 
 	CPathManager::getInst()->init();
 	CTimeManager::getInst()->init();
 	CKeyManager::getInst()->init();
 	CSoundManager::getInst()->init();
+	CRenderManager::getInst()->init();
+	CCameraManager::getInst()->init();
 	CSceneManager::getInst()->init();
 	CCollisionManager::getInst()->init();
-	CCameraManager::getInst()->init();
 
-	m_pMemTex = CResourceManager::getInst()->CreateTexture(L"CoreTex", WINSIZEX, WINSIZEY);
 
-}
-
-void CCore::CreateBrushPen()
-{
-	// brush
-	m_arrBrush[(int)TYPE_BRUSH::HOLLOW] = (HBRUSH)GetStockObject(HOLLOW_BRUSH);
-
-	// pen
-	m_arrPen[(int)TYPE_PEN::RED] = CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
-	m_arrPen[(int)TYPE_PEN::GREEN] = CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
-	m_arrPen[(int)TYPE_PEN::BLUE] = CreatePen(PS_SOLID, 1, RGB(0, 0, 255));
 }
 
 

@@ -10,7 +10,7 @@ private:
 public:
 
 	virtual void update();
-	virtual void render(HDC hDC);
+	virtual void render();
 
 public:
 	CBG1();

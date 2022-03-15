@@ -113,9 +113,6 @@
       <Filter>DEFAULT</Filter>
     </ClInclude>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="SelectGDI.h">
-      <Filter>Util</Filter>
-    </ClInclude>
     <ClInclude Include="struct.h">
       <Filter>Util</Filter>
     </ClInclude>
@@ -200,6 +197,9 @@
     <ClInclude Include="CD2DImage.h">
       <Filter>Engine\02.Manager\11.RenderManager</Filter>
     </ClInclude>
+    <ClInclude Include="Map_Start.h">
+      <Filter>Engine\02.Manager\11.RenderManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -216,9 +216,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinAPI_2D_3Wonders.cpp" />
-    <ClCompile Include="SelectGDI.cpp">
-      <Filter>Util</Filter>
-    </ClCompile>
     <ClCompile Include="CCore.cpp">
       <Filter>Engine\01.Core</Filter>
     </ClCompile>
@@ -298,6 +295,9 @@
       <Filter>Engine\02.Manager\11.RenderManager</Filter>
     </ClCompile>
     <ClCompile Include="CD2DImage.cpp">
+      <Filter>Engine\02.Manager\11.RenderManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Map_Start.cpp">
       <Filter>Engine\02.Manager\11.RenderManager</Filter>
     </ClCompile>
   </ItemGroup>

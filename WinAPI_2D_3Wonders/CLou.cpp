@@ -6,9 +6,9 @@
 #include "CAnimator.h"
 #include "CAnimation.h"
 
-#define D_GRAVITY 200
+#define D_GRAVITY 800
 #define D_VELOCITY 200
-#define D_UPFORCE 200
+#define D_UPFORCE 400
 CLou::CLou()
 {
 
@@ -27,11 +27,15 @@ CLou::CLou()
 
 	CreateAnimator();
 	//¿Ê ÀÔÀ½
-	GetAnimator()->CreateAnimation(L"Idle_Right", m_pTex, Vec2(0.f, 0.f), Vec2(106.f, 106.f), Vec2(106.f, 0.f), 0.5f, 6);
-	GetAnimator()->CreateAnimation(L"Idle_Left", m_pTex, Vec2(0.f, 106.f), Vec2(106.f, 106.f), Vec2(106.f, 0.f), 0.5f, 6);
+	GetAnimator()->CreateAnimation(L"Idle_Right", m_pTex, Vec2(0.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.5f, 4);
+	GetAnimator()->CreateAnimation(L"Idle_Left", m_pTex, Vec2(106.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.5f, 4);
 
-	GetAnimator()->CreateAnimation(L"Move_Right", m_pTex, Vec2(0.f, 212.f), Vec2(106.f, 106.f), Vec2(106.f, 0.f), 0.2f, 6);
-	GetAnimator()->CreateAnimation(L"Move_Left", m_pTex, Vec2(0.f, 318.f), Vec2(106.f, 106.f), Vec2(106.f, 0.f), 0.2f, 6);
+	GetAnimator()->CreateAnimation(L"Move_Right", m_pTex, Vec2(0.f, 424.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6);
+	GetAnimator()->CreateAnimation(L"Move_Left", m_pTex, Vec2(106.f, 424.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6);
+	
+	GetAnimator()->CreateAnimation(L"Jump_Right", m_pTex, Vec2(0.f, 212.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6);
+	GetAnimator()->CreateAnimation(L"Jump_Left", m_pTex, Vec2(0.f, 318.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6);
+	
 	//Å»ÀÇ
 
 	GetAnimator()->Play(L"Idle_Right");
@@ -69,27 +73,30 @@ void CLou::update()
 	}
 	if (m_floor > 0)
 	{
-		if (KEYDOWN(VK_UP))
-		{
-			isJump = true;
-		}
 		m_gravity = 0;
 		m_upforce = D_UPFORCE;
+		if (KEYDOWN(VK_UP))
+		{
+			--pos.y;
+			isUpside = true;
+		}
+
 	}
-	if (m_floor == 0 && true == isJump)
+	if (m_floor == 0 && true == isUpside)
 	{
 		m_gravity = D_GRAVITY;
 		m_upforce -= m_gravity * fDT;
 		pos.y -= m_upforce * fDT;
+
 		if (m_upforce <= 0.f)
 		{
-			isJump = false;
+			isUpside = false;
 		}
 	}
-	else if (m_floor == 0 && false == isJump)
+	else if (m_floor == 0 && false == isUpside)
 	{
 		m_gravity = D_GRAVITY;
-		m_upforce -= m_gravity * fDT;
+		m_upforce += m_gravity * fDT;
 		pos.y += m_upforce * fDT;
 	}
 

@@ -58,7 +58,7 @@ void CScene_Start::Enter()
 	//LoadTile(path);
 
 	CLou* pLou = new CLou();
-	pLou->SetPos(Vec2(300.f, 200.f));
+	pLou->SetPos(Vec2(300.f, -100.f));
 	AddObject(pLou, GROUP_GAMEOBJ::PLAYER);
 
 

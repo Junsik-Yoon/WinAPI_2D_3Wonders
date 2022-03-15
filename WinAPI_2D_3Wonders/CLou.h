@@ -14,7 +14,7 @@ private:
     float m_velocity;
     float m_upforce;
     float m_gravity;
-    bool isJump;
+    bool isUpside;
 
 public:
     virtual void OnCollisionEnter(CCollider* _pOther);

@@ -2,6 +2,7 @@
 
 class CTexture;
 class CSound;
+class CD2DImage;
 
 class CResourceManager
 {
@@ -10,6 +11,9 @@ private:
 	map<wstring, CTexture*> m_mapTex;//키값,텍스처
 	map<wstring, CSound*> m_mapSound; //sound 리소스의 저장 자료구조
 	CSound* m_pBGM;
+
+	map<wstring, CD2DImage*> m_mapD2DImg;	// D2D Image 리소스의 저장 자료구조
+
 public:
 	CTexture* LoadTexture(const wstring& strKey, const wstring& strPath);
 	CTexture* FindTexture(const wstring& strKey);
@@ -21,4 +25,6 @@ public:
 
 	CSound LoadBGM(const wstring& strKey, const wstring& strRelativePath); // stream으로
 
+	CD2DImage* FindD2DImage(const wstring& strKey);
+	CD2DImage* LoadD2DImage(const wstring& strKey, const wstring& strRelativePath);	// D2DImage 불러오기 이미 있는 경우 있던 D2DImage 반환
 };

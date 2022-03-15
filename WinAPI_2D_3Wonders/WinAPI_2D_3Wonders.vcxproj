@@ -158,11 +158,13 @@
     <ClInclude Include="CCollider.h" />
     <ClInclude Include="CCollisionManager.h" />
     <ClInclude Include="CCore.h" />
+    <ClInclude Include="CD2DImage.h" />
     <ClInclude Include="CEventManager.h" />
     <ClInclude Include="CKeyManager.h" />
     <ClInclude Include="CGameObject.h" />
     <ClInclude Include="CLou.h" />
     <ClInclude Include="CPathManager.h" />
+    <ClInclude Include="CRenderManager.h" />
     <ClInclude Include="CResource.h" />
     <ClInclude Include="CResourceManager.h" />
     <ClInclude Include="CScene.h" />
@@ -192,11 +194,13 @@
     <ClCompile Include="CCollider.cpp" />
     <ClCompile Include="CCollisionManager.cpp" />
     <ClCompile Include="CCore.cpp" />
+    <ClCompile Include="CD2DImage.cpp" />
     <ClCompile Include="CEventManager.cpp" />
     <ClCompile Include="CKeyManager.cpp" />
     <ClCompile Include="CGameObject.cpp" />
     <ClCompile Include="CLou.cpp" />
     <ClCompile Include="CPathManager.cpp" />
+    <ClCompile Include="CRenderManager.cpp" />
     <ClCompile Include="CResource.cpp" />
     <ClCompile Include="CResourceManager.cpp" />
     <ClCompile Include="CScene.cpp" />

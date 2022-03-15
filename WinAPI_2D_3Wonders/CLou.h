@@ -6,7 +6,8 @@ class CTexture;
 class CLou :
     public CGameObject
 {
-
+    static float sCountTime;//¹ü¿ë
+    bool m_counter_toggle;
 private:
     CTexture* m_pTex;
     UINT m_floor;
@@ -15,6 +16,8 @@ private:
     float m_upforce;
     float m_gravity;
     bool isUpside;
+    bool isAir;
+    bool isFacedRight;
 
 public:
     virtual void OnCollisionEnter(CCollider* _pOther);

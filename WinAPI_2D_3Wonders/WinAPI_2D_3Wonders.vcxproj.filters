@@ -95,6 +95,9 @@
     <Filter Include="Things\01.Object\UI">
       <UniqueIdentifier>{f144ff08-dd88-4595-a655-0e6cafebb929}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\02.Manager\11.RenderManager">
+      <UniqueIdentifier>{17f67e57-97be-40b8-976d-f4f4414a9280}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -191,6 +194,12 @@
     <ClInclude Include="CUI.h">
       <Filter>Things\01.Object\UI</Filter>
     </ClInclude>
+    <ClInclude Include="CRenderManager.h">
+      <Filter>Engine\02.Manager\11.RenderManager</Filter>
+    </ClInclude>
+    <ClInclude Include="CD2DImage.h">
+      <Filter>Engine\02.Manager\11.RenderManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -284,6 +293,12 @@
     </ClCompile>
     <ClCompile Include="CUI.cpp">
       <Filter>Things\01.Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CRenderManager.cpp">
+      <Filter>Engine\02.Manager\11.RenderManager</Filter>
+    </ClCompile>
+    <ClCompile Include="CD2DImage.cpp">
+      <Filter>Engine\02.Manager\11.RenderManager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

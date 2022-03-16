@@ -52,6 +52,16 @@ enum class TYPE_EVENT
 
 	SIZE,
 };
+//tile type
+enum class GROUP_TILE
+{
+	NONE,
+	GROUND,
+	WALL,
+	DOOR,
+
+	SIZE,
+};
 
 //library
 #pragma comment(lib,"Msimg32.lib")

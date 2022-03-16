@@ -32,18 +32,18 @@ CLou::CLou()
 
 	CreateAnimator();
 	//¿Ê ÀÔÀ½
-	GetAnimator()->CreateAnimation(L"Idle_Right", m_pImg, Vec2(0.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.5f, 4);
-	GetAnimator()->CreateAnimation(L"Idle_Left", m_pImg, Vec2(106.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.5f, 4);
+	GetAnimator()->CreateAnimation(L"Idle_Right", m_pImg, Vec2(0.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.5f, 4, false);
+	GetAnimator()->CreateAnimation(L"Idle_Left", m_pImg, Vec2(106.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.5f, 4, false);
 
-	GetAnimator()->CreateAnimation(L"Move_Right", m_pImg, Vec2(0.f, 424.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6);
-	GetAnimator()->CreateAnimation(L"Move_Left", m_pImg, Vec2(106.f, 424.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6);
+	GetAnimator()->CreateAnimation(L"Move_Right", m_pImg, Vec2(0.f, 424.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6, false);
+	GetAnimator()->CreateAnimation(L"Move_Left", m_pImg, Vec2(106.f, 424.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 6, false);
 	
-	GetAnimator()->CreateAnimation(L"Jump_Right_U", m_pImg, Vec2(212.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
-	GetAnimator()->CreateAnimation(L"Jump_Left_U", m_pImg, Vec2(318.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
-	GetAnimator()->CreateAnimation(L"Jump_Right_D", m_pImg, Vec2(212.f, 106.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
-	GetAnimator()->CreateAnimation(L"Jump_Left_D", m_pImg, Vec2(318.f, 106.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
-	GetAnimator()->CreateAnimation(L"Jump_Right_Onland", m_pImg, Vec2(318.f, 212.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
-	GetAnimator()->CreateAnimation(L"Jump_Left_Onland", m_pImg, Vec2(318.f, 318.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1);
+	GetAnimator()->CreateAnimation(L"Jump_Right_U", m_pImg, Vec2(212.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_U", m_pImg, Vec2(318.f, 0.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Right_D", m_pImg, Vec2(212.f, 106.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_D", m_pImg, Vec2(318.f, 106.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Right_Onland", m_pImg, Vec2(318.f, 212.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_Onland", m_pImg, Vec2(318.f, 318.f), Vec2(106.f, 106.f), Vec2(0.f, 106.f), 0.2f, 1, false);
 	//Å»ÀÇ
 
 	GetAnimator()->Play(L"Idle_Right");

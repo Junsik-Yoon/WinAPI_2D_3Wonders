@@ -3,9 +3,9 @@
 #include "CTile.h"
 #include "CScene.h"
 #include "resource.h"
-#include "CTexture.h"
+#include "CD2DImage.h"
 #include "commdlg.h"
-//#include "CUI.h"
+#include "CUI.h"
 //#include "CButtonUI.h"
 //#include "CPanelUI.h"
 #include "CCollider.h"
@@ -14,8 +14,14 @@
 INT_PTR CALLBACK TileWndProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 CScene_Tool::CScene_Tool()
 {
+    m_pMap = nullptr;
+    m_gTile = GROUP_TILE::GROUND;
+
     m_hWnd = 0;
     m_iIdx = 0;
+    m_velocity = 200;
+    m_iTileX = 0;
+    m_iTileY = 0;
 }
 
 CScene_Tool::~CScene_Tool()
@@ -49,6 +55,14 @@ void CScene_Tool::update()
     }
 
     SetTileIdx();
+    SetTileGroup();
+}
+
+void CScene_Tool::render()
+{
+    CScene::render();
+    PrintTileLine();
+    PrintTileGroup();
 }
 
 void buttonItemClicked(DWORD_PTR param1, DWORD_PTR param2)
@@ -68,30 +82,56 @@ void CScene_Tool::Enter()
     AddObject(pBG, GROUP_GAMEOBJ::BACKGROUND);
 
     CreateTile(5, 5);
-    CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
     m_hWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_TILEBOX), hWnd, TileWndProc);
     ShowWindow(m_hWnd, SW_SHOW);
-
-
+    CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
 
 }
 
 void CScene_Tool::Exit()
 {
     EndDialog(m_hWnd, IDOK);
-    DeleteGroup(GROUP_GAMEOBJ::TILE);
+    DeleteAll();
 }
 
 
 void CScene_Tool::SetTileIdx()
 {
-    if (KEY(VK_LBUTTON))
+    if (KEY(VK_LBUTTON) || KEY(VK_RBUTTON))
     {
         Vec2 fptMousePos = MousePos();
         fptMousePos = CCameraManager::getInst()->GetRealPos(fptMousePos);
 
-        int iTileX = (int)GetTileX();
-        int iTileY = (int)GetTileY();
+        int iTileX = m_iTileX;
+        int iTileY = m_iTileY;
+
+        int iCol = (int)fptMousePos.x / CTile::SIZE_TILE;
+        int iRow = (int)fptMousePos.y / CTile::SIZE_TILE;
+
+        if (fptMousePos.x < 0.f || iTileX <= iCol ||
+            fptMousePos.y < 0.f || iTileY <= iRow)
+        {
+            return;		// 타일이 없는 위치 무시
+        }
+
+        UINT iIdx = iRow * iTileX + iCol;
+        const vector<CGameObject*>& vecTile = GetGroupObject(GROUP_GAMEOBJ::TILE);
+        if (KEY(VK_LBUTTON))
+            ((CTile*)vecTile[iIdx])->SetImgIdx(m_iIdx);
+        else if (KEY(VK_RBUTTON))
+            ((CTile*)vecTile[iIdx])->SetImgIdx(0);
+    }
+}
+    
+void CScene_Tool::SetTileGroup()
+{
+    if (KEY(VK_LBUTTON) || KEY(VK_RBUTTON))
+    {
+        Vec2 fptMousePos = MousePos();
+        fptMousePos = CCameraManager::getInst()->GetRealPos(fptMousePos);
+
+        int iTileX = m_iTileX;
+        int iTileY = m_iTileY;
 
         int iCol = (int)fptMousePos.x / CTile::SIZE_TILE;
         int iRow = (int)fptMousePos.y / CTile::SIZE_TILE;
@@ -104,53 +144,163 @@ void CScene_Tool::SetTileIdx()
 
         UINT iIdx = iRow * iTileX + iCol;
         const vector<CGameObject*>& vecTile = GetGroupObject(GROUP_GAMEOBJ::TILE);
-        ((CTile*)vecTile[iIdx])->SetTileIdx(m_iIdx);
-        if (true == isColTile)
-        {
-            ((CTile*)vecTile[iIdx])->CreateCollider();
-            ((CTile*)vecTile[iIdx])->GetCollider()->SetOffsetPos(Vec2(vecTile[iIdx]->GetScale().x / 2.f, vecTile[iIdx]->GetScale().y / 2.f));
-            ((CTile*)vecTile[iIdx])->GetCollider()->SetScale(Vec2(vecTile[iIdx]->GetScale().x, vecTile[iIdx]->GetScale().y));
-            ((CTile*)vecTile[iIdx])->SetCollider(true);
-
-        }
+        if (KEY(VK_LBUTTON))
+            ((CTile*)vecTile[iIdx])->SetGroup(m_gTile);
+        else if (KEY(VK_RBUTTON))
+            ((CTile*)vecTile[iIdx])->SetGroup(GROUP_TILE::NONE);
 
     }
 }
 
-void CScene_Tool::SetIdx(UINT idx)
+
+
+
+
+void CScene_Tool::CreateTile(UINT xSize, UINT ySize)
 {
-    m_iIdx = idx;
+    DeleteGroup(GROUP_GAMEOBJ::TILE);
+
+    m_iTileX = xSize;
+    m_iTileY = ySize;
+
+    CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"Tile", L"texture\\tile\\tilemap.bmp");
+
+    for (UINT y = 0; y < ySize; y++)
+    {
+        for (UINT x = 0; x < xSize; x++)
+        {
+            CTile* pTile = new CTile();
+            pTile->SetPos(Vec2((float)(x * CTile::SIZE_TILE), (float)(y * CTile::SIZE_TILE)));
+            pTile->SetX(x);
+            pTile->SetY(y);
+            pTile->SetD2DImage(pImg);
+            AddObject(pTile, GROUP_GAMEOBJ::TILE);
+        }
+    }
 }
-
-
-
 
 void CScene_Tool::SaveTile(const wstring& strPath)
 {
-    //wstring strFilePath = CPathManager::getInst()->GetContentPath();
-
 
     FILE* pFile = nullptr;
 
     _wfopen_s(&pFile, strPath.c_str(), L"wb");		// w : write, b : binary
     assert(pFile);
 
-    UINT xCount = GetTileX();
-    UINT yCount = GetTileY();
-
-    fwrite(&xCount, sizeof(UINT), 1, pFile);
-    fwrite(&yCount, sizeof(UINT), 1, pFile);
+    UINT xCount = m_iTileX;
+    UINT yCount = m_iTileY;
+    UINT tileCount = 0;
 
     const vector<CGameObject*>& vecTile = GetGroupObject(GROUP_GAMEOBJ::TILE);
 
-    for (UINT i = 0; i < vecTile.size(); ++i)
+    for (UINT i = 0; i < vecTile.size(); i++)
     {
-        ((CTile*)vecTile[i])->Save(pFile);
+        CTile* pTile = (CTile*)vecTile[i];
+        if (0 != pTile->GetIdx() || GROUP_TILE::NONE != pTile->GetGroup())
+            tileCount++;
+    }
+    fwrite(&xCount, sizeof(UINT), 1, pFile);
+    fwrite(&yCount, sizeof(UINT), 1, pFile);
+    fwrite(&tileCount, sizeof(UINT), 1, pFile);
+
+    for (UINT i = 0; i < vecTile.size(); i++)
+    {
+        CTile* pTile = (CTile*)vecTile[i];
+        if (0 != pTile->GetIdx() || GROUP_TILE::NONE != pTile->GetGroup())
+            ((CTile*)vecTile[i])->Save(pFile);
     }
 
     fclose(pFile);
 }
 
+void CScene_Tool::LoadTile(const wstring& strPath)
+{
+    DeleteGroup(GROUP_GAMEOBJ::TILE);
+
+    FILE* pFile = nullptr;
+
+    _wfopen_s(&pFile, strPath.c_str(), L"rb");      // w : write, b : binary
+    assert(pFile);
+
+    UINT xCount = 0;
+    UINT yCount = 0;
+    UINT tileCount = 0;
+
+    fread(&xCount, sizeof(UINT), 1, pFile);
+    fread(&yCount, sizeof(UINT), 1, pFile);
+    fread(&tileCount, sizeof(UINT), 1, pFile);
+
+    CreateTile(xCount, yCount);
+
+    const vector<CGameObject*>& vecTile = GetGroupObject(GROUP_GAMEOBJ::TILE);
+    CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"Tile", L"texture\\tile\\tilemap.bmp");
+    CTile* pTile = new CTile;
+    for (UINT i = 0; i < tileCount; i++)
+    {
+        pTile->Load(pFile);
+        UINT iIdx = pTile->GetY() * xCount + pTile->GetX();
+        ((CTile*)vecTile[iIdx])->SetX(pTile->GetX());
+        ((CTile*)vecTile[iIdx])->SetY(pTile->GetY());
+        ((CTile*)vecTile[iIdx])->SetImgIdx(pTile->GetIdx());
+        ((CTile*)vecTile[iIdx])->SetGroup(pTile->GetGroup());   
+    }
+
+    fclose(pFile);
+}
+void CScene_Tool::PrintTileLine()
+{
+    Vec2 pos = CCameraManager::getInst()->GetLookAt();
+    pos = pos - Vec2(WINSIZEX / 2.f, WINSIZEY / 2.f);
+
+    // 가로줄 출력
+    for (UINT y = 0; y <= m_iTileX; y++)
+    {
+        CRenderManager::getInst()->RenderLine(
+            Vec2(0 - pos.x, y * CTile::SIZE_TILE - pos.y),
+            Vec2(CTile::SIZE_TILE * m_iTileX - pos.x, y * CTile::SIZE_TILE - pos.y)
+        );
+    }
+
+    // 세로줄 출력
+    for (UINT x = 0; x <= m_iTileY; x++)
+    {
+        CRenderManager::getInst()->RenderLine(
+            Vec2(x * CTile::SIZE_TILE - pos.x, 0 - pos.y),
+            Vec2(x * CTile::SIZE_TILE - pos.x, CTile::SIZE_TILE * m_iTileY - pos.y)
+        );
+    }
+}
+
+void CScene_Tool::PrintTileGroup()
+{
+    const vector<CGameObject*>& vecTile = GetGroupObject(GROUP_GAMEOBJ::TILE);
+    CTile* pTile;
+
+    for (UINT i = 0; i < vecTile.size(); i++)
+    {
+        pTile = (CTile*)vecTile[i];
+        if (GROUP_TILE::GROUND == pTile->GetGroup())
+        {
+            CRenderManager::getInst()->RenderEllipse(
+                pTile->GetPos().x + CTile::SIZE_TILE / 2.f,
+                pTile->GetPos().y + CTile::SIZE_TILE / 2.f,
+                CTile::SIZE_TILE / 2.f,
+                CTile::SIZE_TILE / 2.f,
+                RGB(255, 0, 0)
+            );
+        }
+        else if (GROUP_TILE::WALL == pTile->GetGroup())
+        {
+            CRenderManager::getInst()->RenderEllipse(
+                pTile->GetPos().x + CTile::SIZE_TILE / 2.f,
+                pTile->GetPos().y + CTile::SIZE_TILE / 2.f,
+                CTile::SIZE_TILE / 2.f,
+                CTile::SIZE_TILE / 2.f,
+                RGB(0, 255, 0)
+            );
+        }
+    }
+}
 void CScene_Tool::SaveTileData()
 {
     OPENFILENAME ofn = {};
@@ -254,73 +404,9 @@ INT_PTR CALLBACK TileWndProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
             CScene_Tool* pToolScene = dynamic_cast<CScene_Tool*>(pCurScene);
             assert(pToolScene);
 
-            CTexture* pTex = CResourceManager::getInst()->FindTexture(L"Tile");
-
-            UINT iWidth = pTex->GetBmpWidth();
-            UINT iHeight = pTex->GetBmpHeight();
-
-            UINT iMaxRow = iHeight / CTile::SIZE_TILE;
-            UINT iMaxCol = iWidth / CTile::SIZE_TILE;
-
-            UINT iCurRow = (m_iIdx / iMaxCol) % iMaxRow;
-            UINT iCurCol = (m_iIdx % iMaxCol);
-
-            // 임시로 이미지 출력
-            BitBlt(GetDC(hDlg),
-                (int)(150),
-                (int)(150),
-                (int)(CTile::SIZE_TILE),
-                (int)(CTile::SIZE_TILE),
-                pTex->GetDC(),
-                (int)(iCurCol * CTile::SIZE_TILE),
-                (int)(iCurRow * CTile::SIZE_TILE),
-                SRCCOPY);
-
             pToolScene->SetIdx(m_iIdx);
-            ////미리보기 그리기
-            //CTexture* pTex = CResourceManager::getInst()->LoadTexture(L"Tile", L"texture\\Tile\\tilemap.bmp");
-
-            //UINT iWidth = pTex->GetBmpWidth();
-            //UINT iHeight = pTex->GetBmpHeight();
-            //UINT iMaxRow = iHeight / CTile::SIZE_TILE;
-            //UINT iMaxCol = iWidth / CTile::SIZE_TILE;
-
-            //UINT iCurRow = (index / iMaxCol) % iMaxRow;
-            //UINT iCurCol = (index % iMaxCol) ;
-            //StretchBlt(GetDC(hDlg),
-            //    150, 150, iCurCol * CTile::SIZE_TILE * 2
-            //    iCurRow * CTile::SIZE_TILE * 2),
-            //    CTile::SIZE_TILE, CTile::SIZE_TILE, SRCCOPY);
-
+ 
         }
-
-        else if (LOWORD(wParam) == IDC_CHECKCOL)
-        {
-            HWND check = GetDlgItem(hDlg, IDC_CHECKCOL);
-            if (SendMessage(check, BM_GETCHECK, 0, 0) == BST_UNCHECKED)
-            {
-                SetWindowText(hDlg, L"체크해제");
-                CScene* pCurScene = CSceneManager::getInst()->GetCurScene();
-
-                CScene_Tool* pToolScene = dynamic_cast<CScene_Tool*>(pCurScene);
-                assert(pToolScene);
-
-                pToolScene->SetCollider(false);
-
-            }
-            else
-            {
-                SetWindowText(hDlg, L"체크됨");
-                CScene* pCurScene = CSceneManager::getInst()->GetCurScene();
-
-                CScene_Tool* pToolScene = dynamic_cast<CScene_Tool*>(pCurScene);
-                assert(pToolScene);
-
-                pToolScene->SetCollider(true);
-            }
-
-        }
-
         break;
     }
     return (INT_PTR)FALSE;

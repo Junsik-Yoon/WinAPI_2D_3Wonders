@@ -12,9 +12,9 @@ private:
 	float m_velocity;
 	float m_gravity;
 public:
-	virtual void OnCollisionEnter(CCollider* _pOther);
-	virtual void OnCollision(CCollider* _pOther);
-	virtual void OnCollisionExit(CCollider* _pOther);
+	void OnCollisionEnter(CCollider* _pOther);
+	void OnCollision(CCollider* _pOther);
+	void OnCollisionExit(CCollider* _pOther);
 public:
 	virtual void update();
 	virtual void render();

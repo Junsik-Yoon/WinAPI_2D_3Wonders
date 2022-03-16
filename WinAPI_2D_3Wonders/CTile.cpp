@@ -1,14 +1,16 @@
 #include "pch.h"
 #include "CTile.h"
 #include "CD2DImage.h"
-#include "CCollider.h"
 
 CTile::CTile()
 {
 	m_pImg = nullptr;
+	m_iX = 0;
+	m_iY = 0;
 	m_iIdx = 0;
+	SetName(L"Tile");
 	SetScale(Vec2(SIZE_TILE, SIZE_TILE));
-
+	m_group = GROUP_TILE::NONE;
 }
 
 CTile::~CTile()
@@ -37,77 +39,45 @@ void CTile::render()
 	Vec2 fptRenderPos = CCameraManager::getInst()->GetRenderPos(GetPos());
 	Vec2 fptScale = GetScale();
 
-	CRenderManager::getInst()->RenderFrame(
-		m_pImg,
-		fptRenderPos.x,
-		fptRenderPos.y,
-		fptScale.x,
-		fptScale.y,
-		iCurCol * fptScale.x,
-		iCurRow * fptScale.y,
-		fptScale.x,
-		fptScale.y);
-	//if (iCurCol == 0 && iCurRow == 0)
-	//{
-
-	//}
-	//else
-	//{
-	//	BitBlt(hDC,
-	//		(int)(fptRenderPos.x),
-	//		(int)(fptRenderPos.y),
-	//		(int)(fptScale.x),
-	//		(int)(fptScale.y),
-	//		m_pTex->GetDC(),
-	//		iCurCol * SIZE_TILE,
-	//		iCurRow * SIZE_TILE,
-	//		SRCCOPY);
-	//}
-
-	//Rectangle(hDC,
-	//	(int)(fptRenderPos.x),
-	//	(int)(fptRenderPos.y),
-	//	(int)(fptRenderPos.x + fptScale.x),
-	//	(int)(fptRenderPos.y + fptScale.y));
-
+	if (0 != m_iIdx)
+	{
+		CRenderManager::getInst()->RenderFrame(
+			m_pImg,
+			fptRenderPos.x,
+			fptRenderPos.y,
+			fptRenderPos.x + fptScale.x,
+			fptRenderPos.y + fptScale.y,
+			iCurCol * fptScale.x,
+			iCurRow * fptScale.y,
+			(iCurCol + 1) * fptScale.x,
+			(iCurRow + 1) * fptScale.y
+		);
+	}
 	component_render();
 }
 
-void CTile::OnCollisionEnter(CCollider* _pOther)
-{
-}
-
-void CTile::OnCollision(CCollider* _pOther)
-{
-}
-
-void CTile::OnCollisionExit(CCollider* _pOther)
-{
-}
 
 
 
 void CTile::Save(FILE* pFile)
 {
-	//wstring str = GetName();
+	fwrite(&m_iX, sizeof(int), 1, pFile);
+	fwrite(&m_iY, sizeof(int), 1, pFile);
 	fwrite(&m_iIdx, sizeof(int), 1, pFile);
-	fwrite(&isCollision, sizeof(bool), 1, pFile);
-	//fwrite(&str, str.size(), 1, pFile);
+
+	int group = (int)m_group;
+	fwrite(&group, sizeof(int), 1, pFile);
 }
 
 void CTile::Load(FILE* pFile)
 {
-	//wstring str = GetName();
+	fread(&m_iX, sizeof(int), 1, pFile);
+	fread(&m_iY, sizeof(int), 1, pFile);
 	fread(&m_iIdx, sizeof(int), 1, pFile);
-	fread(&isCollision, sizeof(bool), 1, pFile);
-	//fread(&str, str.size(), 1, pFile);
-	//SetName(str);
-	if (isCollision)
-	{
-		CreateCollider();
-		GetCollider()->SetOffsetPos(Vec2(GetScale().x / 2.f, GetScale().y / 2.f));
-		GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
-	}
+
+	int group;
+	fread(&group, sizeof(int), 1, pFile);
+	m_group = (GROUP_TILE)group;
 }
 
 

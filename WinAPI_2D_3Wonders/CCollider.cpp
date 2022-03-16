@@ -99,7 +99,7 @@ void CCollider::OnCollision(CCollider* pOther)
 
 void CCollider::OnCollisionEnter(CCollider* pOther)
 {
-	m_pOwner->OnCollisionEnter(pOther);
+	m_pOwner->OnCollisionEnter(pOther);	
 	m_iColCount++;
 }
 

@@ -19,7 +19,7 @@ private:
 	IDWriteFactory* m_pWriteFactory;
 	IWICImagingFactory* m_pImageFactory;
 	ID2D1Bitmap* m_pBitmap;
-
+	ID2D1SolidColorBrush* m_pBrush;
 	IDWriteTextFormat* m_pTextFormat;
 
 public:

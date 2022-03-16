@@ -59,14 +59,14 @@ void CCollisionManager::CollisionGroupUpdate(GROUP_GAMEOBJ objLeft, GROUP_GAMEOB
 					// 충돌체 중 하나가 Dead 상태라면 충돌 해제
 					if (vecLeft[i]->isDead() || vecRight[j]->isDead())
 					{
-						vecLeft[i]->OnCollisionExit(vecRight[j]->GetCollider());
-						vecRight[j]->OnCollisionExit(vecLeft[i]->GetCollider());
+						vecLeft[i]->GetCollider()->OnCollisionExit(vecRight[j]->GetCollider());
+						vecRight[j]->GetCollider()->OnCollisionExit(vecLeft[i]->GetCollider());
 						iter->second = false;
 					}
 					else
 					{
-						vecLeft[i]->OnCollision(vecRight[j]->GetCollider());
-						vecRight[j]->OnCollision(vecLeft[i]->GetCollider());
+						vecLeft[i]->GetCollider()->OnCollision(vecRight[j]->GetCollider());
+						vecRight[j]->GetCollider()->OnCollision(vecLeft[i]->GetCollider());
 					}
 				}
 				// Prev X, Cur O
@@ -79,8 +79,8 @@ void CCollisionManager::CollisionGroupUpdate(GROUP_GAMEOBJ objLeft, GROUP_GAMEOB
 					}
 					else
 					{
-						vecLeft[i]->OnCollisionEnter(vecRight[j]->GetCollider());
-						vecRight[j]->OnCollisionEnter(vecLeft[i]->GetCollider());
+						vecLeft[i]->GetCollider()->OnCollisionEnter(vecRight[j]->GetCollider());
+						vecRight[j]->GetCollider()->OnCollisionEnter(vecLeft[i]->GetCollider());
 						iter->second = true;
 					}
 				}
@@ -90,8 +90,8 @@ void CCollisionManager::CollisionGroupUpdate(GROUP_GAMEOBJ objLeft, GROUP_GAMEOB
 				// Prev O, Cur X
 				if (iter->second)
 				{
-					vecLeft[i]->OnCollisionExit(vecRight[j]->GetCollider());
-					vecRight[j]->OnCollisionExit(vecLeft[i]->GetCollider());
+					vecLeft[i]->GetCollider()->OnCollisionExit(vecRight[j]->GetCollider());
+					vecRight[j]->GetCollider()->OnCollisionExit(vecLeft[i]->GetCollider());
 					iter->second = false;
 				}
 				else

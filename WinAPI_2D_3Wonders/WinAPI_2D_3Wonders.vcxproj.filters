@@ -209,6 +209,9 @@
     <ClInclude Include="CGreen.h">
       <Filter>Things\01.Object\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="CTempTile.h">
+      <Filter>Things\01.Object\Tile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -314,6 +317,9 @@
     </ClCompile>
     <ClCompile Include="CGreen.cpp">
       <Filter>Things\01.Object\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="CTempTile.cpp">
+      <Filter>Things\01.Object\Tile</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

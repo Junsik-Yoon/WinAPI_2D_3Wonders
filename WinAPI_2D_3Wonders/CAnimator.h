@@ -18,9 +18,10 @@ public:
 
 	void update();
 	void render();
-
-	void CreateAnimation(const wstring& strName, CD2DImage* Img,
-		Vec2 lt, Vec2 slice, Vec2 step, float duration, UINT frmCount);
+	
+	void CreateAnimation(const wstring& strName, CD2DImage* img,
+		Vec2 lt, Vec2 slice, Vec2 step, float duration, 
+		UINT frmCount, bool reverse);
 	CAnimation* FindAnimation(const wstring& strName);
 	void Play(const wstring& strName);
 

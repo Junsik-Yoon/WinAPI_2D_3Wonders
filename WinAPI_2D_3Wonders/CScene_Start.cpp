@@ -8,6 +8,8 @@
 #include "CGoblin.h"
 #include "CGreen.h"
 
+#include "CTempTile.h"
+
 CScene_Start::CScene_Start()
 {
 }
@@ -48,8 +50,17 @@ void CScene_Start::update()
 void CScene_Start::Enter()
 {
 	wstring path = CPathManager::getInst()->GetContentPath();
-	path += L"tile\\test2.tile";
+	path += L"tile\\test3.tile";
 	LoadTile(path);
+
+	CTempTile* pTempTile = nullptr;
+	for (int i = 0; i < 40; ++i)
+	{
+		pTempTile = new CTempTile();
+		pTempTile->SetScale(Vec2(32.f, 32.f));
+		pTempTile->SetPos(Vec2(i * 32.f, 400.f));
+		AddObject(pTempTile, GROUP_GAMEOBJ::TILE);
+	}
 	CBG1* pBG1 = new CBG1();
 	pBG1->SetPos(Vec2(0.f, 0.f));
 	pBG1->SetScale(Vec2(1.f, 1.f));

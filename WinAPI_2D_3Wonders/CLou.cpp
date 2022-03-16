@@ -24,7 +24,7 @@ CLou::CLou()
 	m_counter_toggle = false;
 
 	SetName(L"Lou");
-	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"PlayerImg", L"texture\\Animation\\Animation_Lou.bmp");
+	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"PlayerImg", L"texture\\Animation\\Animation_Lou.png");
 	CreateCollider();
 	SetScale(Vec2(60.f, 80.f));
 	GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));

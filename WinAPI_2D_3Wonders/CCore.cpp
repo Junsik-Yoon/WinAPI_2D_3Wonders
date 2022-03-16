@@ -4,7 +4,6 @@
 
 CCore::CCore()
 {
-	m_hDC = 0;
 }
 CCore::~CCore()
 {
@@ -29,7 +28,7 @@ void CCore::render()
 	CRenderManager::getInst()->GetRenderTarget()->BeginDraw();
 	CRenderManager::getInst()->RenderFillRectangle(-1, -1, WINSIZEX + 1, WINSIZEY + 1, RGB(255, 255, 255));
 	CSceneManager::getInst()->render();
-	//CCameraManager::getInst()->render();
+	CCameraManager::getInst()->render();
 
 	//fps
 	WCHAR strFPS[6];

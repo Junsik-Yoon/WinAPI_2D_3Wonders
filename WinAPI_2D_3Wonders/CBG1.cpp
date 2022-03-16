@@ -2,11 +2,11 @@
 #include "CBG1.h"
 #include "CTexture.h"
 #include "CScene.h"
-
+#include "CD2DImage.h"
 
 CBG1::CBG1()
 {
-	m_pTex = CResourceManager::getInst()->LoadTexture(L"BGTex", L"texture\\map_24bit.bmp");
+	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"BGImg", L"texture\\map_24bit.png");
 }
 
 CBG1::~CBG1()
@@ -19,9 +19,8 @@ void CBG1::update()
 
 void CBG1::render()
 {
-	m_pTex;
-	int iWidth = (int)m_pTex->GetBmpWidth();
-	int iHeight = (int)m_pTex->GetBmpHeight();
+	int iWidth = m_pImg->GetWidth();
+	int iHeight = m_pImg->GetHeight();
 
 	Vec2 fptCamLook = CCameraManager::getInst()->GetLookAt();
 
@@ -54,11 +53,11 @@ void CBG1::render()
 	//	m_pTex->GetDC(),
 	//	0, 0,
 	//	SRCCOPY);
-	CRenderManager::getInst()->RenderRectangle(
-		vPos.x - GetScale().x / 2.f,
-		vPos.y - GetScale().y / 2.f,
-		vPos.x + GetScale().x / 2.f,
-		vPos.y + GetScale().y / 2.f,
-		RGB(255,255,255));
+	CRenderManager::getInst()->RenderImage(m_pImg,
+		(int)vPos.x+0,
+		(int)vPos.y+0,
+		(int)vPos.x + iWidth,
+		(int)vPos.y+ iHeight
+		);
 
 }

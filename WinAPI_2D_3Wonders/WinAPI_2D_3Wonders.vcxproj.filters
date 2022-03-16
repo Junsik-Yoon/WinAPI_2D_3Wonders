@@ -98,6 +98,9 @@
     <Filter Include="Engine\02.Manager\11.RenderManager">
       <UniqueIdentifier>{17f67e57-97be-40b8-976d-f4f4414a9280}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Things\01.Object\Monster">
+      <UniqueIdentifier>{bb3ae901-91ec-4d8e-81a6-b59a734b74fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -200,6 +203,12 @@
     <ClInclude Include="Map_Start.h">
       <Filter>Engine\02.Manager\11.RenderManager</Filter>
     </ClInclude>
+    <ClInclude Include="CGoblin.h">
+      <Filter>Things\01.Object\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="CGreen.h">
+      <Filter>Things\01.Object\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -299,6 +308,12 @@
     </ClCompile>
     <ClCompile Include="Map_Start.cpp">
       <Filter>Engine\02.Manager\11.RenderManager</Filter>
+    </ClCompile>
+    <ClCompile Include="CGoblin.cpp">
+      <Filter>Things\01.Object\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="CGreen.cpp">
+      <Filter>Things\01.Object\Monster</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

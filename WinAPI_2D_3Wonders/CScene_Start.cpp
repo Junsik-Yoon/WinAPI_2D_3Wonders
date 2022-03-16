@@ -2,9 +2,11 @@
 #include "CScene_Start.h"
 #include "CGameObject.h"
 #include "CScene_Tool.h"
-//#include "CSound.h"
+#include "CSound.h"
 #include "CBG1.h"
 #include "CLou.h"
+#include "CGoblin.h"
+#include "CGreen.h"
 
 CScene_Start::CScene_Start()
 {
@@ -61,15 +63,24 @@ void CScene_Start::Enter()
 	pLou->SetPos(Vec2(300.f, -100.f));
 	AddObject(pLou, GROUP_GAMEOBJ::PLAYER);
 
+	CGoblin* pGoblin1 = new CGoblin();
+	pGoblin1->SetPos(Vec2(700.f, 100.f));
+	AddObject(pGoblin1, GROUP_GAMEOBJ::MONSTER);
+
+	CGreen* pGreen1 = new CGreen();
+	pGreen1->SetPos(Vec2(850.f, 100.f));
+	AddObject(pGreen1, GROUP_GAMEOBJ::MONSTER);
 
 	//CSoundManager::getInst()->AddSound(L"test", L"sound\\B4VHMGUN.wav", false);
 	//CSoundManager::getInst()->AddSound(L"test2", L"sound\\B4VLASER.wav", false);
 	//CSoundManager::getInst()->AddSound(L"test3", L"sound\\B4VHELL.wav", false);
 
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::PLAYER, GROUP_GAMEOBJ::TILE);
+	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::PLAYER, GROUP_GAMEOBJ::MONSTER);
+	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::MONSTER, GROUP_GAMEOBJ::TILE);
 	CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
-
-	//CCameraManager::getInst()->FadeIn(5.f);
+	//CCameraManager::getInst()->FadeOut(5.f);
+	CCameraManager::getInst()->FadeIn(1.f);
 }
 
 void CScene_Start::Exit()

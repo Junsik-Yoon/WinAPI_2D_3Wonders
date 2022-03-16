@@ -160,6 +160,8 @@
     <ClInclude Include="CCore.h" />
     <ClInclude Include="CD2DImage.h" />
     <ClInclude Include="CEventManager.h" />
+    <ClInclude Include="CGoblin.h" />
+    <ClInclude Include="CGreen.h" />
     <ClInclude Include="CKeyManager.h" />
     <ClInclude Include="CGameObject.h" />
     <ClInclude Include="CLou.h" />
@@ -196,6 +198,8 @@
     <ClCompile Include="CCore.cpp" />
     <ClCompile Include="CD2DImage.cpp" />
     <ClCompile Include="CEventManager.cpp" />
+    <ClCompile Include="CGoblin.cpp" />
+    <ClCompile Include="CGreen.cpp" />
     <ClCompile Include="CKeyManager.cpp" />
     <ClCompile Include="CGameObject.cpp" />
     <ClCompile Include="CLou.cpp" />

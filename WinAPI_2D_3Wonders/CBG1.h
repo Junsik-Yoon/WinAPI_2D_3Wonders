@@ -1,11 +1,12 @@
 #pragma once
 #include "CGameObject.h"
+class CD2DImage;
 
 class CBG1 : public CGameObject
 {
 
 private:
-	CTexture* m_pTex;
+	CD2DImage* m_pImg;
 
 public:
 

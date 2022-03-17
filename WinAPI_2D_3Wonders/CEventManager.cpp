@@ -49,7 +49,7 @@ void CEventManager::update()
 	// 삭제 예정 오브젝트들을 삭제
 	for (int i = 0; i < m_vecDead.size(); i++)
 	{
-		delete m_vecDead[i];
+		delete m_vecDead[i];//TODO:미사일이 타일 2개이상을 동시에 타격시 삭제에러가난다
 	}
 	m_vecDead.clear();
 

@@ -13,7 +13,6 @@
 #define IDC_WINAPI2D3WONDERS            109
 #define IDR_MAINFRAME                   128
 #define IDD_TILEBOX                     129
-#define IDC_CHECK1                      1000
 #define IDC_CHECKCOL                    1000
 #define IDC_BUTTON1                     1001
 #define IDC_BUTTON2                     1002

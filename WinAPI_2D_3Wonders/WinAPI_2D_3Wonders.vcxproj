@@ -154,6 +154,7 @@
     <ClInclude Include="CAnimation.h" />
     <ClInclude Include="CAnimator.h" />
     <ClInclude Include="CBG1.h" />
+    <ClInclude Include="CBug.h" />
     <ClInclude Include="CCameraManager.h" />
     <ClInclude Include="CCollider.h" />
     <ClInclude Include="CCollisionManager.h" />
@@ -162,9 +163,11 @@
     <ClInclude Include="CEventManager.h" />
     <ClInclude Include="CGoblin.h" />
     <ClInclude Include="CGreen.h" />
+    <ClInclude Include="CHalfMoon.h" />
     <ClInclude Include="CKeyManager.h" />
     <ClInclude Include="CGameObject.h" />
     <ClInclude Include="CLou.h" />
+    <ClInclude Include="CMissile.h" />
     <ClInclude Include="CPathManager.h" />
     <ClInclude Include="CRenderManager.h" />
     <ClInclude Include="CResource.h" />
@@ -193,6 +196,7 @@
     <ClCompile Include="CAnimation.cpp" />
     <ClCompile Include="CAnimator.cpp" />
     <ClCompile Include="CBG1.cpp" />
+    <ClCompile Include="CBug.cpp" />
     <ClCompile Include="CCameraManager.cpp" />
     <ClCompile Include="CCollider.cpp" />
     <ClCompile Include="CCollisionManager.cpp" />
@@ -201,9 +205,11 @@
     <ClCompile Include="CEventManager.cpp" />
     <ClCompile Include="CGoblin.cpp" />
     <ClCompile Include="CGreen.cpp" />
+    <ClCompile Include="CHalfMoon.cpp" />
     <ClCompile Include="CKeyManager.cpp" />
     <ClCompile Include="CGameObject.cpp" />
     <ClCompile Include="CLou.cpp" />
+    <ClCompile Include="CMissile.cpp" />
     <ClCompile Include="CPathManager.cpp" />
     <ClCompile Include="CRenderManager.cpp" />
     <ClCompile Include="CResource.cpp" />

@@ -101,6 +101,9 @@
     <Filter Include="Things\01.Object\Monster">
       <UniqueIdentifier>{bb3ae901-91ec-4d8e-81a6-b59a734b74fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Things\01.Object\Missile">
+      <UniqueIdentifier>{b9322c05-e180-4d0e-b75a-3d96c14101bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -212,6 +215,15 @@
     <ClInclude Include="CTempTile.h">
       <Filter>Things\01.Object\Tile</Filter>
     </ClInclude>
+    <ClInclude Include="CHalfMoon.h">
+      <Filter>Things\01.Object\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="CBug.h">
+      <Filter>Things\01.Object\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="CMissile.h">
+      <Filter>Things\01.Object\Missile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -320,6 +332,15 @@
     </ClCompile>
     <ClCompile Include="CTempTile.cpp">
       <Filter>Things\01.Object\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="CHalfMoon.cpp">
+      <Filter>Things\01.Object\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="CBug.cpp">
+      <Filter>Things\01.Object\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="CMissile.cpp">
+      <Filter>Things\01.Object\Missile</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

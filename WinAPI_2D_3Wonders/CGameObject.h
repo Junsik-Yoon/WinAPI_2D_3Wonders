@@ -11,6 +11,8 @@ private:
 	Vec2 m_fptPos;		//ÁÂÇ¥
 	Vec2 m_fptScale;	//Å©±â
 
+	int m_hp;
+
 	bool m_bAlive;
 
 	CCollider* m_pCollider;
@@ -31,6 +33,9 @@ public:
 	Vec2 GetScale() { return m_fptScale; }
 	void SetName(wstring name) { m_strName = name; }
 	wstring GetName() { return m_strName; }
+
+	void SetHP(int _hp) { m_hp = _hp; }
+	int GetHP() { return m_hp; }
 
 	bool isDead() { return !m_bAlive; }
 

@@ -1,6 +1,8 @@
 #pragma once
 #include "CScene.h"
 
+class CButtonUI;
+class CTileButton;
 class CD2DImage;
 
 class CScene_Tool :
@@ -33,8 +35,15 @@ public:
     void LoadTile(const wstring& strPath);
     void SaveTileData();
     void LoadTileData();
+    void LoadMap();
+
+    void ClickTileGroup(CButtonUI* button);
+    void ClickTile(CTileButton* button);
 
 private:
+    void CreateTilePanel();
+
+    void PrintMap();
     void PrintTileLine();
     void PrintTileGroup();
 

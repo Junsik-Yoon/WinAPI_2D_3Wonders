@@ -12,7 +12,7 @@ private:
 	int m_iY;
 	int m_iIdx;
 
-	GROUP_TILE m_group;
+	GROUP_TILE m_eGroup;
 
 public:
 	const static int SIZE_TILE = 32;
@@ -31,8 +31,8 @@ public:
 	int GetX() { return m_iX; }
 	int GetY() { return m_iY; }
 
-	void SetGroup(GROUP_TILE group){ m_group = group; }
-	GROUP_TILE GetGroup() { return m_group; }
+	void SetGroup(GROUP_TILE group){ m_eGroup = group; }
+	GROUP_TILE GetGroup() { return m_eGroup; }
 
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);

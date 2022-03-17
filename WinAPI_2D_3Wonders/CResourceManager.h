@@ -13,6 +13,7 @@ private:
 	CSound* m_pBGM;
 
 	map<wstring, CD2DImage*> m_mapD2DImg;	// D2D Image 리소스의 저장 자료구조
+	CD2DImage* m_pToolImage;
 
 public:
 	CTexture* LoadTexture(const wstring& strKey, const wstring& strPath);
@@ -27,4 +28,6 @@ public:
 
 	CD2DImage* FindD2DImage(const wstring& strKey);
 	CD2DImage* LoadD2DImage(const wstring& strKey, const wstring& strRelativePath);	// D2DImage 불러오기 이미 있는 경우 있던 D2DImage 반환
+
+	CD2DImage* LoadToolD2DImage(const wstring& strPath);
 };

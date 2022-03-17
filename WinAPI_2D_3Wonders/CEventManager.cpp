@@ -29,6 +29,8 @@ void CEventManager::Execute(const tEvent& event)
 		// lParam : 오브젝트 주소
 		// object를 삭제대기상태로 변경
 		CGameObject* pObj = (CGameObject*)event.lParam;
+		if (pObj->isDead())
+			return;
 		pObj->SetDead();
 		m_vecDead.push_back(pObj);
 	}

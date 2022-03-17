@@ -155,6 +155,7 @@
     <ClInclude Include="CAnimator.h" />
     <ClInclude Include="CBG1.h" />
     <ClInclude Include="CBug.h" />
+    <ClInclude Include="CButtonUI.h" />
     <ClInclude Include="CCameraManager.h" />
     <ClInclude Include="CCollider.h" />
     <ClInclude Include="CCollisionManager.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="CGameObject.h" />
     <ClInclude Include="CLou.h" />
     <ClInclude Include="CMissile.h" />
+    <ClInclude Include="CPanelUI.h" />
     <ClInclude Include="CPathManager.h" />
     <ClInclude Include="CRenderManager.h" />
     <ClInclude Include="CResource.h" />
@@ -181,6 +183,7 @@
     <ClInclude Include="CTempTile.h" />
     <ClInclude Include="CTexture.h" />
     <ClInclude Include="CTile.h" />
+    <ClInclude Include="CTileButton.h" />
     <ClInclude Include="CTimeManager.h" />
     <ClInclude Include="CUI.h" />
     <ClInclude Include="CUIManager.h" />
@@ -197,6 +200,7 @@
     <ClCompile Include="CAnimator.cpp" />
     <ClCompile Include="CBG1.cpp" />
     <ClCompile Include="CBug.cpp" />
+    <ClCompile Include="CButtonUI.cpp" />
     <ClCompile Include="CCameraManager.cpp" />
     <ClCompile Include="CCollider.cpp" />
     <ClCompile Include="CCollisionManager.cpp" />
@@ -210,6 +214,7 @@
     <ClCompile Include="CGameObject.cpp" />
     <ClCompile Include="CLou.cpp" />
     <ClCompile Include="CMissile.cpp" />
+    <ClCompile Include="CPanelUI.cpp" />
     <ClCompile Include="CPathManager.cpp" />
     <ClCompile Include="CRenderManager.cpp" />
     <ClCompile Include="CResource.cpp" />
@@ -223,6 +228,7 @@
     <ClCompile Include="CTempTile.cpp" />
     <ClCompile Include="CTexture.cpp" />
     <ClCompile Include="CTile.cpp" />
+    <ClCompile Include="CTileButton.cpp" />
     <ClCompile Include="CTimeManager.cpp" />
     <ClCompile Include="CUI.cpp" />
     <ClCompile Include="CUIManager.cpp" />

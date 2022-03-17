@@ -224,6 +224,15 @@
     <ClInclude Include="CMissile.h">
       <Filter>Things\01.Object\Missile</Filter>
     </ClInclude>
+    <ClInclude Include="CButtonUI.h">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CPanelUI.h">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CTileButton.h">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -341,6 +350,15 @@
     </ClCompile>
     <ClCompile Include="CMissile.cpp">
       <Filter>Things\01.Object\Missile</Filter>
+    </ClCompile>
+    <ClCompile Include="CButtonUI.cpp">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CPanelUI.cpp">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CTileButton.cpp">
+      <Filter>Things\01.Object\UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

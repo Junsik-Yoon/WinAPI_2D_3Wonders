@@ -53,7 +53,7 @@ void CScene_Start::update()
 void CScene_Start::Enter()
 {
 	wstring path = CPathManager::getInst()->GetContentPath();
-	path += L"tile\\test3.tile";
+	path += L"tile\\test4.tile";
 	LoadTile(path);
 
 	CTempTile* pTempTile = nullptr;
@@ -106,6 +106,7 @@ void CScene_Start::Enter()
 	CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
 	//CCameraManager::getInst()->FadeOut(5.f);
 	CCameraManager::getInst()->FadeIn(1.f);
+	
 }
 
 void CScene_Start::Exit()

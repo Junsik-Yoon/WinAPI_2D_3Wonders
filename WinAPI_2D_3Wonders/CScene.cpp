@@ -3,7 +3,7 @@
 #include "CGameObject.h"
 #include "CTile.h"
 #include "CCollider.h"
-#include "CTexture.h"
+
 
 CScene::CScene()
 {
@@ -112,12 +112,10 @@ void CScene::LoadTile(const wstring& strPath)
 {
 	DeleteGroup(GROUP_GAMEOBJ::TILE);
 
-
 	FILE* pFile = nullptr;
 
-	_wfopen_s(&pFile, strPath.c_str(), L"rb"); //r: read, b:binary
+	_wfopen_s(&pFile, strPath.c_str(), L"rb");      // w : write, b : binary
 	assert(pFile);
-
 
 	UINT xCount = 0;
 	UINT yCount = 0;
@@ -127,8 +125,8 @@ void CScene::LoadTile(const wstring& strPath)
 	fread(&yCount, sizeof(UINT), 1, pFile);
 	fread(&tileCount, sizeof(UINT), 1, pFile);
 
-	CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"Tile", L"texture\\Tile\\tilemap.bmp");
-	
+	CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"Tile", L"texture\\tile\\tilemap.bmp");
+
 	for (UINT i = 0; i < tileCount; i++)
 	{
 		CTile* newTile = new CTile;
@@ -136,7 +134,11 @@ void CScene::LoadTile(const wstring& strPath)
 		newTile->SetD2DImage(pImg);
 		newTile->SetPos(Vec2((float)(newTile->GetX() * CTile::SIZE_TILE), (float)(newTile->GetY() * CTile::SIZE_TILE)));
 
-		if (GROUP_TILE::NONE != newTile->GetGroup())
+		if (GROUP_TILE::SLOPE == newTile->GetGroup())
+		{
+			// TODO : OBB 충돌체 추가
+		}
+		else if (GROUP_TILE::NONE != newTile->GetGroup())
 		{
 			newTile->CreateCollider();
 			newTile->GetCollider()->SetScale(Vec2(CTile::SIZE_TILE, CTile::SIZE_TILE));

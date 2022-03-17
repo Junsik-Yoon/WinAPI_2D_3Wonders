@@ -35,14 +35,6 @@ public:
 	void AddChild(CUI* pUI);
 	const vector<CUI*>& GetChildUI();//모든자식반환
 
-	void SetCameraAffected(bool affected)
-	{
-		m_bCameraAffected = affected;
-		for (int i = 0; i < m_vecChildUI.size(); ++i)
-		{
-			m_vecChildUI[i]->m_bCameraAffected = affected;
-		}
-	}
 	bool GetCameraAffected() { return m_bCameraAffected; }
 	bool IsMouseOn() { return m_bMouseOn; }
 	bool IsLbtnDown() { return m_bLbtnDown; }
@@ -53,19 +45,9 @@ private:
 	void MouseOnCheck();
 
 public:
-	CUI();
+	CUI(bool bCameraAffected);
 	CUI(const CUI& other);
 	virtual ~CUI();
-	virtual CUI* Clone()
-	{
-		CUI* newUI = new CUI(*this);
-		newUI->m_vecChildUI.clear();
-		for (UINT i = 0; i < m_vecChildUI.size(); ++i)
-		{
-			newUI->m_vecChildUI.push_back(new CUI(*m_vecChildUI[i]));
-			newUI->m_vecChildUI[i]->m_pParentUI = newUI;//부모세팅
-		}
-		return newUI;
-	}
+	virtual CUI* Clone() = 0;
 };
 

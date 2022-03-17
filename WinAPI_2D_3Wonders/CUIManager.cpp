@@ -16,25 +16,14 @@ CUIManager::~CUIManager()
 
 void CUIManager::update()
 {
-	//TODO: 마우스가 올려진 UI, 눌린 ,떼진, 클릭된
-	//CScene* pCurScene = CSceneManager::getInst()->GetCurScene();
-	//const vector<CGameObject*>& vecUI = pCurScene->GetGroupObject(GROUP_GAMEOBJ::UI);
-
 	m_pFocusedUI = GetFocusedUI();
-	if (nullptr == m_pFocusedUI)
-		return;
 	CUI* pUI = GetTargetUI(m_pFocusedUI);
 
-	//for (UINT i = 0; i < vecUI.size(); ++i)
-	//{
-	//	CUI* pUI = (CUI*)vecUI[i];
-
-	//	pUI = GetTargetUI(pUI);
-
-	if (nullptr != pUI)//마우스가 올려져있을 때
+	if (nullptr != pUI)
 	{
-		pUI->IsMouseOn();
-		if (KEYDOWN(VK_LBUTTON)) //마우스가 올려져있으면서 버튼이 눌림
+		pUI->MouseOn();
+
+		if (KEYDOWN(VK_LBUTTON))
 		{
 			pUI->MouseLbtnDown();
 			pUI->m_bLbtnDown = true;
@@ -42,35 +31,42 @@ void CUIManager::update()
 		else if (KEYUP(VK_LBUTTON))
 		{
 			pUI->MouseLbtnUp();
+
 			if (pUI->m_bLbtnDown)
 			{
 				pUI->MouseLbtnClicked();
 			}
 			pUI->m_bLbtnDown = false;
 		}
-		//	}
 	}
-
 }
 
 void CUIManager::SetFocusedUI(CUI* pUI)
 {
+	// 이미 포커싱된 UI 이거나 이전에 포커싱된 UI가 없었을 경우
+	if (m_pFocusedUI == pUI || nullptr == m_pFocusedUI)
+	{
+		m_pFocusedUI = pUI;
+		return;
+	}
+
 	m_pFocusedUI = pUI;
+
+	if (nullptr == m_pFocusedUI)
+		return;
+
 	CScene* pCurScene = CSceneManager::getInst()->GetCurScene();
 	vector<CGameObject*>& vecUI = pCurScene->GetUIGroup();
 
 	vector<CGameObject*>::iterator iter = vecUI.begin();
-	for (; iter != vecUI.end(); ++iter)
+	for (; iter != vecUI.end(); iter++)
 	{
 		if (m_pFocusedUI == *iter)
 		{
 			break;
 		}
 	}
-	if (vecUI.end() == iter)
-	{
-		return;
-	}
+
 	vecUI.erase(iter);
 	vecUI.push_back(m_pFocusedUI);
 }
@@ -79,11 +75,12 @@ CUI* CUIManager::GetTargetUI(CUI* pParentUI)
 {
 	//자식을 전부 순회
 	//너비우선탐색 queue로
-	static list<CUI*> queue;
-	static vector<CUI*> vecNoneTarget;
+	list<CUI*> queue;
+	vector<CUI*> vecNoneTarget;
 	CUI* pTargetUI = nullptr;
 
-
+	if (nullptr == pParentUI)
+		return nullptr;
 
 	queue.push_back(pParentUI);
 
@@ -115,7 +112,7 @@ CUI* CUIManager::GetTargetUI(CUI* pParentUI)
 
 	if (KEYUP(VK_LBUTTON))
 	{
-		for (size_t i = 0; i < vecNoneTarget.size(); i++)
+		for (size_t i = 0; i < vecNoneTarget.size(); ++i)
 		{
 			vecNoneTarget[i]->m_bLbtnDown = false;
 		}
@@ -129,25 +126,30 @@ CUI* CUIManager::GetFocusedUI()
 	CScene* pCurScene = CSceneManager::getInst()->GetCurScene();
 	vector<CGameObject*>& vecUI = pCurScene->GetUIGroup();
 	CUI* pFocusedUI = m_pFocusedUI;
+
 	if (!KEYDOWN(VK_LBUTTON))
 	{
 		return pFocusedUI;
 	}
-	vector<CGameObject*>::iterator targetIter = vecUI.end();
+
+	vector<CGameObject*>::iterator targetiter = vecUI.end();
 	vector<CGameObject*>::iterator iter = vecUI.begin();
 	for (; iter != vecUI.end(); ++iter)
 	{
 		if (((CUI*)*iter)->IsMouseOn())
 		{
-			targetIter = iter;
+			targetiter = iter;
 		}
 	}
-	if (vecUI.end() == targetIter)
+
+	if (vecUI.end() == targetiter)
 	{
 		return nullptr;
 	}
-	pFocusedUI = (CUI*)*targetIter;
-	vecUI.erase(targetIter);
+
+	pFocusedUI = (CUI*)*targetiter;
+
+	vecUI.erase(targetiter);
 	vecUI.push_back(pFocusedUI);
 
 	return pFocusedUI;

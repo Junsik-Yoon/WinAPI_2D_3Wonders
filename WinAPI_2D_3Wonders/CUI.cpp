@@ -2,7 +2,7 @@
 #include "CUI.h"
 #include "CGameObject.h"
 
-CUI::CUI()
+CUI::CUI(bool bCameraAffected)
 {
 	m_pParentUI = nullptr;
 	m_bCameraAffected = false;
@@ -18,7 +18,7 @@ CUI::CUI(const CUI& other)
 	m_bMouseOn = false;
 	m_bLbtnDown = false;
 
-	m_vecChildUI.clear();
+	//m_vecChildUI.clear();
 
 	for (UINT i = 0; i < other.m_vecChildUI.size(); ++i)
 	{
@@ -86,8 +86,15 @@ void CUI::render()
 		fptPos = CCameraManager::getInst()->GetRenderPos(fptPos);
 	}
 
-	if (m_bLbtnDown)//클릭시색변경
+	if (m_bLbtnDown)
 	{
+		CRenderManager::getInst()->RenderFillRectangle(
+			fptPos.x,
+			fptPos.y,
+			fptPos.x + fptScale.x,
+			fptPos.y + fptScale.y,
+			RGB(255, 255, 255)
+		);
 		CRenderManager::getInst()->RenderRectangle(
 			fptPos.x,
 			fptPos.y,
@@ -97,6 +104,13 @@ void CUI::render()
 	}
 	else
 	{
+		CRenderManager::getInst()->RenderFillRectangle(
+			fptPos.x,
+			fptPos.y,
+			fptPos.x + fptScale.x,
+			fptPos.y + fptScale.y,
+			RGB(255, 255, 255)
+		);
 		CRenderManager::getInst()->RenderRectangle(
 			fptPos.x,
 			fptPos.y,

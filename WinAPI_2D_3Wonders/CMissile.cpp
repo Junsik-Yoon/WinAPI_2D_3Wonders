@@ -85,7 +85,8 @@ void CMissile::OnCollisionEnter(CCollider* pOther)
 		pOtherObj->GetName() == L"Tile")
 	{
 		GetAnimator()->Play(L"Shoot_Right");
-		DeleteObj(this);
+		if(nullptr!=this)
+			DeleteObj(this);
 	}
 }
 

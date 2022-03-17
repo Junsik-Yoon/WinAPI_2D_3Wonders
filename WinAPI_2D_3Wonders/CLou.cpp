@@ -47,8 +47,8 @@ CLou::CLou()
 	GetAnimator()->CreateAnimation(L"Sit_Right", m_pImg, Vec2(768.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
 	GetAnimator()->CreateAnimation(L"Sit_Left", m_pImg, Vec2(896.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
 
-	GetAnimator()->CreateAnimation(L"Shoot_Right", m_pImg, Vec2(768.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.05f, 3, false);
-	GetAnimator()->CreateAnimation(L"Shoot_Left", m_pImg, Vec2(896.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.05f, 3, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Right", m_pImg, Vec2(768.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.05f, 3, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Left", m_pImg, Vec2(896.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.05f, 3, false,false);
 
 
 	GetAnimator()->CreateAnimation(L"Jump_Right_U", m_pImg, Vec2(256.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
@@ -72,6 +72,10 @@ CLou::~CLou()
 
 void CLou::update()
 {
+	if (KEY('C'))
+	{
+		CCameraManager::getInst()->SetTargetObj(this);
+	}
 	Vec2 pos = GetPos();
 	if (KEY(VK_UP))
 	{
@@ -264,16 +268,31 @@ void CLou::CreateMissile()
 				pMissile->GetAnimator()->Play(L"Shoot_Right");
 				pMissile->GetCollider()->SetOffsetPos(Vec2(0.f, 30.f));
 				pMissile->SetDir(Vec2(0, 1));
+				
 			}
 			else
 			{
-				fpMissilePos.x += 50;
-				fpMissilePos.y += 20;
-				pMissile->SetPos(fpMissilePos);
-				pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-				pMissile->GetAnimator()->Play(L"Shoot_Right");
-				pMissile->GetCollider()->SetOffsetPos(Vec2(30.f, 0.f));
-				pMissile->SetDir(Vec2(1, 0));
+
+				if (isFacedRight)
+				{
+					fpMissilePos.x += 50;
+					fpMissilePos.y += 20;
+					pMissile->SetPos(fpMissilePos);
+					pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
+					pMissile->GetAnimator()->Play(L"Shoot_Right");
+					pMissile->GetCollider()->SetOffsetPos(Vec2(30.f, 0.f));
+					pMissile->SetDir(Vec2(1, 0));
+				}
+				else
+				{
+					fpMissilePos.x -= 110;
+					fpMissilePos.y += 20;
+					pMissile->SetPos(fpMissilePos);
+					pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
+					pMissile->GetAnimator()->Play(L"Shoot_Right");
+					pMissile->GetCollider()->SetOffsetPos(Vec2(30.f, 0.f));
+					pMissile->SetDir(Vec2(-1, 0));
+				}
 			}
 		}break;		
 	}

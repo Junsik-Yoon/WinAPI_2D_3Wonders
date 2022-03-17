@@ -10,7 +10,7 @@ CTile::CTile()
 	m_iIdx = 0;
 	SetName(L"Tile");
 	SetScale(Vec2(SIZE_TILE, SIZE_TILE));
-	m_group = GROUP_TILE::NONE;
+	m_eGroup = GROUP_TILE::NONE;
 }
 
 CTile::~CTile()
@@ -65,7 +65,7 @@ void CTile::Save(FILE* pFile)
 	fwrite(&m_iY, sizeof(int), 1, pFile);
 	fwrite(&m_iIdx, sizeof(int), 1, pFile);
 
-	int group = (int)m_group;
+	int group = (int)m_eGroup;
 	fwrite(&group, sizeof(int), 1, pFile);
 }
 
@@ -77,7 +77,7 @@ void CTile::Load(FILE* pFile)
 
 	int group;
 	fread(&group, sizeof(int), 1, pFile);
-	m_group = (GROUP_TILE)group;
+	m_eGroup = (GROUP_TILE)group;
 }
 
 

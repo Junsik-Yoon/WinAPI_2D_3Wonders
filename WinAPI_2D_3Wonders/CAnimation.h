@@ -8,6 +8,7 @@ struct tAniFrm
 	Vec2 fptSlice;
 	Vec2 fptOffset;
 	float fDuration;
+	bool loop;
 };
 
 class CAnimation
@@ -22,6 +23,7 @@ private:
 	int				m_iCurFrm;		// 현재 프레임의 index
 	float			m_fAccTime;		// 다음 프레임까지 축적시간
 	bool			m_bReverse;
+	bool			m_loop;
 
 public:
 	void update();

@@ -22,6 +22,7 @@ CAnimation::~CAnimation()
 
 void CAnimation::update()
 {
+
     m_fAccTime += fDT;
 
     if (m_vecFrm[m_iCurFrm].fDuration < m_fAccTime)
@@ -77,17 +78,40 @@ void CAnimation::Create(CD2DImage* Img,      // 애니메이션의 이미지
     Vec2 slice,        // 애니메이션 프레임의 크기
     Vec2 step,         // 애니메이션 프레임의 반복 위치
     float duration,    // 애니메이션 프레임 지속시간
-    UINT frmCount)     // 애니메이션 프레임 갯수
+    UINT frmCount     // 애니메이션 프레임 갯수
+)
 {
     m_pImg = Img;
 
     tAniFrm frm = {};
-    for (UINT i = 0; i < frmCount; i++)
+    if (true == m_loop)
     {
-        frm.fDuration = duration;
-        frm.fptSlice = slice;
-        frm.fptLT = lt + step * i;
+        for (UINT i = 0; i < frmCount; i++)
+        {
+            frm.fDuration = duration;
+            frm.fptSlice = slice;
+            frm.fptLT = lt + step * i;
 
-        m_vecFrm.push_back(frm);
+            m_vecFrm.push_back(frm);
+        }
     }
+    else
+    {
+        for (UINT i = 0; i < frmCount; i++)
+        {
+            if (i == frmCount - 1)
+            {
+                frm.fDuration = 999;
+            }
+            else
+            {
+                frm.fDuration = duration;
+            }
+            frm.fptSlice = slice;
+            frm.fptLT = lt + step * i;
+
+            m_vecFrm.push_back(frm);
+        }
+    }
+
 }

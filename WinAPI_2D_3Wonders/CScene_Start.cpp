@@ -10,8 +10,7 @@
 #include "CHalfMoon.h"
 #include "CBug.h"
 #include "CCollider.h"
-
-#include "CTempTile.h"
+#include "CShelter.h"
 
 CScene_Start::CScene_Start()
 {
@@ -53,7 +52,7 @@ void CScene_Start::update()
 void CScene_Start::Enter()
 {
 	wstring path = CPathManager::getInst()->GetContentPath();
-	path += L"tile\\test4.tile";
+	path += L"tile\\only_ground.tile";
 	LoadTile(path);
 
 	CBG1* pBG1 = new CBG1();
@@ -64,6 +63,18 @@ void CScene_Start::Enter()
 	CLou* pLou = new CLou();
 	pLou->SetPos(Vec2(300.f, -100.f));
 	AddObject(pLou, GROUP_GAMEOBJ::PLAYER);
+
+	CShelter* pShelter1 = new CShelter();
+	pShelter1->SetPos(Vec2(1570.f, 230.f));
+	AddObject(pShelter1, GROUP_GAMEOBJ::TILE);
+
+	CShelter* pShelter2 = new CShelter();
+	pShelter2->SetPos(Vec2(5350.f, -35.f));
+	AddObject(pShelter2, GROUP_GAMEOBJ::TILE);
+
+	CShelter* pShelter3 = new CShelter();
+	pShelter3->SetPos(Vec2(7270.f, 280.f));
+	AddObject(pShelter3, GROUP_GAMEOBJ::TILE);
 
 	//CSoundManager::getInst()->AddSound(L"test", L"sound\\B4VHMGUN.wav", false);
 	//CSoundManager::getInst()->AddSound(L"test2", L"sound\\B4VLASER.wav", false);
@@ -77,7 +88,7 @@ void CScene_Start::Enter()
 	CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
 	//CCameraManager::getInst()->FadeOut(5.f);
 	CCameraManager::getInst()->FadeIn(1.f);
-	
+	//CCameraManager::getInst()->SetTargetX(pShelter3);
 }
 
 void CScene_Start::Exit()

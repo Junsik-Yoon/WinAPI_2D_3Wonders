@@ -382,20 +382,20 @@ void CScene_Tool::CreateTilePanel()
 {
     CPanelUI* panelTile = new CPanelUI;
     panelTile->SetName(L"panelTile");
-    panelTile->SetScale(Vec2(400.f, 600.f));
-    panelTile->SetPos(Vec2(WINSIZEX - 450.f, 50.f));
+    panelTile->SetScale(Vec2(300.f, 300.f));
+    panelTile->SetPos(Vec2(50.f,50.f));
 
     CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"Tile", L"texture\\tile\\tilemap.bmp");
-    for (UINT y = 0; y < 12; y++)
+    for (UINT y = 0; y < 5; y++)
     {
-        for (UINT x = 0; x < 12; x++)
+        for (UINT x = 0; x < 5; x++)
         {
             CTileButton* btnTile = new CTileButton;
             btnTile->SetScale(Vec2(CTile::SIZE_TILE, CTile::SIZE_TILE));
             btnTile->SetPos(Vec2((float)x * CTile::SIZE_TILE, (float)y * CTile::SIZE_TILE));
             btnTile->SetPos(btnTile->GetPos() + Vec2(8.f, 8.f));
             btnTile->SetImage(pImg);
-            btnTile->SetIdx(y * 12 + x);
+            btnTile->SetIdx(y * 5 + x);
             btnTile->SetClickedCallBack(ClickTileButton, (DWORD_PTR)this, (DWORD_PTR)btnTile);
             panelTile->AddChild(btnTile);
         }
@@ -403,7 +403,7 @@ void CScene_Tool::CreateTilePanel()
 
     CButtonUI* btnTileGroup = new CButtonUI;
     btnTileGroup->SetScale(Vec2(100.f, 50.f));
-    btnTileGroup->SetPos(Vec2(50.f, 500.f));
+    btnTileGroup->SetPos(Vec2(50.f, 250.f));
     btnTileGroup->SetText(L"NONE");
     btnTileGroup->SetClickedCallBack(ClickTileGroupButton, (DWORD_PTR)this, (DWORD_PTR)btnTileGroup);
     panelTile->AddChild(btnTileGroup);
@@ -423,8 +423,8 @@ void CScene_Tool::PrintMap()
         m_pMap,
         0 - pos.x,
         0 - pos.y,
-        2 * m_pMap->GetWidth() - pos.x,
-        2 * m_pMap->GetHeight() - pos.y
+        m_pMap->GetWidth() - pos.x,
+        m_pMap->GetHeight() - pos.y
     );
 }
 

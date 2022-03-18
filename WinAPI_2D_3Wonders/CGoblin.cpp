@@ -50,6 +50,17 @@ void CGoblin::update()
 {
 	Vec2 vPos = GetPos();
 
+	if (m_floor == 0)
+	{
+		m_gravity = D_GRAVITY;
+		vPos.y += D_GRAVITY * fDT;
+	}
+	else
+	{
+		m_gravity = 0;
+
+	}
+
 	vector<CGameObject*> pPlayer=CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
 	if (pPlayer[0]->GetPos().x >= GetPos().x)
 	{
@@ -91,11 +102,11 @@ void CGoblin::OnCollisionEnter(CCollider* _pOther)
 			GetAnimator()->Play(L"Laugh_Left");
 		}
 	}
-	//if (pOther->GetName() == L"Missile_Player");
-	//{
-	//	int hp = GetHP();
-	//	SetHP(--hp);
-	//}
+	if (pOther->GetName() == L"Missile_Player")
+	{
+		int hp = GetHP();
+		SetHP(--hp);
+	}
 	if (GetHP() <= 0)
 	{
 		DeleteObj(this);
@@ -104,6 +115,18 @@ void CGoblin::OnCollisionEnter(CCollider* _pOther)
 
 void CGoblin::OnCollision(CCollider* _pOther)
 {
+	CGameObject* pOther = _pOther->GetObj();
+	Vec2 vPos = GetPos();
+	if (pOther->GetName() == L"Tile")
+	{
+		int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
+		int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
+		int sum = abs(a - b);
+		if(1<sum)
+		--vPos.y;
+	}
+	
+	SetPos(vPos);
 }
 
 void CGoblin::OnCollisionExit(CCollider* _pOther)

@@ -22,4 +22,9 @@ public:
 	CGreen();
 	~CGreen();
 	CGreen* Clone() { return new CGreen(*this); }
+
+	class Fire : public CGameObject
+	{
+
+	};
 };

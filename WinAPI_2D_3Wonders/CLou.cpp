@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <random>
-
+//1:800,400 / 2:900,500 / 3: 1000,600
 #define D_GRAVITY 800
 #define D_VELOCITY 200
 #define D_UPFORCE 400
@@ -80,29 +80,37 @@ CLou::~CLou()
 
 void CLou::update()
 {
+	update_move();
+	update_animation();
+}
+
+
+void CLou::update_move()
+{
 	m_goblinCounter += fDT;
 	if (m_goblinCounter >= 5.f)
 	{
 		m_goblinCounter = 0.f;
-		GenerateGoblin();
+		//GenerateGoblin();
 	}
-	if (KEYDOWN('Q'))//모션 시험용
+	if (KEYDOWN('Q'))//모션,기능 시험용
 	{
 		GenerateGoblin();
 		GetAnimator()->Play(L"pShoot_Right");
+		//m_floor = 0;
 	}
-	if (KEY('C'))
-	{
-		CCameraManager::getInst()->SetTargetObj(this);
-	}
+	//if (KEY('C'))
+	//{
+	//	CCameraManager::getInst()->SetTargetObj(this);
+	//}
 	if (KEY('V'))
 	{
 		CCameraManager::getInst()->SetTargetX(this);
 	}
-	if (KEY('B'))
-	{
-		CCameraManager::getInst()->SetTargetY(this);
-	}
+	//if (KEY('B'))
+	//{
+	//	CCameraManager::getInst()->SetTargetY(this);
+	//}
 	Vec2 pos = GetPos();
 	if (KEY(VK_UP))
 	{
@@ -121,7 +129,7 @@ void CLou::update()
 		GetAnimator()->Play(L"Idle_Right");
 		m_facing = D_FACING::RIGHT;
 	}
-	else if(KEYUP(VK_UP) && false == isFacedRight)
+	else if (KEYUP(VK_UP) && false == isFacedRight)
 	{
 		GetAnimator()->Play(L"Idle_Left");
 		m_facing = D_FACING::LEFT;
@@ -143,7 +151,7 @@ void CLou::update()
 		GetAnimator()->Play(L"Idle_Right");
 		m_facing = D_FACING::RIGHT;
 	}
-	else if(KEYUP(VK_DOWN)&&false==isFacedRight)
+	else if (KEYUP(VK_DOWN) && false == isFacedRight)
 	{
 		GetAnimator()->Play(L"Idle_Left");
 		m_facing = D_FACING::LEFT;
@@ -159,7 +167,7 @@ void CLou::update()
 		m_facing = D_FACING::LEFT;
 		isFacedRight = false;
 		pos.x -= m_velocity * fDT;
-		GetAnimator()->Play(L"Move_Left");		
+		GetAnimator()->Play(L"Move_Left");
 	}
 	if (KEYUP(VK_LEFT))
 	{
@@ -195,7 +203,7 @@ void CLou::update()
 		m_upforce = D_UPFORCE;
 		if (KEYDOWN('X'))
 		{
-			--pos.y;
+			pos.y -= 2;
 			isUpside = true;
 			isAir = true;
 		}
@@ -234,11 +242,11 @@ void CLou::update()
 		pos.y += m_upforce * fDT;
 	}
 
-
-
-
-
 	SetPos(pos);
+
+}
+void CLou::update_animation()
+{
 
 	GetAnimator()->update();
 }
@@ -400,6 +408,19 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 void CLou::OnCollision(CCollider* _pOther)
 {
 
+	CGameObject* pOther = _pOther->GetObj();
+	Vec2 vPos = GetPos();
+	if (pOther->GetName() == L"Tile")
+	{
+		int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
+		int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
+		int sum = abs(a - b);
+		if (1 < sum)
+			--vPos.y;
+	}
+
+	SetPos(vPos);
+
 }
 
 void CLou::OnCollisionExit(CCollider* _pOther)
@@ -416,5 +437,3 @@ void CLou::render()
 {
 	component_render();
 }
-
-

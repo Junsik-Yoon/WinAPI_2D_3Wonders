@@ -7,6 +7,7 @@
 CBG1::CBG1()
 {
 	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"BGImg", L"texture\\map_24bit.png");
+	
 }
 
 CBG1::~CBG1()

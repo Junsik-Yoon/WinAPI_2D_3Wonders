@@ -34,6 +34,8 @@ private:
 
     float m_goblinCounter;
 
+    bool isFacedRight;
+
     D_FACING m_facing;
     UINT m_state[(UINT)dState::SIZE];
     CD2DImage* m_pImg;
@@ -44,7 +46,7 @@ private:
     float m_gravity;
     bool isUpside;
     bool isAir;
-    bool isFacedRight;
+   
 
 public:
     void CreateMissile();
@@ -57,6 +59,9 @@ public:
     virtual void update();
     virtual void render();
     
+public:
+    void update_move();
+    void update_animation();
 public:
     CLou();
     ~CLou();

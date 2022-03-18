@@ -30,6 +30,8 @@ CGreen::CGreen()
 	GetAnimator()->Play(L"Move_Right");
 
 	CCameraManager::getInst()->GetRenderPos(GetPos());
+
+	
 }
 
 CGreen::~CGreen()

@@ -203,9 +203,6 @@
     <ClInclude Include="CD2DImage.h">
       <Filter>Engine\02.Manager\11.RenderManager</Filter>
     </ClInclude>
-    <ClInclude Include="Map_Start.h">
-      <Filter>Engine\02.Manager\11.RenderManager</Filter>
-    </ClInclude>
     <ClInclude Include="CGoblin.h">
       <Filter>Things\01.Object\Monster</Filter>
     </ClInclude>
@@ -235,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="CMonster.h">
       <Filter>Things\01.Object\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="CShelter.h">
+      <Filter>Things\01.Object\Tile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -333,9 +333,6 @@
     <ClCompile Include="CD2DImage.cpp">
       <Filter>Engine\02.Manager\11.RenderManager</Filter>
     </ClCompile>
-    <ClCompile Include="Map_Start.cpp">
-      <Filter>Engine\02.Manager\11.RenderManager</Filter>
-    </ClCompile>
     <ClCompile Include="CGoblin.cpp">
       <Filter>Things\01.Object\Monster</Filter>
     </ClCompile>
@@ -365,6 +362,9 @@
     </ClCompile>
     <ClCompile Include="CMonster.cpp">
       <Filter>Things\01.Object\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="CShelter.cpp">
+      <Filter>Things\01.Object\Tile</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -11,6 +11,7 @@ private:
 	UINT m_wall;
 	float m_velocity;
 	float m_gravity;
+	bool isFacedRight;
 public:
 	void OnCollisionEnter(CCollider* _pOther);
 	void OnCollision(CCollider* _pOther);
@@ -18,6 +19,9 @@ public:
 public:
 	virtual void update();
 	virtual void render();
+
+public:
+	void SetFacedRight(bool facingRight) { isFacedRight = facingRight; }
 public:
 	CGoblin();
 	~CGoblin();

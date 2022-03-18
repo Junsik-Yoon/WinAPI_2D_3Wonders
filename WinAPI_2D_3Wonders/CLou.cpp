@@ -6,15 +6,23 @@
 #include "CAnimator.h"
 #include "CAnimation.h"
 #include "CMissile.h"
+#include "CTile.h"
+#include "CGoblin.h"
+
+#include <iostream>
+#include <random>
 
 #define D_GRAVITY 800
 #define D_VELOCITY 200
 #define D_UPFORCE 400
+#define D_FROMGOBMAX 600
+#define D_FROMGOBMIN 100
 
 float CLou::sCountTime = 0.f;
 
 CLou::CLou()
 {
+	m_goblinCounter = 0.f;
 	m_facing = D_FACING::RIGHT;
 	m_floor = 0;
 	m_wall = 0;
@@ -47,7 +55,7 @@ CLou::CLou()
 	GetAnimator()->CreateAnimation(L"Sit_Right", m_pImg, Vec2(768.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
 	GetAnimator()->CreateAnimation(L"Sit_Left", m_pImg, Vec2(896.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
 
-	GetAnimator()->CreateAnimation(L"pShoot_Right", m_pImg, Vec2(768.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.05f, 3, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Right", m_pImg, Vec2(768.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.05f, 3, false,false);
 	GetAnimator()->CreateAnimation(L"pShoot_Left", m_pImg, Vec2(896.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.05f, 3, false,false);
 
 
@@ -72,9 +80,28 @@ CLou::~CLou()
 
 void CLou::update()
 {
+	m_goblinCounter += fDT;
+	if (m_goblinCounter >= 5.f)
+	{
+		m_goblinCounter = 0.f;
+		GenerateGoblin();
+	}
+	if (KEYDOWN('Q'))//모션 시험용
+	{
+		GenerateGoblin();
+		GetAnimator()->Play(L"pShoot_Right");
+	}
 	if (KEY('C'))
 	{
 		CCameraManager::getInst()->SetTargetObj(this);
+	}
+	if (KEY('V'))
+	{
+		CCameraManager::getInst()->SetTargetX(this);
+	}
+	if (KEY('B'))
+	{
+		CCameraManager::getInst()->SetTargetY(this);
 	}
 	Vec2 pos = GetPos();
 	if (KEY(VK_UP))
@@ -122,7 +149,7 @@ void CLou::update()
 		m_facing = D_FACING::LEFT;
 	}
 	if (KEYDOWN('Z'))
-	{//TODO:모션 한 번 취하고 멈추도록 play 한번만하게(타이머말고)방법생각하기
+	{
 		//TODO: 이동중에 공격하면 이동애니메이션 멈추고 공격애니메이션으로 전환할 방법
 
 		CreateMissile();
@@ -220,7 +247,6 @@ void CLou::update()
 void CLou::CreateMissile()
 {
 	Vec2 fpMissilePos = GetPos();
-	fpMissilePos.x += GetScale().x / 2.f;
 
 	// Misiile Object
 	CMissile* pMissile = new CMissile;
@@ -232,30 +258,32 @@ void CLou::CreateMissile()
 			fpMissilePos.x += 50;
 			pMissile->SetPos(fpMissilePos);
 			pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-			pMissile->GetAnimator()->Play(L"Shoot_Right");
+			pMissile->GetAnimator()->Play(L"N_Shoot_Right");
 			pMissile->GetCollider()->SetOffsetPos(Vec2(30.f, 0.f));
 			pMissile->SetDir(Vec2(1, 0));
 			
 		}break;
 	case D_FACING::LEFT:
 		{//TODO:충돌체offset때문에 조금만 피격체가 가까이있으면 애니메이션이 안보임
-			fpMissilePos.x -= 110;
+			fpMissilePos.x -= 50;
 			pMissile->SetPos(fpMissilePos);
 			pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-			pMissile->GetAnimator()->Play(L"Shoot_Left");
+			pMissile->GetAnimator()->Play(L"N_Shoot_Left");
 			pMissile->GetCollider()->SetOffsetPos(Vec2(-30.f, 0.f));
 			pMissile->SetDir(Vec2(-1, 0));
 
 		}break;
 	case D_FACING::UP:
 		{
-		//TODO:이미지넣고 코드수정
 			fpMissilePos.y -= 50;
 			pMissile->SetPos(fpMissilePos);
 			pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-			pMissile->GetAnimator()->Play(L"Shoot_Right");
+			pMissile->GetAnimator()->Play(L"N_Shoot_Up");
 			pMissile->GetCollider()->SetOffsetPos(Vec2(0.f, -30.f));
 			pMissile->SetDir(Vec2(0, -1));
+
+
+
 		}break;
 	case D_FACING::DOWN:
 		{
@@ -265,7 +293,7 @@ void CLou::CreateMissile()
 				fpMissilePos.y += 50;
 				pMissile->SetPos(fpMissilePos);
 				pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-				pMissile->GetAnimator()->Play(L"Shoot_Right");
+				pMissile->GetAnimator()->Play(L"N_Shoot_Down");
 				pMissile->GetCollider()->SetOffsetPos(Vec2(0.f, 30.f));
 				pMissile->SetDir(Vec2(0, 1));
 				
@@ -279,7 +307,7 @@ void CLou::CreateMissile()
 					fpMissilePos.y += 20;
 					pMissile->SetPos(fpMissilePos);
 					pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-					pMissile->GetAnimator()->Play(L"Shoot_Right");
+					pMissile->GetAnimator()->Play(L"N_Shoot_Right");
 					pMissile->GetCollider()->SetOffsetPos(Vec2(30.f, 0.f));
 					pMissile->SetDir(Vec2(1, 0));
 				}
@@ -289,7 +317,7 @@ void CLou::CreateMissile()
 					fpMissilePos.y += 20;
 					pMissile->SetPos(fpMissilePos);
 					pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-					pMissile->GetAnimator()->Play(L"Shoot_Right");
+					pMissile->GetAnimator()->Play(L"N_Shoot_Left");
 					pMissile->GetCollider()->SetOffsetPos(Vec2(30.f, 0.f));
 					pMissile->SetDir(Vec2(-1, 0));
 				}
@@ -299,6 +327,44 @@ void CLou::CreateMissile()
 	pMissile->SetName(L"Missile_Player");
 
 	CreateObj(pMissile, GROUP_GAMEOBJ::MISSILE_PLAYER);
+}
+
+void CLou::GenerateGoblin()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+
+	vector<CGameObject*>pTiles;
+
+	Vec2 vPos = GetPos();
+	
+	vector<CGameObject*>pObj = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::TILE);
+	for (int i = 0; i < pObj.size(); ++i)
+	{
+		if (D_FROMGOBMAX > abs(vPos.x - pObj[i]->GetPos().x)&&
+			D_FROMGOBMIN < abs(vPos.x - pObj[i]->GetPos().x))
+		{
+			pTiles.push_back(pObj[i]);
+		}
+	}
+	std::uniform_int_distribution<int> dis(0, pTiles.size()-1);
+	CGameObject* pTile = pTiles[dis(gen)];
+	Vec2 tilePos = pTile->GetPos();
+	
+	CGoblin* pGoblin = new CGoblin();
+	tilePos.y -= (pGoblin->GetScale().y / 2.f + pTile->GetScale().y / 2.f);
+	pGoblin->SetPos(tilePos);
+	if (pGoblin->GetPos().x < GetPos().x)
+	{
+		pGoblin->GetAnimator()->Play(L"Create_Right");
+		pGoblin->SetFacedRight(true);
+	}
+	else
+	{
+		pGoblin->GetAnimator()->Play(L"Create_Left");
+		pGoblin->SetFacedRight(false);
+	}
+	CreateObj(pGoblin, GROUP_GAMEOBJ::MONSTER);
 }
 
 void CLou::OnCollisionEnter(CCollider* _pOther)

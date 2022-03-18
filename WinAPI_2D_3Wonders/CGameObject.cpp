@@ -57,7 +57,7 @@ void CGameObject::finalupdate()
 
 void CGameObject::component_render()
 {
-	if (nullptr != m_pCollider)
+	if (nullptr != m_pCollider && CCore::getInst()->DebugMode())
 	{
 		m_pCollider->render();
 	}

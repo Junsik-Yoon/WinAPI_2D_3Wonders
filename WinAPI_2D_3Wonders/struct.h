@@ -22,10 +22,19 @@ struct Vec2
 	}
 	Vec2& Normalize()
 	{
-		float fLen = Length();
-		assert(fLen != 0.f);
-		x /= fLen;
-		y /= fLen;
+		float length = (float)sqrt((double)x * x + (double)y * y);
+
+		if (0 == length)
+		{
+			x = 0;
+			y = 0;
+		}
+		else
+		{
+			x = x / length;
+			y = y / length;
+		}
+
 		return *this;
 	}
 

@@ -56,43 +56,14 @@ void CScene_Start::Enter()
 	path += L"tile\\test4.tile";
 	LoadTile(path);
 
-	CTempTile* pTempTile = nullptr;
-	for (int i = 0; i < 40; ++i)
-	{
-		pTempTile = new CTempTile();
-		pTempTile->SetScale(Vec2(32.f, 32.f));
-		pTempTile->SetPos(Vec2(i * 32.f, 400.f));
-		AddObject(pTempTile, GROUP_GAMEOBJ::TILE);
-	}
 	CBG1* pBG1 = new CBG1();
 	pBG1->SetPos(Vec2(0.f, 0.f));
 	pBG1->SetScale(Vec2(1.f, 1.f));
 	AddObject(pBG1, GROUP_GAMEOBJ::BACKGROUND);
-	//wstring path = CPathManager::getInst()->GetContentPath();
-	//파일이름유의 -> 불러올파일이름
-	//path += L"Tile\\test.tile";
-	//LoadTile(path);
 
 	CLou* pLou = new CLou();
 	pLou->SetPos(Vec2(300.f, -100.f));
 	AddObject(pLou, GROUP_GAMEOBJ::PLAYER);
-
-	CGoblin* pGoblin1 = new CGoblin();
-	pGoblin1->SetPos(Vec2(400.f, 100.f));
-	AddObject(pGoblin1, GROUP_GAMEOBJ::MONSTER);
-
-	CGreen* pGreen1 = new CGreen();
-	pGreen1->SetPos(Vec2(500.f, 100.f));
-	AddObject(pGreen1, GROUP_GAMEOBJ::MONSTER);
-	/*
-	CBug* pBug1 = new CBug();
-	pBug1->SetPos(Vec2(300.f, 100.f));
-	AddObject(pBug1, GROUP_GAMEOBJ::MONSTER);
-
-	CHalfMoon* pHM1 = new CHalfMoon();
-	pHM1->SetPos(Vec2(200.f, 100.f));
-	pHM1->GetCollider()->SetOffsetPos(Vec2(-30.f, 20.f));
-	AddObject(pHM1, GROUP_GAMEOBJ::MONSTER);*/
 
 	//CSoundManager::getInst()->AddSound(L"test", L"sound\\B4VHMGUN.wav", false);
 	//CSoundManager::getInst()->AddSound(L"test2", L"sound\\B4VLASER.wav", false);

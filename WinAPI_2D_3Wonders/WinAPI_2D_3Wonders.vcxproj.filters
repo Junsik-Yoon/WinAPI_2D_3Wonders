@@ -233,6 +233,9 @@
     <ClInclude Include="CTileButton.h">
       <Filter>Things\01.Object\UI</Filter>
     </ClInclude>
+    <ClInclude Include="CMonster.h">
+      <Filter>Things\01.Object\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -359,6 +362,9 @@
     </ClCompile>
     <ClCompile Include="CTileButton.cpp">
       <Filter>Things\01.Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CMonster.cpp">
+      <Filter>Things\01.Object\Monster</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

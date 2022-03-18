@@ -7,8 +7,10 @@
 
 #define D_VELOCITY 150
 #define D_GRAVITY 400
+
 CGoblin::CGoblin()
 {
+	SetHP(2);
 	m_floor=0;
 	m_wall=0;
 	m_velocity = D_VELOCITY;
@@ -36,7 +38,6 @@ CGoblin::CGoblin()
 
 
 	GetAnimator()->Play(L"Die_Left");
-
 	CCameraManager::getInst()->GetRenderPos(GetPos());
 }
 
@@ -47,9 +48,22 @@ CGoblin::~CGoblin()
 
 void CGoblin::update()
 {
-	Vec2 pos = GetPos();
+	Vec2 vPos = GetPos();
 
-	SetPos(pos);
+	vector<CGameObject*> pPlayer=CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
+	if (pPlayer[0]->GetPos().x >= GetPos().x)
+	{
+		vPos.x += 50.f * fDT;
+		GetAnimator()->Play(L"Move_Right");
+	}
+	else
+	{
+		vPos.x -= 50.f * fDT;
+		GetAnimator()->Play(L"Move_Left");
+	}
+	//TODO: 플레이어와 좌표 x차이(절대값)가 일정 이하이고 y축이 위나 아래인 경우 고블린이 점프해서 플레이어를 찌르거나 점프해서 내려오는 것 구현
+
+	SetPos(vPos);
 
 	GetAnimator()->update();
 }
@@ -65,6 +79,26 @@ void CGoblin::OnCollisionEnter(CCollider* _pOther)
 	if (pOther->GetName() == L"Tile")
 	{
 		++m_floor;
+	}
+	if (pOther->GetName() == L"Lou")
+	{
+		if (isFacedRight)
+		{
+			GetAnimator()->Play(L"Laugh_Right");
+		}//TODO:타이머나 다른 것을 사용해서 다 웃고 다음행동하게하기
+		else
+		{
+			GetAnimator()->Play(L"Laugh_Left");
+		}
+	}
+	//if (pOther->GetName() == L"Missile_Player");
+	//{
+	//	int hp = GetHP();
+	//	SetHP(--hp);
+	//}
+	if (GetHP() <= 0)
+	{
+		DeleteObj(this);
 	}
 }
 

@@ -92,14 +92,14 @@ void buttonMapClicked(DWORD_PTR param1, DWORD_PTR param2)
 
 void CScene_Tool::Enter()
 {
-    CBG1* pBG = new CBG1();
-    pBG->SetScale(Vec2(1.f, 1.f));
-    pBG->SetPos(Vec2(0.f, 0.f));
-    AddObject(pBG, GROUP_GAMEOBJ::BACKGROUND);
+    //CBG1* pBG = new CBG1();
+    //pBG->SetScale(Vec2(1.f, 1.f));
+    //pBG->SetPos(Vec2(0.f, 0.f));
+    //AddObject(pBG, GROUP_GAMEOBJ::BACKGROUND);
 
     m_hWnd = CreateDialog(hInst, MAKEINTRESOURCE(IDD_TILEBOX), hWnd, TileWndProc);
     ShowWindow(m_hWnd, SW_SHOW);
-    CreateTile(260, 14);
+    CreateTile(10, 10);
     CreateTilePanel();
 
     CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
@@ -157,7 +157,7 @@ void CScene_Tool::SetTileGroup()
         if (fptMousePos.x < 0.f || iTileX <= iCol ||
             fptMousePos.y < 0.f || iTileY <= iRow)
         {
-            return;     // 타일이 없는 위치 무시
+            return;		// 타일이 없는 위치 무시
         }
 
         UINT iIdx = iRow * iTileX + iCol;
@@ -180,7 +180,7 @@ void CScene_Tool::CreateTile(UINT xSize, UINT ySize)
     m_iTileX = xSize;
     m_iTileY = ySize;
 
-    CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"Tile", L"texture\\tile\\tilemap.bmp");
+    CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"Tile", L"texture\\Tile\\tilemap.bmp");
 
     for (UINT y = 0; y < ySize; y++)
     {
@@ -350,7 +350,7 @@ void CScene_Tool::ClickTileGroup(CButtonUI* button)
     if (m_gTile == GROUP_TILE::NONE)
     {
         m_gTile = GROUP_TILE::GROUND;
-        button->SetText(L"Ground");
+        button->SetText(L"GROUND");
     }
     else if (m_gTile == GROUP_TILE::GROUND)
     {
@@ -430,30 +430,33 @@ void CScene_Tool::PrintMap()
 
 void CScene_Tool::PrintTileLine()
 {
-    Vec2 vPos = CCameraManager::getInst()->GetLookAt();
-    vPos = vPos - Vec2(WINSIZEX / 2.f, WINSIZEY / 2.f);
+    Vec2 pos = CCameraManager::getInst()->GetLookAt();
+    pos = pos - Vec2(WINSIZEX / 2.f, WINSIZEY / 2.f);
 
     // 가로줄 출력
-    for (UINT y = 0; y <= m_iTileX; y++)
+    for (UINT y = 0; y <= m_iTileY; y++)
     {
         CRenderManager::getInst()->RenderLine(
-            Vec2(0 - vPos.x, y * CTile::SIZE_TILE - vPos.y),
-            Vec2(CTile::SIZE_TILE * m_iTileX - vPos.x, y * CTile::SIZE_TILE - vPos.y)
+            Vec2(0 - pos.x, y * CTile::SIZE_TILE - pos.y),
+            Vec2(CTile::SIZE_TILE * m_iTileX - pos.x, y * CTile::SIZE_TILE - pos.y)
         );
     }
 
     // 세로줄 출력
-    for (UINT x = 0; x <= m_iTileY; x++)
+    for (UINT x = 0; x <= m_iTileX; x++)
     {
         CRenderManager::getInst()->RenderLine(
-            Vec2(x * CTile::SIZE_TILE - vPos.x, 0 - vPos.y),
-            Vec2(x * CTile::SIZE_TILE - vPos.x, CTile::SIZE_TILE * m_iTileY - vPos.y)
+            Vec2(x * CTile::SIZE_TILE - pos.x, 0 - pos.y),
+            Vec2(x * CTile::SIZE_TILE - pos.x, CTile::SIZE_TILE * m_iTileY - pos.y)
         );
     }
 }
 
 void CScene_Tool::PrintTileGroup()
 {
+    Vec2 pos = CCameraManager::getInst()->GetLookAt();
+    pos = pos - Vec2(WINSIZEX / 2.f, WINSIZEY / 2.f);
+
     const vector<CGameObject*>& vecTile = GetGroupObject(GROUP_GAMEOBJ::TILE);
     CTile* pTile;
 
@@ -463,21 +466,23 @@ void CScene_Tool::PrintTileGroup()
         if (GROUP_TILE::GROUND == pTile->GetGroup())
         {
             CRenderManager::getInst()->RenderEllipse(
-                pTile->GetPos().x + CTile::SIZE_TILE / 2.f,
-                pTile->GetPos().y + CTile::SIZE_TILE / 2.f,
+                pTile->GetPos().x + CTile::SIZE_TILE / 2.f - pos.x,
+                pTile->GetPos().y + CTile::SIZE_TILE / 2.f - pos.y,
                 CTile::SIZE_TILE / 2.f,
                 CTile::SIZE_TILE / 2.f,
-                RGB(255, 0, 0)
+                RGB(255, 0, 0),
+                3.f
             );
         }
         else if (GROUP_TILE::WALL == pTile->GetGroup())
         {
             CRenderManager::getInst()->RenderEllipse(
-                pTile->GetPos().x + CTile::SIZE_TILE / 2.f,
-                pTile->GetPos().y + CTile::SIZE_TILE / 2.f,
+                pTile->GetPos().x + CTile::SIZE_TILE / 2.f - pos.x,
+                pTile->GetPos().y + CTile::SIZE_TILE / 2.f - pos.y,
                 CTile::SIZE_TILE / 2.f,
                 CTile::SIZE_TILE / 2.f,
-                RGB(0, 255, 0)
+                RGB(0, 255, 0),
+                3.f
             );
         }
     }

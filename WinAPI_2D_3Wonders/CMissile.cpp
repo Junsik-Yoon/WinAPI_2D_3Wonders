@@ -18,11 +18,15 @@ CMissile::CMissile()
 	GetCollider()->SetOffsetPos(Vec2(0.f, 0.f));
 
 	CreateAnimator();
-	GetAnimator()->CreateAnimation(L"Shoot_Right", m_pImg, Vec2(0.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, false);
-	GetAnimator()->CreateAnimation(L"Shoot_Left", m_pImg, Vec2(0.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, true);
+	GetAnimator()->CreateAnimation(L"N_Shoot_Right", m_pImg, Vec2(0.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"N_Shoot_Left", m_pImg, Vec2(0.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, true);
 
-	GetAnimator()->CreateAnimation(L"Hit_Right", m_pImg, Vec2(192.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, false);
-	GetAnimator()->CreateAnimation(L"Hit_Left", m_pImg, Vec2(192.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, true);
+	GetAnimator()->CreateAnimation(L"N_Shoot_Up", m_pImg, Vec2(0.f, 192.f), Vec2(48.f, 192.f), Vec2(48.f, 0.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"N_Shoot_Down", m_pImg, Vec2(96.f, 192.f), Vec2(48.f, 192.f), Vec2(48.f, 0.f), 0.5f, 1, false);
+
+
+	GetAnimator()->CreateAnimation(L"N_Hit_Right", m_pImg, Vec2(192.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"N_Hit_Left", m_pImg, Vec2(192.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, true);
 
 	
 
@@ -85,8 +89,6 @@ void CMissile::OnCollisionEnter(CCollider* pOther)
 		pOtherObj->GetName() == L"Tile")
 	{
 		GetAnimator()->Play(L"Shoot_Right");
-		if(nullptr!=this)
-			DeleteObj(this);
 	}
 }
 

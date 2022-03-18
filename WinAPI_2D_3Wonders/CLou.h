@@ -32,6 +32,8 @@ class CLou :
     bool m_counter_toggle;
 private:
 
+    float m_goblinCounter;
+
     D_FACING m_facing;
     UINT m_state[(UINT)dState::SIZE];
     CD2DImage* m_pImg;
@@ -46,7 +48,7 @@ private:
 
 public:
     void CreateMissile();
-
+    void GenerateGoblin();
 public:
     void OnCollisionEnter(CCollider* _pOther);
     void OnCollision(CCollider* _pOther);

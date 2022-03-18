@@ -169,6 +169,7 @@
     <ClInclude Include="CGameObject.h" />
     <ClInclude Include="CLou.h" />
     <ClInclude Include="CMissile.h" />
+    <ClInclude Include="CMonster.h" />
     <ClInclude Include="CPanelUI.h" />
     <ClInclude Include="CPathManager.h" />
     <ClInclude Include="CRenderManager.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="CGameObject.cpp" />
     <ClCompile Include="CLou.cpp" />
     <ClCompile Include="CMissile.cpp" />
+    <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="CPanelUI.cpp" />
     <ClCompile Include="CPathManager.cpp" />
     <ClCompile Include="CRenderManager.cpp" />

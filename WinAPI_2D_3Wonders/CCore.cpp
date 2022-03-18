@@ -4,6 +4,7 @@
 
 CCore::CCore()
 {
+	m_debugOn = true;
 }
 CCore::~CCore()
 {
@@ -12,6 +13,11 @@ CCore::~CCore()
 
 void CCore::update()
 {
+	if (KEYDOWN(VK_LSHIFT))
+	{
+		m_debugOn= !m_debugOn;
+	}
+
 	CEventManager::getInst()->update();
 	CTimeManager::getInst()->update();
 	CKeyManager::getInst()->update();
@@ -24,7 +30,6 @@ void CCore::update()
 
 void CCore::render()
 {
-	//Rectangle(m_pMemTex->GetDC(), -1, -1, WINSIZEX + 1, WINSIZEY + 1);
 	CRenderManager::getInst()->GetRenderTarget()->BeginDraw();
 	CRenderManager::getInst()->RenderFillRectangle(-1, -1, WINSIZEX + 1, WINSIZEY + 1, RGB(255, 255, 255));
 	CSceneManager::getInst()->render();

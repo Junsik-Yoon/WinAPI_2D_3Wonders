@@ -19,9 +19,6 @@ enum class dState
     U_UPAIR,
     U_DOWNAIR,
     
-
-
-
     SIZE
 };
 

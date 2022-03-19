@@ -164,9 +164,6 @@
     <ClInclude Include="CAnimation.h">
       <Filter>Engine\03.Component\Animator\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="CGameObject.h">
-      <Filter>Things\01.Object</Filter>
-    </ClInclude>
     <ClInclude Include="CScene.h">
       <Filter>Things\02.Scene</Filter>
     </ClInclude>
@@ -182,7 +179,7 @@
     <ClInclude Include="CScene_Tool.h">
       <Filter>Things\02.Scene\SCenes</Filter>
     </ClInclude>
-    <ClInclude Include="CScene_Start.h">
+    <ClInclude Include="CScene_Stage1.h">
       <Filter>Things\02.Scene\SCenes</Filter>
     </ClInclude>
     <ClInclude Include="CBG1.h">
@@ -235,6 +232,21 @@
     </ClInclude>
     <ClInclude Include="CShelter.h">
       <Filter>Things\01.Object\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="CScene_Selection.h">
+      <Filter>Things\02.Scene\SCenes</Filter>
+    </ClInclude>
+    <ClInclude Include="CGameObject.h">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CGameSelect.h">
+      <Filter>Things\01.Object\Background</Filter>
+    </ClInclude>
+    <ClInclude Include="CScene_Opening.h">
+      <Filter>Things\02.Scene\SCenes</Filter>
+    </ClInclude>
+    <ClInclude Include="COpening.h">
+      <Filter>Things\01.Object\Background</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -294,9 +306,6 @@
     <ClCompile Include="CAnimation.cpp">
       <Filter>Engine\03.Component\Animator\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="CGameObject.cpp">
-      <Filter>Things\01.Object</Filter>
-    </ClCompile>
     <ClCompile Include="CScene.cpp">
       <Filter>Things\02.Scene</Filter>
     </ClCompile>
@@ -312,7 +321,7 @@
     <ClCompile Include="CScene_Tool.cpp">
       <Filter>Things\02.Scene\SCenes</Filter>
     </ClCompile>
-    <ClCompile Include="CScene_Start.cpp">
+    <ClCompile Include="CScene_Stage1.cpp">
       <Filter>Things\02.Scene\SCenes</Filter>
     </ClCompile>
     <ClCompile Include="CBG1.cpp">
@@ -365,6 +374,21 @@
     </ClCompile>
     <ClCompile Include="CShelter.cpp">
       <Filter>Things\01.Object\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="CScene_Selection.cpp">
+      <Filter>Things\02.Scene\SCenes</Filter>
+    </ClCompile>
+    <ClCompile Include="CGameObject.cpp">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CGameSelect.cpp">
+      <Filter>Things\01.Object\Background</Filter>
+    </ClCompile>
+    <ClCompile Include="CScene_Opening.cpp">
+      <Filter>Things\02.Scene\SCenes</Filter>
+    </ClCompile>
+    <ClCompile Include="COpening.cpp">
+      <Filter>Things\01.Object\Background</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

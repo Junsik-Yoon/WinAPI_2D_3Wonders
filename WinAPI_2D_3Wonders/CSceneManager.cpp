@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "CSceneManager.h"
-#include "CScene_Start.h"
+#include "CScene_Stage1.h"
 #include "CScene_Tool.h"
+#include "CScene_Selection.h"
+#include "CScene_Opening.h"
 
 CSceneManager::CSceneManager()
 {
@@ -22,9 +24,6 @@ CSceneManager::~CSceneManager()
 
 void CSceneManager::ChangeScene(GROUP_SCENE group)
 {
-	//°°Àº ¾ÀÀÏ °æ¿ì ¿¹¿ÜÃ³¸®
-	if (m_arrScene[(UINT)group] == m_pCurScene)
-		return;
 	m_pCurScene->Exit();
 	m_pCurScene = m_arrScene[(UINT)group];
 	m_pCurScene->Enter();
@@ -45,12 +44,22 @@ void CSceneManager::init()
 {
 	//TODO: ¸ğµç ¾À »ı¼º
 
-	m_arrScene[(UINT)GROUP_SCENE::START] = new CScene_Start;
-	m_arrScene[(UINT)GROUP_SCENE::START]->SetName(L"Start_Scene");
+	m_arrScene[(UINT)GROUP_SCENE::SELECT] = new CScene_Selection;
+	m_arrScene[(UINT)GROUP_SCENE::SELECT]->SetName(L"Selection_Scene");
+
+	m_arrScene[(UINT)GROUP_SCENE::OPENING] = new CScene_Opening;
+	m_arrScene[(UINT)GROUP_SCENE::OPENING]->SetName(L"Opening_Scene");
+
+	m_arrScene[(UINT)GROUP_SCENE::STAGE1] = new CScene_Stage1;
+	m_arrScene[(UINT)GROUP_SCENE::STAGE1]->SetName(L"Stage1_Scene");
 
 	m_arrScene[(UINT)GROUP_SCENE::TOOL] = new CScene_Tool;
 	m_arrScene[(UINT)GROUP_SCENE::TOOL]->SetName(L"Tool_Scene");
 
-	m_pCurScene = m_arrScene[(UINT)GROUP_SCENE::START];//ÇöÀç¾ÀÁöÁ¤
+
+
+
+
+	m_pCurScene = m_arrScene[(UINT)GROUP_SCENE::SELECT];//ÇöÀç¾ÀÁöÁ¤
 	m_pCurScene->Enter();
 }

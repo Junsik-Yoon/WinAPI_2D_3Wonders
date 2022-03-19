@@ -39,7 +39,7 @@ void CScene_Tool::update()
 
     if (KEYDOWN(VK_F1))
     {
-        CEventManager::getInst()->EventChangeScene(GROUP_SCENE::START);
+        CEventManager::getInst()->EventChangeScene(GROUP_SCENE::OPENING);
     }
     if (KEY('A'))
     {

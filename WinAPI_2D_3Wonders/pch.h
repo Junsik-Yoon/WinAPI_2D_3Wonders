@@ -18,9 +18,12 @@ enum class GROUP_SCENE
 {
 	DEFAULT,
 	START,
+	SELECT,
+	OPENING,
 	STAGE1,
 	STAGE2,
 	TOOL,
+	
 
 	SIZE,
 };

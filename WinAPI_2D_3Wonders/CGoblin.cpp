@@ -123,7 +123,7 @@ void CGoblin::OnCollision(CCollider* _pOther)
 		int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
 		int sum = abs(a - b);
 		if(1<sum)
-		--vPos.y;
+			--vPos.y;
 	}
 	
 	SetPos(vPos);

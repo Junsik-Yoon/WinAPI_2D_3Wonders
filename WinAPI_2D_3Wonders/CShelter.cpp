@@ -13,6 +13,7 @@ CShelter::CShelter()
 	SetScale(Vec2(200.f, 200.f));
 	GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 	GetCollider()->SetOffsetPos(Vec2(0.f, 0.f));
+
 	CreateAnimator();
 
 	GetAnimator()->CreateAnimation(L"HP4", m_pImg, Vec2(0.f, 0.f), Vec2(384.f, 384.f), Vec2(384.f, 0.f), 0.5f, 1, false);
@@ -53,6 +54,12 @@ void CShelter::update()
 		GetAnimator()->Play(L"HP0");
 		break;
 	}
+	if (0 == GetHP())
+	{
+		//GetCollider()->SetScale(Vec2(0.f, 0.f));
+		GetCollider()->SetOffsetPos(Vec2(0.f, -650.f));
+		
+	}
 	GetAnimator()->update();
 }
 
@@ -63,8 +70,13 @@ void CShelter::render()
 
 void CShelter::OnCollisionEnter(CCollider* _pOther)
 {
-	int hp = GetHP();
-	if(0<hp) SetHP(--hp);
+	CGameObject* pOther = _pOther->GetObj();
+	if(pOther->GetName()== L"Missile_Player")
+	{
+		int hp = GetHP();
+		if (0 < hp) SetHP(--hp);
+	}
+
 }
 
 void CShelter::OnCollision(CCollider* _pOther)

@@ -58,7 +58,6 @@ void CGoblin::update()
 	else
 	{
 		m_gravity = 0;
-
 	}
 
 	vector<CGameObject*> pPlayer=CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);

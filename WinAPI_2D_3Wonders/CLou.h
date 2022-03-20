@@ -10,14 +10,19 @@ enum class D_FACING
     LEFT,
     SIZE
 };
-enum class dState
+enum class eState
 {
-    ONLAND,
-    UPAIR,
-    DOWNAIR,
-    U_ONLAND,
-    U_UPAIR,
-    U_DOWNAIR,
+    IDLE,
+    MOVE,
+    JUMP,
+    SHOOTING,
+    JUMPSHOOTING,
+    HOLDCLIFF,
+    DASH,
+    INVINSIBLE,
+    FLY,
+    GOTHIT,
+
     
     SIZE
 };
@@ -34,7 +39,7 @@ private:
     bool isFacedRight;
 
     D_FACING m_facing;
-    UINT m_state[(UINT)dState::SIZE];
+    eState m_state;
     CD2DImage* m_pImg;
     UINT m_floor;
     UINT m_wall;

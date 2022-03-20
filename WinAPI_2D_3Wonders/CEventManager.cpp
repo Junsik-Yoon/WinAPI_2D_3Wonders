@@ -2,6 +2,7 @@
 #include "CEventManager.h"
 #include "CGameObject.h"
 #include "CScene.h"
+#include "CCollider.h"
 
 CEventManager::CEventManager()
 {
@@ -44,6 +45,7 @@ void CEventManager::Execute(const tEvent& event)
 	}
 	break;
 	}
+
 }
 
 void CEventManager::update()
@@ -52,6 +54,7 @@ void CEventManager::update()
 	for (int i = 0; i < m_vecDead.size(); i++)
 	{
 		delete m_vecDead[i];
+
 	}
 	m_vecDead.clear();
 
@@ -86,6 +89,7 @@ void CEventManager::EventDeleteObject(CGameObject* pObj)
 
 	AddEvent(event);
 }
+
 
 void CEventManager::EventChangeScene(GROUP_SCENE scene)
 {

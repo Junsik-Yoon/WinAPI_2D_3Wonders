@@ -10,7 +10,7 @@ class CSceneManager
 private:
 	CScene* m_arrScene[(UINT)GROUP_SCENE::SIZE];
 	CScene* m_pCurScene;
-
+private:
 	void ChangeScene(GROUP_SCENE group);
 
 public:

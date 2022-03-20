@@ -248,6 +248,15 @@
     <ClInclude Include="COpening.h">
       <Filter>Things\01.Object\Background</Filter>
     </ClInclude>
+    <ClInclude Include="CGolemWood.h">
+      <Filter>Things\01.Object\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="CChestnut.h">
+      <Filter>Things\01.Object\Missile</Filter>
+    </ClInclude>
+    <ClInclude Include="CMovingTile.h">
+      <Filter>Things\01.Object\Tile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -389,6 +398,15 @@
     </ClCompile>
     <ClCompile Include="COpening.cpp">
       <Filter>Things\01.Object\Background</Filter>
+    </ClCompile>
+    <ClCompile Include="CGolemWood.cpp">
+      <Filter>Things\01.Object\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="CChestnut.cpp">
+      <Filter>Things\01.Object\Missile</Filter>
+    </ClCompile>
+    <ClCompile Include="CMovingTile.cpp">
+      <Filter>Things\01.Object\Tile</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

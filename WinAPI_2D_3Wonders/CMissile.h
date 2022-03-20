@@ -8,7 +8,9 @@ class CMissile :public CGameObject
 private:
 	Vec2 m_fvDir;
 	float m_fSpeed;
-	CD2DImage* m_pImg;
+	CD2DImage* m_pImgPlayer;
+	CD2DImage* m_pImgGW;
+
 public:
 
 	virtual void update();
@@ -16,6 +18,7 @@ public:
 
 	void SetDir(Vec2 vec);
 	void SetDir(float theta);
+	void SetSpeed(float speed) { m_fSpeed = speed; }
 
 	void OnCollisionEnter(CCollider* pOther);
 	void OnCollision(CCollider* _pOther);

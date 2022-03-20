@@ -11,22 +11,25 @@ CMissile::CMissile()
 	SetName(L"Missile_Player");
 
 	SetScale(Vec2(20.f, 20.f));
-	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"PlayerMissileImg", L"texture\\Animation\\Animation_PlayerMissile.png");
-	
+	m_pImgPlayer = CResourceManager::getInst()->LoadD2DImage(L"PlayerMissileImg", L"texture\\Animation\\Animation_PlayerMissile.png");
+	m_pImgGW = CResourceManager::getInst()->LoadD2DImage(L"GWMissileImg", L"texture\\Animation\\Animation_Missile_GW.png");
 	CreateCollider();
 	GetCollider()->SetScale(Vec2(GetScale().x,GetScale().y));
 	GetCollider()->SetOffsetPos(Vec2(0.f, 0.f));
 
 	CreateAnimator();
-	GetAnimator()->CreateAnimation(L"N_Shoot_Right", m_pImg, Vec2(0.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, false);
-	GetAnimator()->CreateAnimation(L"N_Shoot_Left", m_pImg, Vec2(0.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, true);
 
-	GetAnimator()->CreateAnimation(L"N_Shoot_Up", m_pImg, Vec2(0.f, 192.f), Vec2(48.f, 192.f), Vec2(48.f, 0.f), 0.5f, 1, false);
-	GetAnimator()->CreateAnimation(L"N_Shoot_Down", m_pImg, Vec2(96.f, 192.f), Vec2(48.f, 192.f), Vec2(48.f, 0.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"Missile_GW", m_pImgGW, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 4, false);
+
+	GetAnimator()->CreateAnimation(L"N_Shoot_Right", m_pImgPlayer, Vec2(0.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"N_Shoot_Left", m_pImgPlayer, Vec2(0.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, true);
+
+	GetAnimator()->CreateAnimation(L"N_Shoot_Up", m_pImgPlayer, Vec2(0.f, 192.f), Vec2(48.f, 192.f), Vec2(48.f, 0.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"N_Shoot_Down", m_pImgPlayer, Vec2(96.f, 192.f), Vec2(48.f, 192.f), Vec2(48.f, 0.f), 0.5f, 1, false);
 
 
-	GetAnimator()->CreateAnimation(L"N_Hit_Right", m_pImg, Vec2(192.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, false);
-	GetAnimator()->CreateAnimation(L"N_Hit_Left", m_pImg, Vec2(192.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, true);
+	GetAnimator()->CreateAnimation(L"N_Hit_Right", m_pImgPlayer, Vec2(192.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"N_Hit_Left", m_pImgPlayer, Vec2(192.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, true);
 
 	
 
@@ -53,6 +56,7 @@ void CMissile::update()
 		fptRenderPos.y < 0			||
 		fptRenderPos.y > WINSIZEY)
 		DeleteObj(this);
+	GetAnimator()->update();
 }
 
 void CMissile::render()

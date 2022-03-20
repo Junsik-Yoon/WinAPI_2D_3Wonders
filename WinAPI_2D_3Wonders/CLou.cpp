@@ -91,7 +91,7 @@ void CLou::update_move()
 	if (m_goblinCounter >= 5.f)
 	{
 		m_goblinCounter = 0.f;
-		//GenerateGoblin();
+		GenerateGoblin();
 	}
 	if (KEYDOWN('Q'))//모션,기능 시험용
 	{
@@ -247,7 +247,14 @@ void CLou::update_move()
 }
 void CLou::update_animation()
 {
+	if (isFacedRight)
+	{
+		//idle
+	}
+	else
+	{
 
+	}
 	GetAnimator()->update();
 }
 
@@ -342,17 +349,21 @@ void CLou::GenerateGoblin()
 	std::random_device rd;
 	std::mt19937 gen(rd());
 
-	vector<CGameObject*>pTiles;
+	vector<CTile*>pTiles;
 
 	Vec2 vPos = GetPos();
 	
 	vector<CGameObject*>pObj = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::TILE);
 	for (int i = 0; i < pObj.size(); ++i)
 	{
-		if (D_FROMGOBMAX > abs(vPos.x - pObj[i]->GetPos().x)&&
-			D_FROMGOBMIN < abs(vPos.x - pObj[i]->GetPos().x))
+		CTile* pTile = (CTile*)pObj[i];
+		if (D_FROMGOBMAX > abs(vPos.x - pTile->GetPos().x)&&
+			D_FROMGOBMIN < abs(vPos.x - pTile->GetPos().x))
 		{
-			pTiles.push_back(pObj[i]);
+			if (pTile->GetGroup() == GROUP_TILE::GROUND)
+			{
+				pTiles.push_back(pTile);
+			}		
 		}
 	}
 	std::uniform_int_distribution<int> dis(0, pTiles.size()-1);
@@ -378,31 +389,76 @@ void CLou::GenerateGoblin()
 void CLou::OnCollisionEnter(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
+	//Vec2 plColSize = GetCollider()->GetScale();
+	//Vec2 oColSize = _pOther->GetScale();
 
-	Vec2 plColSize = GetCollider()->GetScale();
-	Vec2 oColSize = _pOther->GetScale();
-
-	if (pOther->GetName() == L"Tile"&&(plColSize.x + oColSize.x -4)/ 2.f >= abs(GetCollider()->GetFinalPos().x - _pOther->GetFinalPos().x) && (plColSize.y + oColSize.y) > abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y))
+	if (pOther->GetName() == L"Tile")//&&(plColSize.x + oColSize.x -4)/ 2.f >= abs(GetCollider()->GetFinalPos().x - _pOther->GetFinalPos().x) && (plColSize.y + oColSize.y) > abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y))
 	{
 
-		
-		//if (plColSize.x / 2.f + oColSize.x / 2.f >= abs(GetPos().x + pOther->GetPos().x))
-		//{
-			Vec2 tPos = GetPos();
-			if (true == isFacedRight)
+		Vec2 vPos = GetPos();
+
+		CTile* pTile = (CTile*)pOther;
+		GROUP_TILE tileType =pTile->GetGroup();
+
+		switch (tileType)
+		{
+		case GROUP_TILE::GROUND:
+		{
+			++m_floor;
+		}break;
+		case GROUP_TILE::MOVE:
+		{
+			++m_floor;
+		}
+		case GROUP_TILE::WALL:
+		{
+			if (abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y) + 2.f
+				>= GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f)
 			{
-				tPos.x -= 2.f;
+				++m_floor;
+				++m_wall;
 			}
 			else
 			{
-				tPos.x += 2.f;
+				if (GetCollider()->GetFinalPos().x < _pOther->GetFinalPos().x)
+				{
+					vPos.x -= 2.f;
+				}
+				else if (GetCollider()->GetFinalPos().x > _pOther->GetFinalPos().x)
+				{
+					vPos.x += 2.f;
+				}
 			}
-			SetPos(tPos);
+
+		}break;
+		case GROUP_TILE::PLATFORM:
+		{
+
+		}break;
+		case GROUP_TILE::SLOPE:
+		{
+
+		}break;
+		}
+
+		//if (plColSize.x / 2.f + oColSize.x / 2.f >= abs(GetPos().x + pOther->GetPos().x))
+		//{
+			//Vec2 tPos = GetPos();
+			//if (true == isFacedRight)
+			//{
+			//	tPos.x -= 2.f;
+			//}
+			//else
+			//{
+			//	tPos.x += 2.f;
+			//}
+		SetPos(vPos);
+
 	}
-	else if (pOther->GetName() == L"Tile" && (plColSize.y + oColSize.y - 2) <= abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
-	{
-		++m_floor;
-	}
+	//else if (pOther->GetName() == L"Tile" && (plColSize.y + oColSize.y - 2) <= abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
+	//{
+	//	++m_floor;
+	//}
 }
 
 void CLou::OnCollision(CCollider* _pOther)
@@ -410,26 +466,87 @@ void CLou::OnCollision(CCollider* _pOther)
 
 	CGameObject* pOther = _pOther->GetObj();
 	Vec2 vPos = GetPos();
+
+	CTile* pTile = (CTile*)pOther;
+	GROUP_TILE tileType = pTile->GetGroup();
+
 	if (pOther->GetName() == L"Tile")
 	{
-		int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
-		int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
-		int sum = abs(a - b);
-		if (1 < sum)
-			--vPos.y;
+
+		switch (tileType)
+		{
+		case GROUP_TILE::GROUND:
+		{
+			int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
+			int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
+			int sum = abs(a - b);
+			if (1 < sum)
+				--vPos.y;
+		}break;
+		case GROUP_TILE::MOVE:
+		{
+			int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
+			int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
+			int sum = abs(a - b);
+			if (1 < sum)
+				--vPos.y;
+		}break;
+		case GROUP_TILE::WALL:
+		{
+
+		}break;
+		case GROUP_TILE::PLATFORM:
+		{
+
+		}break;
+		case GROUP_TILE::SLOPE:
+		{
+
+		}break;
+		}
 	}
 
 	SetPos(vPos);
-
 }
 
 void CLou::OnCollisionExit(CCollider* _pOther)
 {
+
 	CGameObject* pOther = _pOther->GetObj();
+	Vec2 vPos = GetPos();
+
+	CTile* pTile = (CTile*)pOther;
+	GROUP_TILE tileType = pTile->GetGroup();
 
 	if (pOther->GetName() == L"Tile")
 	{
-		--m_floor;
+		switch (tileType)
+		{
+		case GROUP_TILE::GROUND:
+		{
+			--m_floor;
+		}break;
+		case  GROUP_TILE::MOVE:
+		{
+			--m_floor;
+		}break;
+		case GROUP_TILE::WALL:
+		{
+			if (m_wall)
+			{
+				--m_floor;
+				--m_wall;
+			}
+		}break;
+		case GROUP_TILE::PLATFORM:
+		{
+
+		}break;
+		case GROUP_TILE::SLOPE:
+		{
+
+		}break;
+		}
 	}
 }
 

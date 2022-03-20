@@ -73,6 +73,7 @@ void CGameObject::CreateCollider()
 	m_pCollider->m_pOwner = this;
 }
 
+
 void CGameObject::CreateAnimator()
 {
 	m_pAnimator = new CAnimator;

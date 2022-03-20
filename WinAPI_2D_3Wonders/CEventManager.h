@@ -1,6 +1,7 @@
 #pragma once
 
 class CGameObject;
+class CCollider;
 
 struct tEvent
 {

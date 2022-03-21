@@ -75,6 +75,10 @@ void CScene_Stage1::Enter()
 	pGolemWood->SetPos(Vec2(8200.f, 150.f));
 	AddObject(pGolemWood, GROUP_GAMEOBJ::MONSTER);
 
+	CGreen* pGreen = new CGreen();
+	pGreen->SetPos(Vec2(4300.f, 350.f));
+	AddObject(pGreen, GROUP_GAMEOBJ::MONSTER);
+
 	CShelter* pShelter1 = new CShelter();
 	pShelter1->SetPos(Vec2(1570.f, 230.f));
 	AddObject(pShelter1, GROUP_GAMEOBJ::TILE);
@@ -135,7 +139,7 @@ void CScene_Stage1::Enter()
 	CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
 	//CCameraManager::getInst()->FadeOut(5.f);
 	CCameraManager::getInst()->FadeIn(1.f);
-	//CCameraManager::getInst()->SetTargetX(pGolemWood);
+	CCameraManager::getInst()->SetTargetX(pGreen);
 
 
 }

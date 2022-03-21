@@ -104,7 +104,7 @@ void CLou::update()
 {
 
 	wchar_t szBuffer[255] = {};
-	swprintf_s(szBuffer, L"state : %d \t FaceRight : %d", m_state,isFacedRight);
+	swprintf_s(szBuffer, L"state : %d \t FaceRight : %d \t Direc : %d", m_state,isFacedRight,m_facing);
 	SetWindowText(hWnd, szBuffer);
 
 	update_move();
@@ -121,17 +121,21 @@ void CLou::update_move()
 
 	//////////////////////////////////////
 	//////////////////////////////////////
-	if (KEYDOWN('Q'))//모션,기능 시험용
+	//모션,기능 시험용
+	if (KEYDOWN('Q'))
 	{
 		//GenerateGoblin();
 		GetAnimator()->Play(L"pShoot_Right");
 		//m_floor = 0;
 	}
+	//////////////////////////////////////
+	//카메라 캐릭터 target
 	if (KEYDOWN('V'))
 	{
 		CCameraManager::getInst()->SetTargetX(this);
 	}
 	m_goblinCounter += fDT;
+	//n초마다 고블린 리젠
 	if (m_goblinCounter >= 5.f)
 	{
 		m_goblinCounter = 0.f;
@@ -331,25 +335,48 @@ void CLou::update_move()
 		}
 		if (KEY(VK_RIGHT))
 		{
-			isFacedRight = true;
-			m_facing = D_FACING::RIGHT;
-			vPos.x += m_velocity * fDT;
+			if (KEY(VK_DOWN))
+			{
+				m_facing = D_FACING::DOWN;
+			}
+			else if (KEY(VK_UP))
+			{
+				m_facing = D_FACING::UP;
+			}
+			else
+			{
+				isFacedRight = true;
+				m_facing = D_FACING::RIGHT;
+				vPos.x += m_velocity * fDT;
+			}
 		}
 		if (KEY(VK_LEFT))
 		{
-			isFacedRight = false;
-			m_facing = D_FACING::LEFT;
-			vPos.x -= m_velocity * fDT;
+			if (KEY(VK_DOWN))
+			{
+				m_facing = D_FACING::DOWN;
+			}
+			else if (KEY(VK_UP))
+			{
+				m_facing = D_FACING::UP;
+			}
+			else
+			{
+				isFacedRight = false;
+				m_facing = D_FACING::LEFT;
+				vPos.x -= m_velocity * fDT;
+			}
+
 		}
 		if (KEYUP(VK_RIGHT))
 		{
 			isFacedRight = true;
-			m_facing = D_FACING::RIGHT;
+			//m_facing = D_FACING::RIGHT;
 		}
 		if (KEYUP(VK_LEFT))
 		{
 			isFacedRight = false;
-			m_facing = D_FACING::LEFT;
+			//m_facing = D_FACING::LEFT;
 		}
 
 		if (KEYDOWN(VK_UP))
@@ -400,7 +427,6 @@ void CLou::update_move()
 	}
 	if (m_state == eState::FALL)
 	{
-
 		if (KEY(VK_RIGHT))
 		{
 			isFacedRight = true;

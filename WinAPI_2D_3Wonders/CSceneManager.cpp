@@ -60,6 +60,6 @@ void CSceneManager::init()
 
 
 
-	m_pCurScene = m_arrScene[(UINT)GROUP_SCENE::SELECT];//ÇöÀç¾ÀÁöÁ¤
+	m_pCurScene = m_arrScene[(UINT)GROUP_SCENE::STAGE1];//ÇöÀç¾ÀÁöÁ¤
 	m_pCurScene->Enter();
 }

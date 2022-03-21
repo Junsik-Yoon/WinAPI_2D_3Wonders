@@ -8,7 +8,6 @@ enum class D_FACING
     DOWN,
     RIGHT,
     LEFT,
-    SIZE
 };
 enum class eState
 {

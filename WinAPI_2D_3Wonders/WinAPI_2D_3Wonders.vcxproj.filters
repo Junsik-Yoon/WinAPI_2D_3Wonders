@@ -257,6 +257,9 @@
     <ClInclude Include="CMovingTile.h">
       <Filter>Things\01.Object\Tile</Filter>
     </ClInclude>
+    <ClInclude Include="CShootFire.h">
+      <Filter>Things\01.Object\Missile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -407,6 +410,9 @@
     </ClCompile>
     <ClCompile Include="CMovingTile.cpp">
       <Filter>Things\01.Object\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="CShootFire.cpp">
+      <Filter>Things\01.Object\Missile</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

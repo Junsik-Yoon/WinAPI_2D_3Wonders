@@ -359,6 +359,26 @@ void CScene_Tool::ClickTileGroup(CButtonUI* button)
     }
     else if (m_gTile == GROUP_TILE::WALL)
     {
+        m_gTile = GROUP_TILE::PLATFORM;
+        button->SetText(L"PLATFORM");
+    }
+    else if (m_gTile == GROUP_TILE::PLATFORM)
+    {
+        m_gTile = GROUP_TILE::SLOPE;
+        button->SetText(L"SLOPE");
+    }
+    else if (m_gTile == GROUP_TILE::SLOPE)
+    {
+        m_gTile = GROUP_TILE::SLOPEUP;
+        button->SetText(L"SLOPE_UP");
+    }
+    else if (m_gTile == GROUP_TILE::SLOPEUP)
+    {
+        m_gTile = GROUP_TILE::SLOPEDOWN;
+        button->SetText(L"SLOPE_DOWN");
+    }
+    else if (m_gTile == GROUP_TILE::SLOPEDOWN)
+    {
         m_gTile = GROUP_TILE::NONE;
         button->SetText(L"NONE");
     }
@@ -482,6 +502,39 @@ void CScene_Tool::PrintTileGroup()
                 CTile::SIZE_TILE / 2.f,
                 CTile::SIZE_TILE / 2.f,
                 RGB(0, 255, 0),
+                3.f
+            );
+        }
+        else if (GROUP_TILE::PLATFORM == pTile->GetGroup())
+        {
+            CRenderManager::getInst()->RenderEllipse(
+                pTile->GetPos().x + CTile::SIZE_TILE / 2.f - pos.x,
+                pTile->GetPos().y + CTile::SIZE_TILE / 2.f - pos.y,
+                CTile::SIZE_TILE / 2.f,
+                CTile::SIZE_TILE / 2.f,
+                RGB(0, 0, 0),
+                3.f
+            );
+        }
+        else if (GROUP_TILE::SLOPEUP == pTile->GetGroup())
+        {
+            CRenderManager::getInst()->RenderEllipse(
+                pTile->GetPos().x + CTile::SIZE_TILE / 2.f - pos.x,
+                pTile->GetPos().y + CTile::SIZE_TILE / 2.f - pos.y,
+                CTile::SIZE_TILE / 2.f,
+                CTile::SIZE_TILE / 2.f,
+                RGB(0, 0, 255),
+                3.f
+            );
+        }
+        else if (GROUP_TILE::SLOPEDOWN == pTile->GetGroup())
+        {
+            CRenderManager::getInst()->RenderEllipse(
+                pTile->GetPos().x + CTile::SIZE_TILE / 2.f - pos.x,
+                pTile->GetPos().y + CTile::SIZE_TILE / 2.f - pos.y,
+                CTile::SIZE_TILE / 2.f,
+                CTile::SIZE_TILE / 2.f,
+                RGB(0, 255, 255),
                 3.f
             );
         }

@@ -11,8 +11,8 @@
 #define D_GRAVITY 400
 #define D_TILESPEED 200
 
-#define MINY 450.f
-#define MAXY 250.f
+#define MINY 400.f
+#define MAXY 320.f
 
 CGolemWood::CGolemWood()
 {
@@ -34,10 +34,10 @@ CGolemWood::CGolemWood()
 	GetAnimator()->CreateAnimation(L"Idle", m_pImg, Vec2(0.f, 0.f), Vec2(512.f, 512.f), Vec2(512.f, 0.f), 0.5f, 1, false);
 	GetAnimator()->CreateAnimation(L"Shoot", m_pImg, Vec2(512.f, 0.f), Vec2(512.f, 512.f), Vec2(512.f, 0.f), 0.5f, 3, false);
 	GetAnimator()->CreateAnimation(L"Damaged", m_pImg, Vec2(2048.f, 0.f), Vec2(512.f, 512.f), Vec2(512.f, 0.f), 0.5f, 1, false);
-	
-	GetAnimator()->Play(L"Idle");
 
-	CCameraManager::getInst()->GetRenderPos(GetPos());
+GetAnimator()->Play(L"Idle");
+
+CCameraManager::getInst()->GetRenderPos(GetPos());
 
 }
 
@@ -50,42 +50,47 @@ void CGolemWood::update()
 {
 	Vec2 vPos = GetPos();
 
-	//TODO:플레이어가 일정구역 안에 들어오면 동작/동적할당
-	if (m_stopCounter == 0.f)
+	vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
+	if (abs(pPlayer[0]->GetPos().x - GetPos().x) <= 600.f
+		|| KEY('Q'))
 	{
-		m_missileCounter += fDT;
-		MoveTiles();
-	}
-	else
-	{
-		m_stopCounter += fDT;
-	}
-	if (m_missileCounter >= 3.f)
-	{
-		CreateMissile();
-		GetAnimator()->Play(L"Shoot");
-		m_missileCounter = 0.f;
-		m_stopCounter += fDT;
-		
-	}
-	if (m_stopCounter >= 2.f)
-	{
-		GetAnimator()->Play(L"Idle");
-		m_stopCounter = 0.f;
-		m_missileCounter += fDT;
-	}
+
+		//TODO:플레이어가 일정구역 안에 들어오면 동적할당
+		if (m_stopCounter == 0.f)
+		{
+			m_missileCounter += fDT;
+			MoveTiles();
+		}
+		else
+		{
+			m_stopCounter += fDT;
+		}
+		if (m_missileCounter >= 3.f)
+		{
+			CreateMissile();
+			GetAnimator()->Play(L"Shoot");
+			m_missileCounter = 0.f;
+			m_stopCounter += fDT;
+
+		}
+		if (m_stopCounter >= 2.f)
+		{
+			GetAnimator()->Play(L"Idle");
+			m_stopCounter = 0.f;
+			m_missileCounter += fDT;
+		}
 
 
-	if (m_floor == 0)
-	{
-		m_gravity = D_GRAVITY;
-		vPos.y += D_GRAVITY * fDT;
+		if (m_floor == 0)
+		{
+			m_gravity = D_GRAVITY;
+			vPos.y += D_GRAVITY * fDT;
+		}
+		else
+		{
+			m_gravity = 0;
+		}
 	}
-	else
-	{
-		m_gravity = 0;
-	}
-
 	SetPos(vPos);
 
 	GetAnimator()->update();
@@ -105,7 +110,7 @@ void CGolemWood::CreateMissile()
 
 
 	pMissile->SetScale(Vec2(50.f, 50.f));
-	pMissile->SetPos(Vec2(fpMissilePos.x+3.f,fpMissilePos.y+13.f));
+	pMissile->SetPos(Vec2(fpMissilePos.x + 3.f, fpMissilePos.y + 13.f));
 	pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
 	pMissile->GetCollider()->SetScale(Vec2(pMissile->GetScale().x, pMissile->GetScale().y));
 	pMissile->GetAnimator()->Play(L"Missile_GW");
@@ -117,14 +122,34 @@ void CGolemWood::CreateMissile()
 	pMissile->SetDir(Vec2(vPos.x, vPos.y));
 	pMissile->SetSpeed(300.f);
 	pMissile->SetName(L"Missile_GolemWood");
-	
 	//if(abs(vPos.x)<=700.f)
-		CreateObj(pMissile, GROUP_GAMEOBJ::MISSILE_MONSTER);
+
+	CreateObj(pMissile, GROUP_GAMEOBJ::MISSILE_MONSTER);
 }
 
 void CGolemWood::MoveTiles()
 {
-	
+	int minTileY = 9999;
+	int minIndex=-1;
+	int maxTileY = 0;
+	int maxIndex=-1;
+	for (int i = 1; i <pMovingTiles.size()-1; ++i) 
+	{
+		if (pMovingTiles[i]->GetPos().y > maxTileY)
+		{
+			maxTileY = pMovingTiles[i]->GetPos().y;
+			maxIndex = i;
+		}
+	}
+	for (int i = 0; i < pMovingTiles.size(); ++i)
+	{
+		if (pMovingTiles[i]->GetPos().y < minTileY)
+		{
+			minTileY = pMovingTiles[i]->GetPos().y;
+			minIndex = i;
+		}
+	}
+
 	for (int i = 0; i < pMovingTiles.size(); ++i)
 	{
 		Vec2 vPos = pMovingTiles[i]->GetPos();
@@ -139,8 +164,32 @@ void CGolemWood::MoveTiles()
 
 		vPos.y += m_tileSpeed * fDT * pMovingTiles[i]->Y_axis;
 		pMovingTiles[i]->SetPos(vPos);
-		
+		if (0 == i|| pMovingTiles.size()-1==i)
+		{
+			continue;
+		}
+		if (i == maxIndex || i==minIndex)
+		{
+			pMovingTiles[i]->SetState(1);
+			pMovingTiles[i]->isEndline = true;
+		}
+		else
+		{
+			pMovingTiles[i]->isEndline = false;
+		}
+
+		if (pMovingTiles[i]->GetPos().y > pMovingTiles[i - 1]->GetPos().y)
+		{
+			if(pMovingTiles[i]->GetPos().y<pMovingTiles[i + 1]->GetPos().y)
+				pMovingTiles[i]->SetRight(true);
+		}
+		else if (pMovingTiles[i]->GetPos().y <  pMovingTiles[i - 1]->GetPos().y)
+		{
+			if (pMovingTiles[i]->GetPos().y > pMovingTiles[i + 1]->GetPos().y)
+				pMovingTiles[i]->SetRight(false);
+		}
 	}
+
 	
 }
 
@@ -158,7 +207,7 @@ void CGolemWood::OnCollisionEnter(CCollider* _pOther)
 	}
 	if (pOther->GetName() == L"Lou")
 	{
-	
+		
 	}
 	if (pOther->GetName() == L"Missile_Player")
 	{

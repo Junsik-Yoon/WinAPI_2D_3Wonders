@@ -13,15 +13,22 @@ enum class D_FACING
 enum class eState
 {
     IDLE,
-    MOVE,
+    SIT,
+    AIRMOVE,
+    LANDMOVE,
+    FALL,
     JUMP,
     SHOOTING,
+    DEAD,
+    LOOKUP,
+
     JUMPSHOOTING,
     HOLDCLIFF,
     DASH,
-    INVINSIBLE,
+    INVINCIBLE,
     FLY,
     GOTHIT,
+
 
     
     SIZE
@@ -34,9 +41,13 @@ class CLou :
     bool m_counter_toggle;
 private:
 
+    bool bGravity;
+    float dash;
     float m_goblinCounter;
 
     bool isFacedRight;
+
+
 
     D_FACING m_facing;
     eState m_state;
@@ -48,7 +59,9 @@ private:
     float m_gravity;
     bool isUpside;
     bool isAir;
-   
+
+    int prevHP;
+    float prevY;
 
 public:
     void CreateMissile();
@@ -60,7 +73,8 @@ public:
 public:
     virtual void update();
     virtual void render();
-    
+public:
+    eState GetState() { return m_state; }
 public:
     void update_move();
     void update_animation();

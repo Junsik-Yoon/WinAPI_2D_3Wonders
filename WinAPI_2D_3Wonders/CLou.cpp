@@ -12,16 +12,22 @@
 #include <iostream>
 #include <random>
 //1:800,400 / 2:900,500 / 3: 1000,600
-#define D_GRAVITY 800
+#define D_GRAVITY 400
+#define D_DOWNFORCE 700
 #define D_VELOCITY 200
-#define D_UPFORCE 400
+#define D_UPFORCE 800
 #define D_FROMGOBMAX 600
 #define D_FROMGOBMIN 100
 
+
+#define SETSTATE m_state = eState
 float CLou::sCountTime = 0.f;
 
 CLou::CLou()
 {
+	dash = 0.f;
+	bGravity = true;
+	m_state = eState::IDLE;
 	m_goblinCounter = 0.f;
 	m_facing = D_FACING::RIGHT;
 	m_floor = 0;
@@ -32,12 +38,17 @@ CLou::CLou()
 	isFacedRight = true;
 	m_counter_toggle = false;
 
+
+	SetHP(2);
+	prevHP = GetHP();
+	prevY = GetPos().y;
+
 	SetName(L"Lou");
 	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"PlayerImg", L"texture\\Animation\\Animation_Lou.png");
 	CreateCollider();
 	SetScale(Vec2(60.f, 80.f));
 	GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
-	GetCollider()->SetOffsetPos(Vec2(0.f, 13.f));
+	GetCollider()->SetOffsetPos(Vec2(0.f, -10.f));
 
 	CreateAnimator();
 	//옷 입음
@@ -65,6 +76,17 @@ CLou::CLou()
 	GetAnimator()->CreateAnimation(L"Jump_Left_D", m_pImg, Vec2(384.f, 128.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
 	GetAnimator()->CreateAnimation(L"Jump_Right_Onland", m_pImg, Vec2(384.f, 256.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
 	GetAnimator()->CreateAnimation(L"Jump_Left_Onland", m_pImg, Vec2(384.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Right_Look_D", m_pImg, Vec2(256.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_Look_D", m_pImg, Vec2(384.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Right_Look_U", m_pImg, Vec2(256.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_Look_U", m_pImg, Vec2(384.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
+
+
+	GetAnimator()->CreateAnimation(L"Dash_Right", m_pImg, Vec2(1280.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.06f, 5, false);
+	GetAnimator()->CreateAnimation(L"Dash_Left", m_pImg, Vec2(1408.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.06f, 5, false);
+
+
+
 	//탈의
 
 	GetAnimator()->Play(L"Idle_Right");
@@ -80,6 +102,11 @@ CLou::~CLou()
 
 void CLou::update()
 {
+
+	wchar_t szBuffer[255] = {};
+	swprintf_s(szBuffer, L"state : %d \t FaceRight : %d", m_state,isFacedRight);
+	SetWindowText(hWnd, szBuffer);
+
 	update_move();
 	update_animation();
 }
@@ -87,177 +114,535 @@ void CLou::update()
 
 void CLou::update_move()
 {
+
+
+	Vec2 vPos = GetPos();
+	
+
+	//////////////////////////////////////
+	//////////////////////////////////////
+	if (KEYDOWN('Q'))//모션,기능 시험용
+	{
+		//GenerateGoblin();
+		GetAnimator()->Play(L"pShoot_Right");
+		//m_floor = 0;
+	}
+	if (KEYDOWN('V'))
+	{
+		CCameraManager::getInst()->SetTargetX(this);
+	}
 	m_goblinCounter += fDT;
 	if (m_goblinCounter >= 5.f)
 	{
 		m_goblinCounter = 0.f;
-		GenerateGoblin();
+		//GenerateGoblin();
 	}
-	if (KEYDOWN('Q'))//모션,기능 시험용
-	{
-		GenerateGoblin();
-		GetAnimator()->Play(L"pShoot_Right");
-		//m_floor = 0;
-	}
-	//if (KEY('C'))
-	//{
-	//	CCameraManager::getInst()->SetTargetObj(this);
-	//}
-	if (KEY('V'))
-	{
-		CCameraManager::getInst()->SetTargetX(this);
-	}
-	//if (KEY('B'))
-	//{
-	//	CCameraManager::getInst()->SetTargetY(this);
-	//}
-	Vec2 pos = GetPos();
-	if (KEY(VK_UP))
-	{
-		m_facing = D_FACING::UP;
-		if (true == isFacedRight)
-		{
-			GetAnimator()->Play(L"Lookup_Right");
-		}
-		else
-		{
-			GetAnimator()->Play(L"Lookup_Left");
-		}
-	}
-	if (KEYUP(VK_UP) && true == isFacedRight)
-	{
-		GetAnimator()->Play(L"Idle_Right");
-		m_facing = D_FACING::RIGHT;
-	}
-	else if (KEYUP(VK_UP) && false == isFacedRight)
-	{
-		GetAnimator()->Play(L"Idle_Left");
-		m_facing = D_FACING::LEFT;
-	}//TODO:keyup 다 묶기
-	if (KEY(VK_DOWN))
-	{
-		m_facing = D_FACING::DOWN;
-		if (true == isFacedRight)
-		{
-			GetAnimator()->Play(L"Sit_Right");
-		}
-		else
-		{
-			GetAnimator()->Play(L"Sit_Left");
-		}
-	}
-	if (KEYUP(VK_DOWN) && true == isFacedRight)
-	{
-		GetAnimator()->Play(L"Idle_Right");
-		m_facing = D_FACING::RIGHT;
-	}
-	else if (KEYUP(VK_DOWN) && false == isFacedRight)
-	{
-		GetAnimator()->Play(L"Idle_Left");
-		m_facing = D_FACING::LEFT;
-	}
-	if (KEYDOWN('Z'))
-	{
-		//TODO: 이동중에 공격하면 이동애니메이션 멈추고 공격애니메이션으로 전환할 방법
+	//////////////////////////////////////
+	//////////////////////////////////////
 
-		CreateMissile();
-	}
-	if (KEY(VK_LEFT))//왼키누르다떼기
+	if (m_floor > 0)	//충돌on
 	{
-		m_facing = D_FACING::LEFT;
-		isFacedRight = false;
-		pos.x -= m_velocity * fDT;
-		GetAnimator()->Play(L"Move_Left");
+		m_gravity = 0.f;
+		m_upforce = 0.f;
 	}
-	if (KEYUP(VK_LEFT))
+	else				//충돌off
 	{
-		GetAnimator()->Play(L"Idle_Left");
+		m_gravity = D_GRAVITY;
+		vPos.y += D_GRAVITY * fDT;
 	}
 
-	if (KEY(VK_RIGHT))//오른키누르다떼기
+	if (m_state == eState::IDLE)
 	{
-		pos.x += m_velocity * fDT;
-		m_facing = D_FACING::RIGHT;
-		isFacedRight = true;
-
-
-		GetAnimator()->Play(L"Move_Right");
-
-	}
-	if (KEYUP(VK_RIGHT))
-	{
-		GetAnimator()->Play(L"Idle_Right");
-	}
-	if (m_floor > 0)
-	{
-		if (true == isFacedRight)
+		if (0 >= m_upforce) 
+			//&&0==m_floor)
 		{
-			//GetAnimator()->Play(L"Idle_Right");
+			SETSTATE::FALL;
 		}
-		else
+		if (KEYDOWN(VK_UP))
 		{
-			//GetAnimator()->Play(L"Idle_Left");
+			m_facing = D_FACING::UP;
 		}
-		isAir = false;
-		m_gravity = 0;
-		m_upforce = D_UPFORCE;
+		if (KEYUP(VK_UP))
+		{
+			if (isFacedRight)
+			{
+				m_facing=D_FACING::RIGHT;
+			}
+			else
+			{
+				m_facing=D_FACING::LEFT;
+			}
+		}
+		if (KEY(VK_DOWN))
+		{
+			SETSTATE::SIT;
+		}
+		if (KEY(VK_RIGHT))
+		{
+			isFacedRight = true;
+			SETSTATE::LANDMOVE;
+		}
+		if (KEYUP(VK_RIGHT))
+		{
+			isFacedRight = true;
+		}
+
+		if (KEY(VK_LEFT))
+		{
+			isFacedRight = false;
+			SETSTATE::LANDMOVE;
+		}
+		if (KEYUP(VK_LEFT))
+		{
+			isFacedRight = false;
+		}
+
 		if (KEYDOWN('X'))
 		{
-			pos.y -= 2;
-			isUpside = true;
-			isAir = true;
+			m_upforce = D_UPFORCE;
+			vPos.y -= 2.f;
+			SETSTATE::JUMP;
+		}
+		if (KEYDOWN('Z'))
+		{
+			CreateMissile();
+		}
+		if (prevHP > GetHP())
+		{
+			prevHP = GetHP();
+			SETSTATE::GOTHIT;
+		}
+		else if (0 >= GetHP())
+		{
+			SETSTATE::DEAD;
+		}
+
+	}
+	if (m_state == eState::SIT)
+	{
+
+		GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y-30.f));
+		GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, -20.f),0);
+		GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, -20.f), 0);
+	
+		if (KEYDOWN(VK_RIGHT))
+		{
+			isFacedRight = true;
+		}
+		if (KEYDOWN(VK_LEFT))
+		{
+			isFacedRight = false;
+		}
+		if (KEYUP(VK_DOWN))
+		{
+			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
+			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
+			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
+			SETSTATE::IDLE;
+		}
+		if (KEYDOWN(VK_UP))
+		{
+			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
+			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
+			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
+			SETSTATE::IDLE;
+		}
+		if (KEYDOWN('X'))
+		{
+			SETSTATE::DASH;
+		}
+		if (KEYDOWN('Z'))
+		{
+			CreateMissile();
+		}
+		if (prevHP > GetHP())
+		{
+			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
+			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
+			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
+			prevHP = GetHP();
+			SETSTATE::GOTHIT;
+		}
+		else if (0 >= GetHP())
+		{
+			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
+			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
+			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
+			SETSTATE::DEAD;
 		}
 	}
-	if (m_floor == 0 && true == isUpside)
+	if (m_state == eState::LANDMOVE)
 	{
-		if (false == isFacedRight)
+		if (KEYDOWN('Z'))
 		{
-			GetAnimator()->Play(L"Jump_Left_U");
+			CreateMissile();
 		}
-		if (true == isFacedRight)
-		{
-			GetAnimator()->Play(L"Jump_Right_U");
-		}
-		m_gravity = D_GRAVITY;
-		m_upforce -= m_gravity * fDT;
-		pos.y -= m_upforce * fDT;
 
+		if (KEY(VK_RIGHT))
+		{
+			isFacedRight = true;
+			m_facing = D_FACING::RIGHT;
+			vPos.x += m_velocity * fDT;
+		}
+		if (KEY(VK_LEFT))
+		{
+			isFacedRight = false;
+			m_facing = D_FACING::LEFT;
+			vPos.x -= m_velocity * fDT;
+		}
+		if (KEYUP(VK_RIGHT))
+		{
+			isFacedRight = true;
+			m_facing = D_FACING::RIGHT;
+			SETSTATE::IDLE;
+		}
+		if (KEYUP(VK_LEFT))
+		{
+			isFacedRight = false;
+			m_facing = D_FACING::LEFT;
+			SETSTATE::IDLE;
+		}
+
+		if (KEYDOWN('X'))
+		{
+			m_upforce = D_UPFORCE;
+			vPos.y -= 2.f;
+			SETSTATE::JUMP;
+		}
+
+		if (prevHP > GetHP())
+		{
+			prevHP = GetHP();
+			SETSTATE::GOTHIT;
+		}
+		else if (0 >= GetHP())
+		{
+			SETSTATE::DEAD;
+		}
+	}
+	if (m_state == eState::JUMP)
+	{
+		m_upforce -= (D_DOWNFORCE*fDT);
+		vPos.y -= m_upforce * fDT;
+
+		if (KEYDOWN('Z'))
+		{
+			CreateMissile();
+		}
+		if (KEY(VK_RIGHT))
+		{
+			isFacedRight = true;
+			m_facing = D_FACING::RIGHT;
+			vPos.x += m_velocity * fDT;
+		}
+		if (KEY(VK_LEFT))
+		{
+			isFacedRight = false;
+			m_facing = D_FACING::LEFT;
+			vPos.x -= m_velocity * fDT;
+		}
+		if (KEYUP(VK_RIGHT))
+		{
+			isFacedRight = true;
+			m_facing = D_FACING::RIGHT;
+		}
+		if (KEYUP(VK_LEFT))
+		{
+			isFacedRight = false;
+			m_facing = D_FACING::LEFT;
+		}
+
+		if (KEYDOWN(VK_UP))
+		{
+			m_facing = D_FACING::UP;
+		}
+		if (KEYUP(VK_UP))
+		{
+			if (isFacedRight)
+			{
+				m_facing = D_FACING::RIGHT;
+			}
+			else
+			{
+				m_facing = D_FACING::LEFT;
+			}
+		}
+		if (KEYDOWN(VK_DOWN))
+		{
+			m_facing = D_FACING::DOWN;
+		}
+		if (KEYUP(VK_DOWN))
+		{
+			if (isFacedRight)
+			{
+				m_facing = D_FACING::RIGHT;
+			}
+			else
+			{
+				m_facing = D_FACING::LEFT;
+			}
+		}
+
+
+		if (prevHP > GetHP())
+		{
+			prevHP = GetHP();
+			SETSTATE::GOTHIT;
+		}
+		else if (0 >= GetHP())
+		{
+			SETSTATE::DEAD;
+		}
 		if (m_upforce <= 0.f)
 		{
-			isUpside = false;
+			SETSTATE::FALL;
 		}
 	}
-	else if (m_floor == 0 && false == isUpside)
+	if (m_state == eState::FALL)
 	{
-		if (false == isFacedRight)
+
+		if (KEY(VK_RIGHT))
 		{
-			GetAnimator()->Play(L"Jump_Left_D");
+			isFacedRight = true;
+			m_facing = D_FACING::RIGHT;
+			vPos.x += m_velocity * fDT;
 		}
-		if (true == isFacedRight)
+		if (KEY(VK_LEFT))
 		{
-			GetAnimator()->Play(L"Jump_Right_D");
+			isFacedRight = false;
+			m_facing = D_FACING::LEFT;
+			vPos.x -= m_velocity * fDT;
 		}
-		m_gravity = D_GRAVITY;
-		m_upforce += m_gravity * fDT;
-		pos.y += m_upforce * fDT;
+		if (KEYUP(VK_RIGHT))
+		{
+			isFacedRight = true;
+			m_facing = D_FACING::RIGHT;
+		}
+		if (KEYUP(VK_LEFT))
+		{
+			isFacedRight = false;
+			m_facing = D_FACING::LEFT;
+		}
+		if (prevHP > GetHP())
+		{
+			prevHP = GetHP();
+			SETSTATE::GOTHIT;
+		}
+		else if (0 >= GetHP())
+		{
+			SETSTATE::DEAD;
+		}
+		if (0 == m_upforce && m_floor >0)
+		{
+			SETSTATE::IDLE;
+		}
+		if (KEYDOWN('Z'))
+		{
+			CreateMissile();
+		}
 	}
 
-	SetPos(pos);
+	if (m_state == eState::HOLDCLIFF)
+	{
+		if (KEYDOWN('Z'))
+		{
+			CreateMissile();
+		}
+		if (KEYDOWN('X'))
+		{
+			//TODO:타고올라가게
+		}
+		if (prevHP > GetHP())
+		{
+			prevHP = GetHP();
+			SETSTATE::GOTHIT;
+		}
+		else if (0 >= GetHP())
+		{
+			SETSTATE::DEAD;
+		}
+	}
+	if (m_state == eState::DASH)
+	{
+		dash += fDT;
+		if (dash >= 0.3f)
+		{
+			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
+			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
+			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
+			SETSTATE::IDLE;
+			dash = 0.f;
+		}
+		if (isFacedRight)
+		{
+			vPos.x += (D_VELOCITY * 1.5f * fDT);
+		}
+		else
+		{
+			vPos.x -= (D_VELOCITY * 1.5f * fDT);
+		}
+		if (prevHP > GetHP())
+		{
+			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
+			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
+			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
+			prevHP = GetHP();
+			SETSTATE::GOTHIT;
+		}
+		else if (0 >= GetHP())
+		{
+			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
+			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
+			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
+			SETSTATE::DEAD;
+		}
+	}
+	if (m_state == eState::GOTHIT)
+	{
+		int hp = GetHP();
+		SetHP(--hp);
+		if (0 >= hp)
+		{
+			SETSTATE::DEAD;
+		}
+	}
+	if (m_state == eState::DEAD)
+	{
+
+	}
+
+
+	SetPos(vPos);
 
 }
 void CLou::update_animation()
 {
-	if (isFacedRight)
-	{
-		//idle
-	}
-	else
-	{
 
+	switch (m_state)
+	{
+		case eState::IDLE:
+		{
+			if (isFacedRight)
+			{
+				if (KEY(VK_UP))
+				{
+					GetAnimator()->Play(L"Lookup_Right");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Idle_Right");
+				}
+			}
+			else
+			{
+				if (KEY(VK_UP))
+				{
+					GetAnimator()->Play(L"Lookup_Left");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Idle_Left");
+				}
+			}
+		}break;
+		case eState::SIT:
+		{
+			if (isFacedRight)
+			{
+				GetAnimator()->Play(L"Sit_Right");
+			}
+			else
+			{
+				GetAnimator()->Play(L"Sit_Left");
+			}
+		}break;
+		case eState::JUMP:
+		{
+			if (isFacedRight)
+			{
+				if(KEY(VK_DOWN))
+				{
+					GetAnimator()->Play(L"Jump_Right_Look_D");
+				}
+				else if (KEY(VK_UP))
+				{
+					GetAnimator()->Play(L"Jump_Right_Look_U");
+				}
+				else
+				{
+					if (prevY < GetPos().y)
+						GetAnimator()->Play(L"Jump_Right_D");
+					else
+						GetAnimator()->Play(L"Jump_Right_U");
+				}
+			}
+			else
+			{
+				if (KEY(VK_DOWN))
+				{
+					GetAnimator()->Play(L"Jump_Left_Look_D");
+				}
+				else if (KEY(VK_UP))
+				{
+					GetAnimator()->Play(L"Jump_Left_Look_U");
+				}
+				else
+				{
+					if (prevY < GetPos().y)
+						GetAnimator()->Play(L"Jump_Left_D");
+					else
+						GetAnimator()->Play(L"Jump_Left_U");
+				}
+			}
+
+		}break;
+		case eState::FALL:
+		{
+			if (isFacedRight)
+			{
+				GetAnimator()->Play(L"Jump_Right_D");
+			}
+			else
+			{
+				GetAnimator()->Play(L"Jump_Left_D");
+			}
+		}break;
+			
+		case eState::LANDMOVE:
+		{
+			if (true == isFacedRight)
+			{
+				GetAnimator()->Play(L"Move_Right");
+			}
+			else if (false == isFacedRight)
+			{
+				GetAnimator()->Play(L"Move_Left");
+			}
+		}break;
+		case eState::SHOOTING:
+		{
+
+		}break;
+		case eState::HOLDCLIFF:
+		{
+
+		}break;
+		case eState::DASH:
+		{
+			if (true == isFacedRight)
+			{
+				GetAnimator()->Play(L"Dash_Right");
+			}
+			else if (false == isFacedRight)
+			{
+				GetAnimator()->Play(L"Dash_Left");
+			}
+		}break;
 	}
+	
+	prevY = GetPos().y;
 	GetAnimator()->update();
 }
-
 
 void CLou::CreateMissile()
 {
@@ -389,12 +774,9 @@ void CLou::GenerateGoblin()
 void CLou::OnCollisionEnter(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
-	//Vec2 plColSize = GetCollider()->GetScale();
-	//Vec2 oColSize = _pOther->GetScale();
 
-	if (pOther->GetName() == L"Tile")//&&(plColSize.x + oColSize.x -4)/ 2.f >= abs(GetCollider()->GetFinalPos().x - _pOther->GetFinalPos().x) && (plColSize.y + oColSize.y) > abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y))
+	if (pOther->GetName() == L"Tile")
 	{
-
 		Vec2 vPos = GetPos();
 
 		CTile* pTile = (CTile*)pOther;
@@ -409,7 +791,7 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 		case GROUP_TILE::MOVE:
 		{
 			++m_floor;
-		}
+		}break;
 		case GROUP_TILE::WALL:
 		{
 			if (abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y) + 2.f
@@ -552,5 +934,7 @@ void CLou::OnCollisionExit(CCollider* _pOther)
 
 void CLou::render()
 {
+
+	
 	component_render();
 }

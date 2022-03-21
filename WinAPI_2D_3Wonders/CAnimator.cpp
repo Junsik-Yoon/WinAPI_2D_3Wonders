@@ -7,6 +7,7 @@ CAnimator::CAnimator()
 {
 	m_pCurAni = nullptr;
 	m_pOwner = nullptr;
+
 }
 
 CAnimator::~CAnimator()
@@ -35,6 +36,7 @@ void CAnimator::render()
 		m_pCurAni->render();
 	}
 }
+
 
 void CAnimator::CreateAnimation(const wstring& strName, CD2DImage* img, Vec2 lt, Vec2 slice, Vec2 step, float duration, UINT frmCount, bool reverse , bool loop)
 {

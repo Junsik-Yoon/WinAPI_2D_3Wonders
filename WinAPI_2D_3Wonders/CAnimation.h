@@ -35,6 +35,8 @@ public:
 	void SetFrame(int frmIndex) { m_iCurFrm = frmIndex; }
 	tAniFrm& GetFrame(int frmIndex) { return m_vecFrm[frmIndex]; }
 
+	void SetOffset(Vec2 _offset, int _index) { m_vecFrm[_index].fptOffset = _offset; }
+
 	void Create(CD2DImage* Img, Vec2 lt, Vec2 slice, Vec2 step,
 		float duration, UINT frmCount);
 

@@ -3,11 +3,12 @@
 #include "CCollider.h"
 #include "CAnimator.h"
 
-#define MINY 450.f
-#define MAXY 250.f
+#define MINY 400.f
+#define MAXY 320.f
 
 CMovingTile::CMovingTile()
 {
+	m_state = 0;
 	isRight = false;
 	SetName(L"Tile");
 	Y_axis = -1;
@@ -52,88 +53,105 @@ void CMovingTile::update()
 {
 	Vec2 vPos = GetPos();
 
+	switch (m_state)
+	{
+	case 1:GetAnimator()->Play(L"State01"); break;
+	case 2:GetAnimator()->Play(L"State02"); break;
+	case 3:GetAnimator()->Play(L"State03"); break;
+	case 4:GetAnimator()->Play(L"State04"); break;
+	case 5:GetAnimator()->Play(L"State05"); break;
+	case 6:GetAnimator()->Play(L"State06"); break;
+	case 7:GetAnimator()->Play(L"State07"); break;
+	case 8:GetAnimator()->Play(L"State08"); break;
+	case 9:GetAnimator()->Play(L"State09"); break;
+	case 10:GetAnimator()->Play(L"State10"); break;
+	case 11:GetAnimator()->Play(L"State11"); break;
+	case 12:GetAnimator()->Play(L"State12"); break;
+	}
+
 	float fdiff = (MINY - MAXY)/6.f;
+	if (!isEndline)
+	{
+		if (vPos.y <= MINY
+			&& vPos.y > MINY - fdiff
+			)
+		{
+			if (isRight)
+			{
+				m_state = 12;
+			}
+			else
+			{
+				m_state = 1;
+			}
+		}
+		if (vPos.y <= MINY - fdiff
+			&& vPos.y > MINY - fdiff * 2.f
+			)
+		{
+			if (isRight)
+			{
+				m_state = 11;
+			}
+			else
+			{
+				m_state = 2;
+			}
+		}
+		if (vPos.y <= MINY - fdiff * 2.f
+			&& vPos.y > MINY - fdiff * 3.f
+			)
+		{
+			if (isRight)
+			{
+				m_state = 10;
+			}
+			else
+			{
+				m_state = 3;
+			}
+		}
+		if (GetPos().y <= MINY - fdiff * 3.f
+			&& GetPos().y > MINY - fdiff * 4.f
+			)
+		{
+			if (isRight)
+			{
+				m_state = 9;
+			}
+			else
+			{
+				m_state = 4;
+			}
+		}
+		if (GetPos().y <= MINY - fdiff * 4.f
+			&& GetPos().y > MINY - fdiff * 5.f
+			)
+		{
+			if (isRight)
+			{
+				m_state = 8;
+			}
+			else
+			{
+				m_state = 5;
+			}
+		}
+		if (GetPos().y <= MINY - fdiff * 5.f
+			&& GetPos().y > MINY - fdiff * 6.f
+			)
+		{
+			if (isRight)
+			{
+				m_state = 7;
+			}
+			else
+			{
+				m_state = 6;
+			}
+		}
+	}
 	
-	if (vPos.y <= MINY + 1.f
-		&& vPos.y > MINY - fdiff
-		)
-	{
-		if (isRight)
-		{
-			GetAnimator()->Play(L"State12");
-			isRight = false;
-		}
-		else
-		{
-			GetAnimator()->Play(L"State01");
-		}		
-	}
-	if (vPos.y <= MINY - fdiff
-		&& vPos.y > MINY - fdiff * 2.f
-		&& !isRight)
-	{
-		if (isRight)
-		{
-			GetAnimator()->Play(L"State11");
-		}
-		else
-		{
-			GetAnimator()->Play(L"State02");
-		}
-	}
-	if (vPos.y <= MINY - fdiff * 2.f
-		&& vPos.y > MINY - fdiff * 3.f
-		&& !isRight)
-	{
-		if (isRight)
-		{
-			GetAnimator()->Play(L"State10");
-		}
-		else
-		{
-			GetAnimator()->Play(L"State03");
-		}
-	}
-	if (GetPos().y <= MINY - fdiff * 3.f
-		&& GetPos().y > MINY - fdiff * 4.f
-		&& !isRight)
-	{
-		if (isRight)
-		{
-			GetAnimator()->Play(L"State09");
-		}
-		else
-		{
-			GetAnimator()->Play(L"State04");
-		}
-	}
-	if (GetPos().y <= MINY - fdiff * 4.f
-		&& GetPos().y > MINY - fdiff * 5.f
-		&& !isRight)
-	{
-		if (isRight)
-		{
-			GetAnimator()->Play(L"State08");
-		}
-		else
-		{
-			GetAnimator()->Play(L"State05");
-		}
-	}
-	if (GetPos().y <= MINY - fdiff * 5.f
-		&& GetPos().y > MINY - fdiff * 6.f
-		&& !isRight)
-	{
-		if (isRight)
-		{
-			GetAnimator()->Play(L"State07");
-		}
-		else
-		{
-			GetAnimator()->Play(L"State06");
-			isRight = true;
-		}
-	}
 
 	SetPos(vPos);
 	GetAnimator()->update();

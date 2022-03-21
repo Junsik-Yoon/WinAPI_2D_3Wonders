@@ -66,6 +66,8 @@ enum class GROUP_TILE
 	PLATFORM,
 	WALL,
 	SLOPE,
+	SLOPEUP,
+	SLOPEDOWN,
 
 	SIZE,
 };

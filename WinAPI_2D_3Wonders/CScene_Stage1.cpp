@@ -68,7 +68,7 @@ void CScene_Stage1::Enter()
 	AddObject(pBG1, GROUP_GAMEOBJ::BACKGROUND);
 
 	CLou* pLou = new CLou();
-	pLou->SetPos(Vec2(300.f, -100.f));
+	pLou->SetPos(Vec2(300.f, 0.f));
 	AddObject(pLou, GROUP_GAMEOBJ::PLAYER);
 
 	CGolemWood* pGolemWood = new CGolemWood();
@@ -88,11 +88,26 @@ void CScene_Stage1::Enter()
 	AddObject(pShelter3, GROUP_GAMEOBJ::TILE);
 
 	CMovingTile* pMovingTile = nullptr;
-	for (int i = 0; i < 24; ++i)
+	for (int i = 0; i < 8; ++i)
 	{
 		pMovingTile = new CMovingTile();
-		pMovingTile->SetPos(Vec2(7600.f+(32.f*i), 450.f+(float)i*-7.f));
+		pMovingTile->SetPos(Vec2(7600.f+(32.f*i), 400.f+(float)i*-10.f));
+		pMovingTile->SetRight(false);
 		AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);		
+	}
+	for (int i = 8; i < 15; ++i)
+	{
+		pMovingTile = new CMovingTile();
+		pMovingTile->SetPos(Vec2(7600.f + (32.f * i), 320.f + (float)(i-6) * +10.f));
+		pMovingTile->SetRight(true);
+		AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);
+	}
+	for (int i = 15; i < 22; ++i)
+	{
+		pMovingTile = new CMovingTile();
+		pMovingTile->SetPos(Vec2(7600.f + (32.f * i), 400.f + (float)(i - 14) * -10.f));
+		pMovingTile->SetRight(false);
+		AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);
 	}
 
 	vector<CGameObject*> pTiles = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::TILE);
@@ -120,7 +135,9 @@ void CScene_Stage1::Enter()
 	CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
 	//CCameraManager::getInst()->FadeOut(5.f);
 	CCameraManager::getInst()->FadeIn(1.f);
-	CCameraManager::getInst()->SetTargetX(pGolemWood);
+	//CCameraManager::getInst()->SetTargetX(pGolemWood);
+
+
 }
 
 void CScene_Stage1::Exit()

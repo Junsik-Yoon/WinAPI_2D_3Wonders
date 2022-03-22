@@ -13,6 +13,7 @@
 #include "CShelter.h"
 #include "CGolemWood.h"
 #include "CMovingTile.h"
+#include "CAnimator.h"
 
 CScene_Stage1::CScene_Stage1()
 {
@@ -75,9 +76,22 @@ void CScene_Stage1::Enter()
 	pGolemWood->SetPos(Vec2(8200.f, 150.f));
 	AddObject(pGolemWood, GROUP_GAMEOBJ::MONSTER);
 
-	CGreen* pGreen = new CGreen();
-	pGreen->SetPos(Vec2(4300.f, 350.f));
-	AddObject(pGreen, GROUP_GAMEOBJ::MONSTER);
+	CHalfMoon* pHalfMoon1 = new CHalfMoon();
+	pHalfMoon1->SetPos(Vec2(2985.f, 70.f));
+	pHalfMoon1->SetRight(true);
+	pHalfMoon1->GetCollider()->SetOffsetPos(Vec2(-20.f, 0.f));
+	AddObject(pHalfMoon1, GROUP_GAMEOBJ::MONSTER);
+
+	CHalfMoon* pHalfMoon2 = new CHalfMoon();
+	pHalfMoon2->SetPos(Vec2(4590.f, 110.f));
+	pHalfMoon2->SetRight(false);
+	pHalfMoon2->GetAnimator()->Play(L"Idle_Left");
+	pHalfMoon2->GetCollider()->SetOffsetPos(Vec2(20.f, 0.f));
+	AddObject(pHalfMoon2, GROUP_GAMEOBJ::MONSTER);
+
+	CGreen* pGreen1 = new CGreen();
+	pGreen1->SetPos(Vec2(4480.f, 300.f));
+	AddObject(pGreen1, GROUP_GAMEOBJ::MONSTER);
 
 	CShelter* pShelter1 = new CShelter();
 	pShelter1->SetPos(Vec2(1570.f, 230.f));
@@ -135,11 +149,13 @@ void CScene_Stage1::Enter()
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::TILE, GROUP_GAMEOBJ::MISSILE_PLAYER);
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::TILE, GROUP_GAMEOBJ::MISSILE_MONSTER);
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::PLAYER, GROUP_GAMEOBJ::MISSILE_MONSTER);
+	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::PLAYER, GROUP_GAMEOBJ::FIRE);
+	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::MONSTER, GROUP_GAMEOBJ::FIRE);
 
 	CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
 	//CCameraManager::getInst()->FadeOut(5.f);
 	CCameraManager::getInst()->FadeIn(1.f);
-	CCameraManager::getInst()->SetTargetX(pGreen);
+	CCameraManager::getInst()->SetTargetX(pHalfMoon2);
 
 
 }

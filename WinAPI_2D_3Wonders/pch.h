@@ -9,6 +9,7 @@ enum class GROUP_GAMEOBJ
 	MISSILE_MONSTER,
 	PLAYER,
 	MONSTER,
+	FIRE,
 
 
 	UI,

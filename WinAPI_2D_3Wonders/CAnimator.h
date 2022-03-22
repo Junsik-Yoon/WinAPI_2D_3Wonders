@@ -28,7 +28,7 @@ public:
 	CAnimation* FindAnimation(const wstring& strName);
 	void Play(const wstring& strName);
 
-
+	CAnimation* GetCurrentAnimation() { return m_pCurAni; }
 public:
 	CAnimator();
 	~CAnimator();

@@ -8,7 +8,7 @@ CShootFire::CShootFire()
 	shootRange = 200.f;
 	vanishToggle = 0.f;
 	m_fSpeed = 70.f;
-	m_fvDir = Vec2(-1, 0);
+	m_fvDir = Vec2(-1.f, 0.f);
 
 	
 
@@ -22,7 +22,7 @@ CShootFire::CShootFire()
 
 	CreateAnimator();
 
-	GetAnimator()->CreateAnimation(L"GreenFire", m_pImg, Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.1f, 13, false);
+	GetAnimator()->CreateAnimation(L"GreenFire", m_pImg, Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.2f, 13, false);
 
 	CCameraManager::getInst()->GetRenderPos(GetPos());
 
@@ -36,7 +36,7 @@ CShootFire::~CShootFire()
 void CShootFire::update()
 {
 	Vec2 vPos = GetPos();
-	m_fvDir.y -= 0.2f * fDT;
+	m_fvDir.y -= 0.3f * fDT;
 	vPos.x += m_fSpeed * m_fvDir.x * fDT;
 	vPos.y += m_fSpeed * m_fvDir.y * fDT;
 
@@ -68,8 +68,14 @@ void CShootFire::render()
 	component_render();
 }
 
-void CShootFire::OnCollisionEnter(CCollider* pOther)
+void CShootFire::OnCollisionEnter(CCollider* _pOther)
 {
+	CGameObject* pOther = _pOther->GetObj();
+	if (GetName() == L"GreenFire" &&
+		pOther->GetName() == L"Lou")
+	{
+		DeleteObj(this);
+	}
 }
 
 void CShootFire::OnCollision(CCollider* _pOther)

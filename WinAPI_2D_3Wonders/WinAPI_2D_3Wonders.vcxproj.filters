@@ -236,9 +236,6 @@
     <ClInclude Include="CScene_Selection.h">
       <Filter>Things\02.Scene\SCenes</Filter>
     </ClInclude>
-    <ClInclude Include="CGameObject.h">
-      <Filter>Things\01.Object\UI</Filter>
-    </ClInclude>
     <ClInclude Include="CGameSelect.h">
       <Filter>Things\01.Object\Background</Filter>
     </ClInclude>
@@ -259,6 +256,9 @@
     </ClInclude>
     <ClInclude Include="CShootFire.h">
       <Filter>Things\01.Object\Missile</Filter>
+    </ClInclude>
+    <ClInclude Include="CGameObject.h">
+      <Filter>Things\01.Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -390,9 +390,6 @@
     <ClCompile Include="CScene_Selection.cpp">
       <Filter>Things\02.Scene\SCenes</Filter>
     </ClCompile>
-    <ClCompile Include="CGameObject.cpp">
-      <Filter>Things\01.Object\UI</Filter>
-    </ClCompile>
     <ClCompile Include="CGameSelect.cpp">
       <Filter>Things\01.Object\Background</Filter>
     </ClCompile>
@@ -413,6 +410,9 @@
     </ClCompile>
     <ClCompile Include="CShootFire.cpp">
       <Filter>Things\01.Object\Missile</Filter>
+    </ClCompile>
+    <ClCompile Include="CGameObject.cpp">
+      <Filter>Things\01.Object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

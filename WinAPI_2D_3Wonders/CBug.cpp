@@ -57,7 +57,45 @@ void CBug::update()
 
 void CBug::render()
 {
+	render_information();
 	component_render();
+}
+
+void CBug::render_information()
+{
+	if (true == CCore::getInst()->DebugMode())
+	{
+		CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"BackInfo", L"texture\\BackInfo.png");
+		Vec2 vPos = GetPos();
+		vPos = CCameraManager::getInst()->GetRenderPos(vPos);
+
+		CRenderManager::getInst()->RenderImage(
+			pImg,
+			vPos.x + 30.f,
+			vPos.y + -40.f,
+			vPos.x + 200.f,
+			vPos.y + 100.f,
+			0.3f);
+
+		////////////////////////
+		wstring curAni = {};
+		////////////////////////
+		curAni = GetAnimator()->GetCurrentAnimation()->GetName();
+		CRenderManager::getInst()->RenderText(
+			L" pos X : " + std::to_wstring(GetPos().x) + L"\n" +
+			L" pos Y : " + std::to_wstring(GetPos().y) + L"\n" +
+			L" state  : " + L"" + L"\n" +
+			L" drctn  : " + L"" + L"\n" +
+			L" curAm : " + curAni + L"\n" +
+			L" HP:  " + std::to_wstring(GetHP()) + L"\n" +
+			L" wallCount : " + std::to_wstring(m_floor)
+			, vPos.x + 30.f
+			, vPos.y + -40.f
+			, vPos.x + 200.f
+			, vPos.y + 100.f
+			, 16.f
+			, RGB(255, 255, 255));
+	}
 }
 
 

@@ -5,6 +5,7 @@
 #include "CAnimator.h"
 #include "CAnimation.h"
 #include "CShootFire.h"
+#include "CLou.h"
 
 #define D_VELOCITY 150
 #define D_GRAVITY 400
@@ -31,8 +32,8 @@ CGreen::CGreen()
 	GetAnimator()->CreateAnimation(L"Move_Left", m_pImg, Vec2(0.f, 0.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.2f, 5,false);
 	GetAnimator()->CreateAnimation(L"Move_Right", m_pImg, Vec2(0.f, 384.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.2f, 5,false);
 
-	GetAnimator()->CreateAnimation(L"Fire_Right", m_pImg, Vec2(0.f, 576.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.5f, 2, false,false);
-	GetAnimator()->CreateAnimation(L"Fire_Left", m_pImg, Vec2(0.f, 192.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.5f, 2, false,false);
+	GetAnimator()->CreateAnimation(L"Fire_Right", m_pImg, Vec2(0.f, 576.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.2f, 2, false,false);
+	GetAnimator()->CreateAnimation(L"Fire_Left", m_pImg, Vec2(0.f, 192.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.2f, 2, false,false);
 
 
 
@@ -52,6 +53,13 @@ void CGreen::update()
 {
 	Vec2 vPos = GetPos();
 
+	//테스트용///////////////////////
+	if (KEYDOWN('Q'))
+	{
+		ShootFire();
+	}
+	/////////////////////////////////
+	
 	if (m_floor == 0)
 	{
 		m_gravity = D_GRAVITY;
@@ -63,6 +71,7 @@ void CGreen::update()
 	}
 
 	vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
+	CLou* pLou = (CLou*) pPlayer[0];
 	if (abs(pPlayer[0]->GetPos().x-GetPos().x)<400.f
 		&& abs(pPlayer[0]->GetPos().x - GetPos().x) > 200.f)//idle->trace로 변경
 	{
@@ -79,7 +88,9 @@ void CGreen::update()
 			GetAnimator()->Play(L"Move_Left");
 		}
 	}
-	if (abs(pPlayer[0]->GetPos().x - GetPos().x) <= 200.f)//trace->attack으로변경
+	if (abs(pPlayer[0]->GetPos().x - GetPos().x) <= 200.f
+		&& (pLou->GetState() != eState::DEAD||
+			pLou->GetState() != eState::GOTHIT))//trace->attack으로변경
 	{
 		
 		m_shootFire += fDT;
@@ -93,7 +104,7 @@ void CGreen::update()
 			isRight = false;
 		}
 
-		if (m_shootFire >= 0.1f)
+		if (m_shootFire >= 0.2f)
 		{
 			ShootFire();
 			m_shootFire = 0.f;
@@ -109,34 +120,75 @@ void CGreen::update()
 void CGreen::render()
 {
 	component_render();
+	render_information();
 }
+
+void CGreen::render_information()
+{
+	if (true == CCore::getInst()->DebugMode())
+	{
+		CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"BackInfo", L"texture\\BackInfo.png");
+		Vec2 vPos = GetPos();
+		vPos = CCameraManager::getInst()->GetRenderPos(vPos);
+
+		CRenderManager::getInst()->RenderImage(
+			pImg,
+			vPos.x + 30.f,
+			vPos.y + -40.f,
+			vPos.x + 200.f,
+			vPos.y + 100.f,
+			0.3f);
+
+		////////////////////////
+		wstring curAni = {};
+		////////////////////////
+		curAni = GetAnimator()->GetCurrentAnimation()->GetName();
+		CRenderManager::getInst()->RenderText(
+			L" pos X : " + std::to_wstring(GetPos().x) + L"\n" +
+			L" pos Y : " + std::to_wstring(GetPos().y) + L"\n" +
+			L" state  : " + L"" + L"\n" +
+			L" drctn  : " + std::to_wstring(isRight) + L"\n" +//TODO:수정
+			L" curAm : " + curAni + L"\n" +
+			L" HP:  " + std::to_wstring(GetHP()) + L"\n" +
+			L" wallCount : " + std::to_wstring(m_floor)
+			, vPos.x + 30.f
+			, vPos.y + -40.f
+			, vPos.x + 200.f
+			, vPos.y + 100.f
+			, 16.f
+			, RGB(255, 255, 255));
+	}
+}
+
 
 void CGreen::ShootFire()
 {
 	
 	CShootFire* pShootFire = new CShootFire();
 	Vec2 fptFirePos = GetPos();
+	pShootFire->SetName(L"GreenFire");
 	pShootFire->SetStartPos(fptFirePos);
 	pShootFire->SetPos(fptFirePos);
 	pShootFire->SetScale(Vec2(64.f, 64.f));
 	pShootFire->GetCollider()->SetScale(Vec2(pShootFire->GetScale().x, pShootFire->GetScale().y));
+	
 	if (isRight)
 	{
 		GetAnimator()->Play(L"Fire_Right");
 		pShootFire->SetRight(true);
-		pShootFire->SetPos(Vec2(fptFirePos.x + 40.f, fptFirePos.y + 20.f));
-		pShootFire->SetDir(Vec2(1, 0));
+		pShootFire->SetPos(Vec2(fptFirePos.x + 55.f, fptFirePos.y + 20.f));
+		pShootFire->SetDir(Vec2(1.f, 0.f));
 	}
 	else
 	{
 		//TODO:방향안먹는거수정
 		GetAnimator()->Play(L"Fire_Left");
 		pShootFire->SetRight(false);
-		pShootFire->SetPos(Vec2(fptFirePos.x-40.f, fptFirePos.y + 20.f));
-		pShootFire->SetDir(Vec2(-1, 0));
+		pShootFire->SetPos(Vec2(fptFirePos.x-55.f, fptFirePos.y + 20.f));
+		pShootFire->SetDir(Vec2(-1.f, 0.f));
 	}
 	pShootFire->GetAnimator()->Play(L"GreenFire");
-	CreateObj(pShootFire,GROUP_GAMEOBJ::MISSILE_MONSTER);
+	CreateObj(pShootFire, GROUP_GAMEOBJ::FIRE);
 }
 
 void CGreen::OnCollisionEnter(CCollider* _pOther)

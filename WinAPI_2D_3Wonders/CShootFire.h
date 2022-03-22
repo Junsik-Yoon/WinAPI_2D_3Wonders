@@ -23,8 +23,9 @@ public:
 
 	void SetRight(bool _isRight) { isRight = _isRight; }
 	void SetStartPos(Vec2 _pos) { startPos = _pos; }
+	void SetDir(Vec2 vec) { m_fvDir = vec.Normalize(); }
 public:
-	void OnCollisionEnter(CCollider* pOther);
+	void OnCollisionEnter(CCollider* _pOther);
 	void OnCollision(CCollider* _pOther);
 	void OnCollisionExit(CCollider* _pOther);
 

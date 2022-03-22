@@ -127,13 +127,13 @@ void CRenderManager::RenderText(wstring str, float dstX, float dstY, float dstW,
 		m_pWriteFactory->CreateTextFormat(
 			L"±¼¸²",
 			NULL,
-			DWRITE_FONT_WEIGHT_NORMAL,
+			DWRITE_FONT_WEIGHT_SEMI_BOLD,
 			DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,
 			fontSize,
 			L"ko",
 			&m_pTextFormat);
-		m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		m_pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
 		m_pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	}
 

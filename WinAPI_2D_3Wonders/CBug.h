@@ -18,6 +18,7 @@ public:
 public:
 	virtual void update();
 	virtual void render();
+	void render_information();
 public:
 	CBug();
 	~CBug();

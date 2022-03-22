@@ -8,6 +8,7 @@
 #include "CMissile.h"
 #include "CTile.h"
 #include "CGoblin.h"
+#include "CD2DImage.h"
 
 #include <iostream>
 #include <random>
@@ -25,6 +26,7 @@ float CLou::sCountTime = 0.f;
 
 CLou::CLou()
 {
+
 	dash = 0.f;
 	bGravity = true;
 	m_state = eState::IDLE;
@@ -157,12 +159,12 @@ void CLou::update_move()
 
 	if (m_state == eState::IDLE)
 	{
-		if (0 >= m_upforce) 
+		//if (m_upforce <= 0.f)
 			//&&0==m_floor)
-		{
-			SETSTATE::FALL;
-		}
-		if (KEYDOWN(VK_UP))
+		//{
+		//	SETSTATE::FALL;
+		//}
+		if (KEY(VK_UP))
 		{
 			m_facing = D_FACING::UP;
 		}
@@ -645,10 +647,6 @@ void CLou::update_animation()
 				GetAnimator()->Play(L"Move_Left");
 			}
 		}break;
-		case eState::SHOOTING:
-		{
-
-		}break;
 		case eState::HOLDCLIFF:
 		{
 
@@ -669,6 +667,8 @@ void CLou::update_animation()
 	prevY = GetPos().y;
 	GetAnimator()->update();
 }
+
+
 
 void CLou::CreateMissile()
 {
@@ -960,7 +960,85 @@ void CLou::OnCollisionExit(CCollider* _pOther)
 
 void CLou::render()
 {
-
-	
 	component_render();
+	render_information();
+}
+
+void CLou::render_information()
+{
+	if (true == CCore::getInst()->DebugMode())
+	{
+		CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"BackInfo", L"texture\\BackInfo.png");
+		Vec2 vPos = GetPos();
+		vPos = CCameraManager::getInst()->GetRenderPos(vPos);
+		
+		////////////////////////
+		wstring stateName = {};
+		wstring direction = {};
+		wstring curAni = {};
+
+		////////////////////////
+		switch (m_state)
+		{
+		case eState::IDLE:stateName = L"IDLE";
+			break;
+		case eState::SIT:stateName = L"SIT";
+			break;
+		case eState::LANDMOVE:stateName = L"LANDMOVE";
+			break;
+		case eState::FALL:stateName = L"FALL";
+			break;
+		case eState::JUMP:stateName = L"JUMP";
+			break;
+		case eState::DASH:stateName = L"DASH";
+			break;
+		case eState::GOTHIT:stateName = L"GOTHIT";
+			break;
+		case eState::DEAD:stateName = L"DEAD";
+			break;
+		case eState::ATTACK:stateName = L"ATTACK";
+			break;
+		case eState::HOLDCLIFF:stateName = L"HOLDCLIFF";
+			break;
+		case eState::INVINCIBLE:stateName = L"INVINCIBLE";
+			break;
+		case eState::FLY:stateName = L"FLY";
+			break;
+		}
+		switch (m_facing)
+		{
+		case D_FACING::UP:direction = L"UP";
+			break;
+		case D_FACING::DOWN:direction = L"DOWN";
+			break;
+		case D_FACING::LEFT:direction = L"LEFT";
+			break;
+		case D_FACING::RIGHT:direction = L"RIGHT";
+			break;
+		}
+		CRenderManager::getInst()->RenderImage(
+			pImg,
+			vPos.x + 30.f,
+			vPos.y + -40.f,
+			vPos.x + 200.f,
+			vPos.y + 100.f,
+			0.3f);
+
+		curAni = GetAnimator()->GetCurrentAnimation()->GetName();
+		CRenderManager::getInst()->RenderText(
+			L" pos X : " + std::to_wstring(GetPos().x) + L"\n" +
+			L" pos Y : " + std::to_wstring(GetPos().y) + L"\n" +
+			L" state  : " + stateName + L"\n" +
+			L" drctn  : " + direction + L"\n" +
+			L" curAm : " + curAni + L"\n"+
+			L" HP:  " + std::to_wstring(GetHP()) + L"\n" +
+			L" wallCount : "  + std::to_wstring(m_floor)
+			, vPos.x+30.f
+			, vPos.y+ -40.f
+			, vPos.x + 200.f
+			, vPos.y + 100.f
+			, 16.f
+			, RGB(255, 255, 255));
+	}
+
 }

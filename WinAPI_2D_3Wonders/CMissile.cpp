@@ -92,8 +92,8 @@ void CMissile::OnCollisionEnter(CCollider* pOther)
 	if (pOtherObj->GetName() == L"Monster"||
 		pOtherObj->GetName() == L"Tile")
 	{
-		GetAnimator()->Play(L"Shoot_Right");
-	}
+		GetAnimator()->Play(L"NULL"); //맞으면 이미지 없앰
+	}//TODO:getgroupobj구현하기 오브젝트 클래스에
 }
 
 void CMissile::OnCollision(CCollider* _pOther)

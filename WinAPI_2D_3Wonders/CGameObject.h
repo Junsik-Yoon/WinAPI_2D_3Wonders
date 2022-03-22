@@ -11,6 +11,8 @@ private:
 	Vec2 m_fptPos;		//ÁÂÇ¥
 	Vec2 m_fptScale;	//Å©±â
 
+	GROUP_GAMEOBJ objGroup;
+
 	int m_hp;
 
 	bool m_bAlive;
@@ -26,6 +28,7 @@ public:
 	virtual void finalupdate();
 	virtual void render() = 0;
 	virtual void component_render();
+
 
 	void SetPos(Vec2 pos) { m_fptPos = pos; }
 	void SetScale(Vec2 scale) { m_fptScale = scale; }

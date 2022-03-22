@@ -22,7 +22,6 @@ private:
 	UINT m_wall;
 	float m_velocity;
 	float m_gravity;
-
 public:
 	void ShootFire();
 
@@ -33,6 +32,8 @@ public:
 public:
 	virtual void update();
 	virtual void render();
+	void render_information();
+
 public:
 	CGreen();
 	~CGreen();

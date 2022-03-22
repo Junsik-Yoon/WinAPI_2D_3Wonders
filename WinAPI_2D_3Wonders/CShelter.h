@@ -12,6 +12,7 @@ private:
 public:
 	virtual void update();
 	virtual void render();
+	void render_information();
 public:
 	void OnCollisionEnter(CCollider* _pOther);
 	void OnCollision(CCollider* _pOther);

@@ -4,7 +4,7 @@
 
 CCore::CCore()
 {
-	m_debugOn = true;
+	m_debugOn = false;
 }
 CCore::~CCore()
 {

@@ -2,13 +2,35 @@
 #include "CGameObject.h"
 
 class CD2DImage;
+class CBug;
+
+enum class eState_HM
+{
+	IDLE,
+	SUMMON,
+	DEAD,
+
+	SIZE,
+};
 
 class CHalfMoon : public CGameObject
 {
 private:
+	vector<CBug*> pBugs;
 	CD2DImage* m_pImg;
 
 	bool isRight;
+	eState_HM m_state;
+
+	bool isProducing;
+	float bugTimer;
+	int bugCounter;
+	float m_summonTimer;
+
+
+public:
+	void GenerateBug();
+	bool BugLivingCheck();
 
 public:
 	void OnCollisionEnter(CCollider* _pOther);

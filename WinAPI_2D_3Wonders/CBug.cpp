@@ -10,10 +10,11 @@
 
 CBug::CBug()
 {
+	isHeadedRight = false;
 	m_floor = 0;
 	m_wall = 0;
 	m_velocity = D_VELOCITY;
-	m_gravity = D_GRAVITY;
+	m_gravity = 0;
 	SetName(L"Bug");
 	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"HalfmoonBugImg", L"texture\\Animation\\Animation_HalfmoonBug.png");
 
@@ -48,12 +49,92 @@ CBug::~CBug()
 
 void CBug::update()
 {
-	Vec2 pos = GetPos();
+	Vec2 vPos = GetPos();
 
-	SetPos(pos);
+	vPos.x += 30.f * fDT;
+	
+	switch (m_state)
+	{
+	case eState_Bug::NONE:
+	{
+
+	}break;
+	case eState_Bug::FLY:
+	{
+		
+		m_gravity = 100.f;
+
+		if (m_floor > 0)
+		{
+			m_state = eState_Bug::HOP;
+		}
+
+		if (GetHP() <= 0)//이 조건은 항상 마지막에 있어야 할 듯
+		{
+			m_state = eState_Bug::NONE;
+		}
+	}break;
+	case eState_Bug::HOP:
+	{
+		if (GetHP() <= 0)
+		{
+			m_state = eState_Bug::NONE;
+		}
+	}break;
+	case eState_Bug::FLYAWAY:
+	{
+		if (GetHP() <= 0)
+		{
+			m_state = eState_Bug::NONE;
+		}
+	}break;
+	}
+
+	SetPos(vPos);
 
 	GetAnimator()->update();
 }
+void CBug::Fly()
+{
+}
+
+void CBug::Hop()
+{
+}
+
+void CBug::FlyAway()
+{
+}
+
+
+
+void CBug::OnCollisionEnter(CCollider* _pOther)
+{
+	CGameObject* pOther = _pOther->GetObj();
+	if (pOther->GetName() == L"Tile")
+	{
+		++m_floor;
+	}
+	if (pOther->GetName() == L"Missile_Player")
+	{
+		int hp = GetHP();
+		SetHP(--hp);
+	}
+}
+
+void CBug::OnCollision(CCollider* _pOther)
+{
+}
+
+void CBug::OnCollisionExit(CCollider* _pOther)
+{
+	CGameObject* pOther = _pOther->GetObj();
+	if (pOther->GetName() == L"Tile")
+	{
+		--m_floor;
+	}
+}
+
 
 void CBug::render()
 {
@@ -97,27 +178,3 @@ void CBug::render_information()
 			, RGB(255, 255, 255));
 	}
 }
-
-
-void CBug::OnCollisionEnter(CCollider* _pOther)
-{
-	CGameObject* pOther = _pOther->GetObj();
-	if (pOther->GetName() == L"Tile")
-	{
-		++m_floor;
-	}
-}
-
-void CBug::OnCollision(CCollider* _pOther)
-{
-}
-
-void CBug::OnCollisionExit(CCollider* _pOther)
-{
-	CGameObject* pOther = _pOther->GetObj();
-	if (pOther->GetName() == L"Tile")
-	{
-		--m_floor;
-	}
-}
-

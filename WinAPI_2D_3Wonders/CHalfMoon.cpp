@@ -4,14 +4,26 @@
 #include "CCollider.h"
 #include "CAnimator.h"
 #include "CAnimation.h"
-
-#define D_VELOCITY 150
-#define D_GRAVITY 400
+#include "CBug.h"
 
 CHalfMoon::CHalfMoon()
 {
+	bugCounter = 0;
+	CBug* pBug = nullptr;
+	for (int i = 0; i < 4; ++i)
+	{
+		pBug = new CBug();
+		pBugs.push_back(pBug);
+		pBugs[i]->SetHP(0);
+		pBugs[i]->SetPos(Vec2(-500.f, 0.f));
+		CreateObj(pBug, GROUP_GAMEOBJ::MONSTER);
+	}
+
+	bugTimer = 0.f;
+	m_summonTimer = 0.f;
 	SetHP(8);
 	isRight = true;
+	isProducing = false;
 	SetName(L"Halfmoon");
 	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"HalfmoonBugImg", L"texture\\Animation\\Animation_HalfmoonBug.png");
 
@@ -43,9 +55,48 @@ CHalfMoon::~CHalfMoon()
 
 void CHalfMoon::update()
 {
-	Vec2 pos = GetPos();
-
-	SetPos(pos);
+	Vec2 vPos = GetPos();
+	
+	if (GetHP())
+	{
+		if (false == BugLivingCheck())
+		{
+			isProducing = true;
+		}
+		if (isProducing)
+		{
+			m_summonTimer += fDT;
+		}
+		if (m_summonTimer >= 3.f)
+		{
+			GenerateBug();
+			if (m_summonTimer >= 7.f)
+			{
+				m_summonTimer = 0.f;
+			}
+		}
+		if (4 == bugCounter && !BugLivingCheck())
+		{
+			bugCounter = 0;
+		}
+		for (int i = 0; i < 4; ++i)
+		{
+			if (0 >= pBugs[i]->GetHP())
+			{
+				pBugs[i]->SetPos((Vec2(-500.f, 0.f)));
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < pBugs.size(); ++i)
+		{
+			DeleteObj(pBugs[i]);//TODO: 삭제에러
+		}
+		pBugs.clear();
+	}
+	
+	SetPos(vPos);
 
 	GetAnimator()->update();
 }
@@ -92,6 +143,72 @@ void CHalfMoon::render_information()
 	}
 }
 
+
+void CHalfMoon::GenerateBug()
+{
+	vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
+	Vec2 vPlayerPos = pPlayer[0]->GetPos();
+	Vec2 vPos = GetPos();
+	for (int i = 0; i < pBugs.size(); ++i)
+	{
+		if (vPlayerPos.x < vPos.x)
+		{
+			//pBugs[i]->SetHeadRight = false;
+		}
+	}
+
+	bugTimer += fDT;
+
+	if (bugTimer >= 1.f)
+	{
+		if (0== bugCounter)
+		{
+			++bugCounter;
+			bugTimer = 0.f;
+			pBugs[0]->SetPos(Vec2(vPos));
+			pBugs[0]->SetHP(1);
+			pBugs[0]->SetState(eState_Bug::FLY);
+		}
+		else if (1== bugCounter)
+		{
+			++bugCounter;
+			bugTimer = 0.f;
+			pBugs[1]->SetPos(Vec2(vPos));
+			pBugs[1]->SetHP(1);
+			pBugs[1]->SetState(eState_Bug::FLY);
+		}
+		else if (2== bugCounter)
+		{
+			++bugCounter;
+			bugTimer = 0.f;
+			pBugs[2]->SetPos(Vec2(vPos));
+			pBugs[2]->SetHP(1);
+			pBugs[2]->SetState(eState_Bug::FLY);
+		}
+		else if (3== bugCounter)
+		{
+			++bugCounter;
+			bugTimer = 0.f;
+			pBugs[3]->SetPos(Vec2(vPos));
+			pBugs[3]->SetHP(1);
+			pBugs[3]->SetState(eState_Bug::FLY);
+		}
+	
+	}
+
+}
+
+bool CHalfMoon::BugLivingCheck()
+{
+	if (0 >= pBugs[0]->GetHP() &&
+		0 >= pBugs[1]->GetHP() &&
+		0 >= pBugs[2]->GetHP() &&
+		0 >= pBugs[3]->GetHP())
+	{
+		return false;
+	}
+	return true;
+}
 
 void CHalfMoon::OnCollisionEnter(CCollider* _pOther)
 {

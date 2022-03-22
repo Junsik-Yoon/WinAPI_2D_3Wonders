@@ -130,6 +130,14 @@ void CLou::update_move()
 		GetAnimator()->Play(L"pShoot_Right");
 		//m_floor = 0;
 	}
+	if (KEY('W'))
+	{
+		m_velocity = 1000.f;
+	}
+	if (KEYUP('W'))
+	{
+		m_velocity = D_VELOCITY;
+	}
 	//////////////////////////////////////
 	//카메라 캐릭터 target
 	if (KEYDOWN('V'))

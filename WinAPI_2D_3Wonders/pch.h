@@ -11,7 +11,7 @@ enum class GROUP_GAMEOBJ
 	MONSTER,
 	FIRE,
 
-
+	EFFECT,
 	UI,
 	SIZE,
 };

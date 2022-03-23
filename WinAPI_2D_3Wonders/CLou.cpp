@@ -9,6 +9,7 @@
 #include "CTile.h"
 #include "CGoblin.h"
 #include "CD2DImage.h"
+#include "CEffect.h"
 
 #include <iostream>
 #include <random>
@@ -126,6 +127,11 @@ void CLou::update_move()
 	//모션,기능 시험용
 	if (KEYDOWN('Q'))
 	{
+		CEffect* effect = new CEffect(L"GoblinGenEff", L"texture\\Animation\\Effect_Goblin_Gen.png",
+			L"Goblin_Gen_Eff", Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.1f, 10, false, false, L"GoblinGenEff");
+		effect->SetPos(GetPos());
+		effect->SetDuration(10.f);
+		CreateObj(effect, GROUP_GAMEOBJ::EFFECT);
 		//GenerateGoblin();
 		//GetAnimator()->Play(L"pShoot_Right");
 		//m_floor = 0;
@@ -794,12 +800,10 @@ void CLou::GenerateGoblin()
 	pGoblin->SetPos(tilePos);
 	if (pGoblin->GetPos().x < GetPos().x)
 	{
-		pGoblin->GetAnimator()->Play(L"Create_Right");
 		pGoblin->SetFacedRight(true);
 	}
 	else
 	{
-		pGoblin->GetAnimator()->Play(L"Create_Left");
 		pGoblin->SetFacedRight(false);
 	}
 	CreateObj(pGoblin, GROUP_GAMEOBJ::MONSTER);

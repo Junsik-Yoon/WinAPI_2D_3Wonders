@@ -267,7 +267,7 @@
       <Filter>Engine\02.Manager\12.EffectManager</Filter>
     </ClInclude>
     <ClInclude Include="CEffect.h">
-      <Filter>Engine\03.Component\Animator\Animation</Filter>
+      <Filter>Things\01.Object\Background</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -427,7 +427,7 @@
       <Filter>Engine\02.Manager\12.EffectManager</Filter>
     </ClCompile>
     <ClCompile Include="CEffect.cpp">
-      <Filter>Engine\03.Component\Animator\Animation</Filter>
+      <Filter>Things\01.Object\Background</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

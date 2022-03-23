@@ -4,12 +4,16 @@
 #include "CCollider.h"
 #include "CAnimator.h"
 #include "CAnimation.h"
+#include "CEffect.h"
 
 #define D_VELOCITY 150
 #define D_GRAVITY 400
 
 CGoblin::CGoblin()
 {
+	isBackflipRight = true;
+	m_timeCounter = 0.f;
+	m_state = eState_Goblin::BORN;
 	SetHP(2);
 	m_floor=0;
 	m_wall=0;
@@ -36,8 +40,6 @@ CGoblin::CGoblin()
 	GetAnimator()->CreateAnimation(L"Die_Left", m_pImg, Vec2(640.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.1f, 5, false);
 	GetAnimator()->CreateAnimation(L"Die_Right", m_pImg, Vec2(512.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.1f, 5, false);
 
-
-	GetAnimator()->Play(L"Die_Left");
 	CCameraManager::getInst()->GetRenderPos(GetPos());
 }
 
@@ -47,6 +49,19 @@ CGoblin::~CGoblin()
 
 
 void CGoblin::update()
+{
+	update_move();
+	update_animation();
+	GetAnimator()->update();
+}
+
+void CGoblin::render()
+{
+	component_render();
+	render_information();
+}
+
+void CGoblin::update_move()
 {
 	Vec2 vPos = GetPos();
 
@@ -60,28 +75,128 @@ void CGoblin::update()
 		m_gravity = 0;
 	}
 
-	vector<CGameObject*> pPlayer=CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
-	if (pPlayer[0]->GetPos().x >= GetPos().x)
+	switch (m_state)
 	{
-		vPos.x += 50.f * fDT;
-		GetAnimator()->Play(L"Move_Right");
-	}
-	else
+	case eState_Goblin::BORN:
 	{
-		vPos.x -= 50.f * fDT;
-		GetAnimator()->Play(L"Move_Left");
+		m_timeCounter += fDT;
+		if (m_timeCounter >= 2.f)
+		{
+			m_timeCounter = 0.f;
+			m_state = eState_Goblin::MOVE;
+		}
+		if (0 >= GetHP())
+		{
+			m_timeCounter = 0.f;
+			m_state = eState_Goblin::DEAD;
+		}
+	}break;
+	case eState_Goblin::MOVE:
+	{
+		vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
+		if (pPlayer[0]->GetPos().x >= GetPos().x)
+		{
+			vPos.x += 50.f * fDT;
+			GetAnimator()->Play(L"Move_Right");
+		}
+		else
+		{
+			vPos.x -= 50.f * fDT;
+			GetAnimator()->Play(L"Move_Left");
+		}
+
+		if (0 >= GetHP())
+		{
+			m_timeCounter = 0.f;
+			m_state = eState_Goblin::DEAD;
+		}
+	}break;
+	case eState_Goblin::LAUGH:
+	{
+
+	}break;
+	case eState_Goblin::JUMP:
+	{
+
+	}break;
+	case eState_Goblin::JUMPUP:
+	{
+
+	}break;
+	case eState_Goblin::JUMPDOWN:
+	{
+
+	}break;
+	case eState_Goblin::TELEPORT:
+	{
+
+	}break;
+	case eState_Goblin::DEAD:
+	{
+		m_timeCounter += fDT;
+
+		if (isBackflipRight)
+		{
+			vPos.x += m_velocity * 2.f;
+		}
+		else
+		{
+			vPos.x -= m_velocity * 2.f;
+		}
+
+		if (m_timeCounter >= 100.f)
+		{
+			m_timeCounter = 0.f;
+			DeleteObj(this);
+		}
+
+	}break;
 	}
-	//TODO: 플레이어와 좌표 x차이(절대값)가 일정 이하이고 y축이 위나 아래인 경우 고블린이 점프해서 플레이어를 찌르거나 점프해서 내려오는 것 구현
 
 	SetPos(vPos);
-
-	GetAnimator()->update();
 }
 
-void CGoblin::render()
+void CGoblin::update_animation()
 {
-	component_render();
-	render_information();
+	switch (m_state)
+	{
+	case eState_Goblin::BORN:
+	{
+		if (isFacedRight)
+		{
+			GetAnimator()->Play(L"Create_Right");
+		}
+		else
+		{
+			GetAnimator()->Play(L"Create_Left");
+		}
+	}
+		break;
+	case eState_Goblin::MOVE:
+		break;
+	case eState_Goblin::LAUGH:
+		break;
+	case eState_Goblin::JUMP:
+		break;
+	case eState_Goblin::JUMPUP:
+		break;
+	case eState_Goblin::JUMPDOWN:
+		break;
+	case eState_Goblin::TELEPORT:
+		break;
+	case eState_Goblin::DEAD: 
+	{
+		if (isFacedRight)
+		{
+			GetAnimator()->Play(L"Die_Right");
+		}
+		else
+		{
+			GetAnimator()->Play(L"Die_Left");
+		}
+
+	}break;
+	}
 }
 
 void CGoblin::render_information()
@@ -102,13 +217,32 @@ void CGoblin::render_information()
 
 		////////////////////////
 		wstring curAni = {};
+		wstring curState = {};
 		////////////////////////
+		switch (m_state)
+		{
+		case eState_Goblin::BORN:curState = L"BORN";
+			break;
+		case eState_Goblin::MOVE:curState = L"BORN";
+			break;
+		case eState_Goblin::LAUGH:curState = L"BORN";
+			break;
+		case eState_Goblin::JUMP:curState = L"BORN";
+			break;
+		case eState_Goblin::JUMPUP:curState = L"BORN";
+			break;
+		case eState_Goblin::JUMPDOWN:curState = L"BORN";
+			break;
+		case eState_Goblin::TELEPORT:curState = L"BORN";
+			break;
+		case eState_Goblin::DEAD:curState = L"DEAD";
+		}
 		curAni = GetAnimator()->GetCurrentAnimation()->GetName();
 		CRenderManager::getInst()->RenderText(
 			L" pos X : " + std::to_wstring(GetPos().x) + L"\n" +
 			L" pos Y : " + std::to_wstring(GetPos().y) + L"\n" +
-			L" state  : " + L"" + L"\n" +
-			L" drctn  : " + std::to_wstring(isFacedRight) + L"\n" +//TODO:수정
+			L" state  : " + curState + L"\n" +
+			L" drtnLR  : " + std::to_wstring(isFacedRight) + L"\n" +//TODO:수정
 			L" curAm : " + curAni + L"\n" +
 			L" HP:  " + std::to_wstring(GetHP()) + L"\n" +
 			L" wallCount : " + std::to_wstring(m_floor)
@@ -142,12 +276,15 @@ void CGoblin::OnCollisionEnter(CCollider* _pOther)
 	if (pOther->GetName() == L"Missile_Player")
 	{
 		int hp = GetHP();
+
+		if(pOther->GetPos().x>=GetPos().x)
+			SetBackflipDir(false);
+		if (pOther->GetPos().x < GetPos().x)
+			SetBackflipDir(true);
+
 		SetHP(--hp);
 	}
-	if (GetHP() <= 0)
-	{
-		DeleteObj(this);
-	}
+
 }
 
 void CGoblin::OnCollision(CCollider* _pOther)

@@ -55,7 +55,7 @@ void CShelter::update()
 		GetAnimator()->Play(L"HP0");
 		break;
 	}
-	if (0 == GetHP())
+	if (0 >= GetHP())
 	{
 		//GetCollider()->SetScale(Vec2(0.f, 0.f));
 		GetCollider()->SetOffsetPos(Vec2(0.f, -650.f));

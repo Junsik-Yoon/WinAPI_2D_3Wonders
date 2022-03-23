@@ -4,17 +4,23 @@
 #include "CCollider.h"
 #include "CAnimator.h"
 #include "CAnimation.h"
+#include "CTile.h"
 
 #define D_VELOCITY 150
-#define D_GRAVITY 400
+#define D_GRAVITY 500
+#define D_UPFORCE 800
 
 CBug::CBug()
 {
-	isHeadedRight = false;
+	isJump = false;
+	m_upforce = D_UPFORCE;
+	m_highJump = 0.f;
+	isGoingRight = false;
 	m_floor = 0;
 	m_wall = 0;
 	m_velocity = D_VELOCITY;
-	m_gravity = 0;
+	m_lifeCycle = 0.f;
+	m_gravity = 0.f;
 	SetName(L"Bug");
 	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"HalfmoonBugImg", L"texture\\Animation\\Animation_HalfmoonBug.png");
 
@@ -34,9 +40,11 @@ CBug::CBug()
 	GetAnimator()->CreateAnimation(L"Jump_Left", m_pImg, Vec2(384.f, 256.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 5, false);
 	GetAnimator()->CreateAnimation(L"Jump_Right", m_pImg, Vec2(384.f, 384.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 5, false);
 
+	GetAnimator()->CreateAnimation(L"NULL", m_pImg, Vec2(0.f, 1000.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, false);
 
 
-	GetAnimator()->Play(L"Jump_Right");
+
+	GetAnimator()->Play(L"NULL");
 
 	CCameraManager::getInst()->GetRenderPos(GetPos());
 }
@@ -49,33 +57,132 @@ CBug::~CBug()
 
 void CBug::update()
 {
-	Vec2 vPos = GetPos();
+	update_move();
+	update_animation();
 
-	vPos.x += 30.f * fDT;
-	
+	GetAnimator()->update();
+}
+
+void CBug::update_move()
+{
+	Vec2 vPos = GetPos();
+	vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
+	Vec2 vPlayerPos = pPlayer[0]->GetPos();
+
+	vPos.y += m_gravity * fDT;
+
 	switch (m_state)
 	{
 	case eState_Bug::NONE:
 	{
-
+		m_gravity = 0.f;
+		m_velocity = 0.f;
+		m_lifeCycle = 0.f;
 	}break;
-	case eState_Bug::FLY:
+	case eState_Bug::BORN:
 	{
-		
-		m_gravity = 100.f;
+		m_lifeCycle += fDT;
+		m_gravity = 0.f;
+		m_velocity = D_VELOCITY;
+		if (isFacingRight)
+		{
+			vPos.x += m_velocity * fDT;
+		}
+		else
+		{
+			vPos.x -= m_velocity * fDT;
+		}
+		if (m_lifeCycle >= 1.f)
+		{
+			m_state = eState_Bug::FLY;
+		}
 
 		if (m_floor > 0)
 		{
-			m_state = eState_Bug::HOP;
+			m_state = eState_Bug::IDLE;
+		}
+		if (GetHP() <= 0)//이 조건은 항상 마지막에 있어야 할 듯
+		{
+			m_state = eState_Bug::NONE;
+		}
+	}break;
+	case eState_Bug::FLY:
+	{
+		m_lifeCycle += fDT;
+
+		m_gravity = 100.f;
+		if (isGoingRight)
+		{
+			isFacingRight = true;
+			vPos.x += m_velocity * fDT;
+		}
+		else
+		{
+			isFacingRight = false;
+			vPos.x -= m_velocity * fDT;
 		}
 
-		if (GetHP() <= 0)//이 조건은 항상 마지막에 있어야 할 듯
+		if (m_floor > 0)
+		{
+			m_state = eState_Bug::IDLE;
+		}
+
+		if (m_lifeCycle >= 15.f)
+		{
+			m_state = eState_Bug::FLYAWAY;
+		}
+		if (GetHP() <= 0)
 		{
 			m_state = eState_Bug::NONE;
 		}
 	}break;
 	case eState_Bug::HOP:
 	{
+		vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
+		Vec2 pPlayerPos = pPlayer[0]->GetPos();
+
+		m_velocity = 50.f;
+		m_gravity = D_GRAVITY;
+		m_upforce -= m_gravity * fDT;
+		vPos.y -= m_upforce * fDT;
+		if (pPlayerPos.x < vPos.x)
+		{
+			isFacingRight = false;
+			vPos.x -= m_velocity * fDT;
+		}
+		else if (pPlayerPos.x > vPos.x)
+		{
+			isFacingRight = true;
+			vPos.x += m_velocity * fDT;
+		}
+
+		if (m_floor > 0)
+		{
+			m_state = eState_Bug::IDLE;
+		}
+		m_lifeCycle += fDT;
+		if (m_lifeCycle >= 15.f)
+		{
+			m_state = eState_Bug::FLYAWAY;
+		}
+		if (GetHP() <= 0)
+		{
+			m_state = eState_Bug::NONE;
+		}
+	}break;
+	case eState_Bug::IDLE:
+	{
+		m_upforce = D_UPFORCE;
+		vPos.y -= 2.f;
+		if (m_floor == 0)
+		{
+			m_state = eState_Bug::HOP;
+		}
+		m_lifeCycle += fDT;
+		if (m_lifeCycle >= 15.f)
+		{
+			m_state = eState_Bug::FLYAWAY;
+		}
 		if (GetHP() <= 0)
 		{
 			m_state = eState_Bug::NONE;
@@ -83,6 +190,14 @@ void CBug::update()
 	}break;
 	case eState_Bug::FLYAWAY:
 	{
+		m_lifeCycle = 0.f;
+		m_gravity = -D_GRAVITY;
+
+		if (vPos.y <= 0.f)
+		{
+			SetHP(0);
+		}
+
 		if (GetHP() <= 0)
 		{
 			m_state = eState_Bug::NONE;
@@ -92,28 +207,76 @@ void CBug::update()
 
 	SetPos(vPos);
 
-	GetAnimator()->update();
-}
-void CBug::Fly()
-{
 }
 
-void CBug::Hop()
+
+
+void CBug::update_animation()
 {
+	switch (m_state)
+	{
+	case eState_Bug::NONE:	GetAnimator()->Play(L"Land_Left");
+		break;
+	case eState_Bug::BORN:	
+		if (isFacingRight)
+		{
+			GetAnimator()->Play(L"Fly_Right");
+		}
+		else
+		{
+			GetAnimator()->Play(L"Fly_Left");
+		}
+		break;
+	case eState_Bug::FLY:
+		if (isFacingRight)
+		{
+			GetAnimator()->Play(L"Fly_Right");
+		}
+		else
+		{
+			GetAnimator()->Play(L"Fly_Left");
+		}
+		break;
+	case eState_Bug::FLYAWAY:
+		if (isFacingRight)
+		{
+			GetAnimator()->Play(L"Fly_Right");
+		}
+		else
+		{
+			GetAnimator()->Play(L"Fly_Left");
+		}
+		break;
+
+	case eState_Bug::HOP:
+		if (isFacingRight)
+		{
+			GetAnimator()->Play(L"Jump_Right");
+		}
+		else
+		{
+			GetAnimator()->Play(L"Jump_Left");
+		}
+		break;
+
+	}
+
 }
 
-void CBug::FlyAway()
-{
-}
+
 
 
 
 void CBug::OnCollisionEnter(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
-	if (pOther->GetName() == L"Tile")
+	CTile* pTile = (CTile *)pOther;
+	if (pTile->GetName() == L"Tile")
 	{
-		++m_floor;
+		if (pTile->GetGroup() == GROUP_TILE::GROUND)
+		{
+			++m_floor;
+		}
 	}
 	if (pOther->GetName() == L"Missile_Player")
 	{
@@ -124,14 +287,29 @@ void CBug::OnCollisionEnter(CCollider* _pOther)
 
 void CBug::OnCollision(CCollider* _pOther)
 {
+	CGameObject* pOther = _pOther->GetObj();
+	Vec2 vPos = GetPos();
+	if (pOther->GetName() == L"Tile")
+	{
+		int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
+		int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
+		int sum = abs(a - b);
+		if (1 < sum)
+			--vPos.y;
+	}
+	SetPos(vPos);
 }
 
 void CBug::OnCollisionExit(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
+	CTile* pTile = (CTile*)pOther;
 	if (pOther->GetName() == L"Tile")
 	{
-		--m_floor;
+		if (pTile->GetGroup() == GROUP_TILE::GROUND)
+		{
+			--m_floor;
+		}
 	}
 }
 
@@ -160,13 +338,30 @@ void CBug::render_information()
 
 		////////////////////////
 		wstring curAni = {};
+		wstring curState = {};
 		////////////////////////
+		switch (m_state)
+		{
+		case eState_Bug::NONE: curState = L"NONE";
+			break;
+		case eState_Bug::BORN:curState = L"BORN";
+			break;
+		case eState_Bug::FLY:curState = L"FLY";
+			break;
+		case eState_Bug::HOP:curState = L"HOP";
+			break;
+		case eState_Bug::IDLE:curState = L"IDLE";
+			break;
+		case eState_Bug::FLYAWAY:curState = L"FLYAWAY";
+			break;
+		}
 		curAni = GetAnimator()->GetCurrentAnimation()->GetName();
 		CRenderManager::getInst()->RenderText(
 			L" pos X : " + std::to_wstring(GetPos().x) + L"\n" +
 			L" pos Y : " + std::to_wstring(GetPos().y) + L"\n" +
-			L" state  : " + L"" + L"\n" +
-			L" drctn  : " + L"" + L"\n" +
+			L" state  : " + curState + L"\n" +
+			L"upforce : "+ std::to_wstring(m_upforce)+L"\n"+
+			L"gravity : "+ std::to_wstring(m_gravity)+L"\n"+ 
 			L" curAm : " + curAni + L"\n" +
 			L" HP:  " + std::to_wstring(GetHP()) + L"\n" +
 			L" wallCount : " + std::to_wstring(m_floor)

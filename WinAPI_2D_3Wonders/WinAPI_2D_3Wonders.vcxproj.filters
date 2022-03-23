@@ -104,6 +104,9 @@
     <Filter Include="Things\01.Object\Missile">
       <UniqueIdentifier>{b9322c05-e180-4d0e-b75a-3d96c14101bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\02.Manager\12.EffectManager">
+      <UniqueIdentifier>{736fc747-ede5-4ba9-86dd-7e578cda1320}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -260,6 +263,12 @@
     <ClInclude Include="CGameObject.h">
       <Filter>Things\01.Object</Filter>
     </ClInclude>
+    <ClInclude Include="CEffectManager.h">
+      <Filter>Engine\02.Manager\12.EffectManager</Filter>
+    </ClInclude>
+    <ClInclude Include="CEffect.h">
+      <Filter>Engine\03.Component\Animator\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -413,6 +422,12 @@
     </ClCompile>
     <ClCompile Include="CGameObject.cpp">
       <Filter>Things\01.Object</Filter>
+    </ClCompile>
+    <ClCompile Include="CEffectManager.cpp">
+      <Filter>Engine\02.Manager\12.EffectManager</Filter>
+    </ClCompile>
+    <ClCompile Include="CEffect.cpp">
+      <Filter>Engine\03.Component\Animator\Animation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

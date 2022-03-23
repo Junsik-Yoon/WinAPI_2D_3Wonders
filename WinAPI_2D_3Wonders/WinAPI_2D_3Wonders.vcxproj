@@ -162,6 +162,8 @@
     <ClInclude Include="CCollisionManager.h" />
     <ClInclude Include="CCore.h" />
     <ClInclude Include="CD2DImage.h" />
+    <ClInclude Include="CEffect.h" />
+    <ClInclude Include="CEffectManager.h" />
     <ClInclude Include="CEventManager.h" />
     <ClInclude Include="CGameSelect.h" />
     <ClInclude Include="CGoblin.h" />
@@ -216,6 +218,8 @@
     <ClCompile Include="CCollisionManager.cpp" />
     <ClCompile Include="CCore.cpp" />
     <ClCompile Include="CD2DImage.cpp" />
+    <ClCompile Include="CEffect.cpp" />
+    <ClCompile Include="CEffectManager.cpp" />
     <ClCompile Include="CEventManager.cpp" />
     <ClCompile Include="CGameSelect.cpp" />
     <ClCompile Include="CGoblin.cpp" />

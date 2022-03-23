@@ -69,7 +69,7 @@ void CScene_Stage1::Enter()
 	AddObject(pBG1, GROUP_GAMEOBJ::BACKGROUND);
 
 	CLou* pLou = new CLou();
-	pLou->SetPos(Vec2(300.f, 0.f));
+	pLou->SetPos(Vec2(200.f, 0.f));
 	AddObject(pLou, GROUP_GAMEOBJ::PLAYER);
 
 	CGolemWood* pGolemWood = new CGolemWood();
@@ -155,7 +155,7 @@ void CScene_Stage1::Enter()
 	CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
 	//CCameraManager::getInst()->FadeOut(5.f);
 	CCameraManager::getInst()->FadeIn(1.f);
-	CCameraManager::getInst()->SetTargetX(pHalfMoon2);
+	CCameraManager::getInst()->SetTargetX(pHalfMoon1);
 
 
 }

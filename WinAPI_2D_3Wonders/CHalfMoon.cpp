@@ -36,8 +36,14 @@ CHalfMoon::CHalfMoon()
 	GetAnimator()->CreateAnimation(L"Idle_Right", m_pImg, Vec2(0.f, 128.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, false);
 	GetAnimator()->CreateAnimation(L"Idle_Left", m_pImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, false);
 
-	GetAnimator()->CreateAnimation(L"Summon_Right", m_pImg, Vec2(128.f, 128.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 9, false);
-	GetAnimator()->CreateAnimation(L"Summon_Left", m_pImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 9, false);
+	GetAnimator()->CreateAnimation(L"Open_Right", m_pImg, Vec2(128.f, 128.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 4, false);
+	GetAnimator()->CreateAnimation(L"Open_Left", m_pImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 4, false);
+
+	GetAnimator()->CreateAnimation(L"Summon_Right", m_pImg, Vec2(640.f, 128.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 4.f, 1, false);
+	GetAnimator()->CreateAnimation(L"Summon_Left", m_pImg, Vec2(640.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 4.f, 1, false);
+
+	GetAnimator()->CreateAnimation(L"Close_Right", m_pImg, Vec2(768.f, 128.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 4, false);
+	GetAnimator()->CreateAnimation(L"Close_Left", m_pImg, Vec2(768.f, 128.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 4, false);
 
 	GetAnimator()->CreateAnimation(L"Dead_Left" ,m_pImg, Vec2(1280.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, false);
 	GetAnimator()->CreateAnimation(L"Dead_Right", m_pImg, Vec2(1280.f, 128.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, false);
@@ -55,23 +61,57 @@ CHalfMoon::~CHalfMoon()
 
 void CHalfMoon::update()
 {
+	vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
+	Vec2 vPlayerPos = pPlayer[0]->GetPos();
 	Vec2 vPos = GetPos();
-	
 	if (GetHP())
 	{
 		if (false == BugLivingCheck())
 		{
-			isProducing = true;
+			if (abs(vPlayerPos.x - vPos.x) < 600.f)
+			{
+				isProducing = true;
+			}
 		}
 		if (isProducing)
 		{
 			m_summonTimer += fDT;
 		}
+		if (m_summonTimer >= 2.2f
+			&& m_summonTimer < 3.f)
+		{
+			if(isRight)
+				GetAnimator()->Play(L"Open_Right");
+			else
+				GetAnimator()->Play(L"Open_Left");
+		}
 		if (m_summonTimer >= 3.f)
 		{
 			GenerateBug();
-			if (m_summonTimer >= 7.f)
+			if (m_summonTimer >= 3.0f
+				&& m_summonTimer < 7.0f)
+			if (isRight)
 			{
+				GetAnimator()->Play(L"Summon_Right");
+			}
+			else
+			{
+				GetAnimator()->Play(L"Summon_Left");
+			}
+			if (m_summonTimer >= 7.2f
+				&& m_summonTimer < 7.5f)
+			{
+				if (isRight)
+					GetAnimator()->Play(L"Close_Right");
+				else
+					GetAnimator()->Play(L"Close_Left");
+			}
+			if (m_summonTimer >= 7.5f)
+			{
+				if (isRight)
+					GetAnimator()->Play(L"Idle_Right");
+				else
+					GetAnimator()->Play(L"Idle_Left");
 				m_summonTimer = 0.f;
 			}
 		}
@@ -101,61 +141,35 @@ void CHalfMoon::update()
 	GetAnimator()->update();
 }
 
-void CHalfMoon::render()
-{
-	component_render();
-	render_information();
-}
-
-void CHalfMoon::render_information()
-{
-	if (true == CCore::getInst()->DebugMode())
-	{
-		CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"BackInfo", L"texture\\BackInfo.png");
-		Vec2 vPos = GetPos();
-		vPos = CCameraManager::getInst()->GetRenderPos(vPos);
-
-		CRenderManager::getInst()->RenderImage(
-			pImg,
-			vPos.x + 30.f,
-			vPos.y + -40.f,
-			vPos.x + 200.f,
-			vPos.y + 100.f,
-			0.3f);
-
-		////////////////////////
-		wstring curAni = {};
-		////////////////////////
-		curAni = GetAnimator()->GetCurrentAnimation()->GetName();
-		CRenderManager::getInst()->RenderText(
-			L" pos X : " + std::to_wstring(GetPos().x) + L"\n" +
-			L" pos Y : " + std::to_wstring(GetPos().y) + L"\n" +
-			L" state  : " + L"" + L"\n" +
-			L" drctn  : " + std::to_wstring(isRight) + L"\n" +//TODO:수정
-			L" curAm : " + curAni + L"\n" +
-			L" HP:  " + std::to_wstring(GetHP()) + L"\n"
-			, vPos.x + 30.f
-			, vPos.y + -40.f
-			, vPos.x + 200.f
-			, vPos.y + 100.f
-			, 16.f
-			, RGB(255, 255, 255));
-	}
-}
-
-
 void CHalfMoon::GenerateBug()
 {
 	vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
 	Vec2 vPlayerPos = pPlayer[0]->GetPos();
 	Vec2 vPos = GetPos();
+	if (vPlayerPos.x < vPos.x)
+	{
+		pBugs[0]->SetGoRight(false);
+	}
+	else
+	{
+		pBugs[0]->SetGoRight(true);
+	}
+	for (int i = 1; i < pBugs.size(); ++i)
+	{
+		pBugs[i]->SetGoRight(pBugs[0]->GetGoRight());
+	}
 	for (int i = 0; i < pBugs.size(); ++i)
 	{
-		if (vPlayerPos.x < vPos.x)
+		if (isRight)
 		{
-			//pBugs[i]->SetHeadRight = false;
+			pBugs[i]->SetFaceRight(true);
+		}
+		else
+		{
+			pBugs[i]->SetFaceRight(false);
 		}
 	}
+
 
 	bugTimer += fDT;
 
@@ -167,7 +181,7 @@ void CHalfMoon::GenerateBug()
 			bugTimer = 0.f;
 			pBugs[0]->SetPos(Vec2(vPos));
 			pBugs[0]->SetHP(1);
-			pBugs[0]->SetState(eState_Bug::FLY);
+			pBugs[0]->SetState(eState_Bug::BORN);
 		}
 		else if (1== bugCounter)
 		{
@@ -175,7 +189,7 @@ void CHalfMoon::GenerateBug()
 			bugTimer = 0.f;
 			pBugs[1]->SetPos(Vec2(vPos));
 			pBugs[1]->SetHP(1);
-			pBugs[1]->SetState(eState_Bug::FLY);
+			pBugs[1]->SetState(eState_Bug::BORN);
 		}
 		else if (2== bugCounter)
 		{
@@ -183,7 +197,7 @@ void CHalfMoon::GenerateBug()
 			bugTimer = 0.f;
 			pBugs[2]->SetPos(Vec2(vPos));
 			pBugs[2]->SetHP(1);
-			pBugs[2]->SetState(eState_Bug::FLY);
+			pBugs[2]->SetState(eState_Bug::BORN);
 		}
 		else if (3== bugCounter)
 		{
@@ -191,7 +205,7 @@ void CHalfMoon::GenerateBug()
 			bugTimer = 0.f;
 			pBugs[3]->SetPos(Vec2(vPos));
 			pBugs[3]->SetHP(1);
-			pBugs[3]->SetState(eState_Bug::FLY);
+			pBugs[3]->SetState(eState_Bug::BORN);
 		}
 	
 	}
@@ -256,3 +270,44 @@ void CHalfMoon::OnCollisionExit(CCollider* _pOther)
 
 }
 
+void CHalfMoon::render()
+{
+	component_render();
+	render_information();
+}
+
+void CHalfMoon::render_information()
+{
+	if (true == CCore::getInst()->DebugMode())
+	{
+		CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"BackInfo", L"texture\\BackInfo.png");
+		Vec2 vPos = GetPos();
+		vPos = CCameraManager::getInst()->GetRenderPos(vPos);
+
+		CRenderManager::getInst()->RenderImage(
+			pImg,
+			vPos.x + 30.f,
+			vPos.y + -40.f,
+			vPos.x + 200.f,
+			vPos.y + 100.f,
+			0.3f);
+
+		////////////////////////
+		wstring curAni = {};
+		////////////////////////
+		curAni = GetAnimator()->GetCurrentAnimation()->GetName();
+		CRenderManager::getInst()->RenderText(
+			L" pos X : " + std::to_wstring(GetPos().x) + L"\n" +
+			L" pos Y : " + std::to_wstring(GetPos().y) + L"\n" +
+			L" state  : " + L"" + L"\n" +
+			L" drctn  : " + std::to_wstring(isRight) + L"\n" +//TODO:수정
+			L" curAm : " + curAni + L"\n" +
+			L" HP:  " + std::to_wstring(GetHP()) + L"\n"
+			, vPos.x + 30.f
+			, vPos.y + -40.f
+			, vPos.x + 200.f
+			, vPos.y + 100.f
+			, 16.f
+			, RGB(255, 255, 255));
+	}
+}

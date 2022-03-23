@@ -6,8 +6,10 @@ class CD2DImage;
 enum class eState_Bug
 {
 	NONE,
+	BORN,
 	FLY,
 	HOP,
+	IDLE,
 	FLYAWAY,
 	SIZE,
 };
@@ -20,16 +22,22 @@ private:
 	eState_Bug m_state;
 	UINT m_floor;
 	UINT m_wall;
+	float m_lifeCycle;
 	float m_velocity;
 	float m_gravity;
-	bool isHeadedRight;
+	float m_upforce;
+	bool isFacingRight;
+	bool isGoingRight;
+	float m_highJump;
+	bool isJump;
 public:
-	void Fly();
-	void Hop();
-	void FlyAway();
+	void Hop(float _velocity);
 
 public:
 	void SetState(eState_Bug _state) { m_state = _state; }
+	void SetGoRight(bool _isHeadedRight) { isGoingRight = _isHeadedRight; }
+	void SetFaceRight(bool _isFacingRight) { isFacingRight = _isFacingRight; }
+	bool GetGoRight() { return isGoingRight; }
 public:
 	void OnCollisionEnter(CCollider* _pOther);
 	void OnCollision(CCollider* _pOther);
@@ -37,6 +45,8 @@ public:
 public:
 	virtual void update();
 	virtual void render();
+	void update_move();
+	void update_animation();
 	void render_information();
 public:
 	CBug();

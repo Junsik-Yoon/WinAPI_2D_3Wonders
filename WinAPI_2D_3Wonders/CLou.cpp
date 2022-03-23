@@ -127,10 +127,10 @@ void CLou::update_move()
 	if (KEYDOWN('Q'))
 	{
 		//GenerateGoblin();
-		GetAnimator()->Play(L"pShoot_Right");
+		//GetAnimator()->Play(L"pShoot_Right");
 		//m_floor = 0;
 	}
-	if (KEY('W'))
+	if (KEY('W'))//누르고있으면 속도 부스터:테스트용
 	{
 		m_velocity = 1000.f;
 	}
@@ -149,7 +149,7 @@ void CLou::update_move()
 	if (m_goblinCounter >= 5.f)
 	{
 		m_goblinCounter = 0.f;
-		//GenerateGoblin();
+		GenerateGoblin();
 	}
 	//////////////////////////////////////
 	//////////////////////////////////////

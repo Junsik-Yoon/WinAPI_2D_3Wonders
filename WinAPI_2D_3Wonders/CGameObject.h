@@ -44,7 +44,7 @@ public:
 
 	CCollider* GetCollider() { return m_pCollider; }
 	void CreateCollider();
-	void DeleteCollider();
+
 
 	virtual void OnCollision(CCollider* _pOther) {}
 	virtual void OnCollisionEnter(CCollider* _pOther) {}

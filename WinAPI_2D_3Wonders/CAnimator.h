@@ -3,6 +3,7 @@
 class CGameObject;
 class CAnimation;
 class CTexture;
+class CEffect;
 
 class CAnimator
 {
@@ -10,6 +11,7 @@ class CAnimator
 
 private:
 	map<wstring, CAnimation*>	m_mapAni;
+	map<wstring, CEffect*> m_mapEffect;
 	CAnimation* m_pCurAni;
 	CGameObject* m_pOwner;
 	Vec2 offset;

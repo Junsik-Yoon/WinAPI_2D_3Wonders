@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "CCameraManager.h"
 #include "CGameObject.h"
-
+#include "CD2DImage.h"
 CCameraManager::CCameraManager()
 {
 	m_fTime = 0.1f;
@@ -53,6 +53,7 @@ void CCameraManager::update()
 			tempPos.y = m_fptPrevLookAt.y;
 			SetLookAt(tempPos);
 		}
+
 	}
 	if (m_pTargetY)
 	{
@@ -72,6 +73,18 @@ void CCameraManager::update()
 
 	// 화면 중앙과 카메라 LookAt 좌표 사이의 차이 계산
 	CalDiff();
+	CD2DImage* pStage1BG = CResourceManager::getInst()->FindD2DImage(L"BGImg");
+	
+	//카메라가 배경화면 바깥을 비추지 않도록
+	if (m_fptCurLookAt.x - WINSIZEX / 2 < 0)
+	{
+		m_fptCurLookAt.x = WINSIZEX / 2;
+	}
+	if (m_fptCurLookAt.x + WINSIZEX / 2 > pStage1BG->GetWidth())
+	{
+		m_fptCurLookAt.x = pStage1BG->GetWidth() - WINSIZEX / 2;
+	}
+	m_fptDiff = m_fptCurLookAt - Vec2(WINSIZEX / 2, WINSIZEY / 2);
 }
 
 void CCameraManager::render()

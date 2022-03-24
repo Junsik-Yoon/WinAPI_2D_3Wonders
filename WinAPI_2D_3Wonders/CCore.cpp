@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CCore.h"
 #include "CTexture.h"
+#include "CScene.h"
 
 CCore::CCore()
 {
@@ -34,19 +35,47 @@ void CCore::render()
 	CRenderManager::getInst()->RenderFillRectangle(-1, -1, WINSIZEX + 1, WINSIZEY + 1, RGB(255, 255, 255));
 	CSceneManager::getInst()->render();
 	CCameraManager::getInst()->render();
-
-	//fps
-	WCHAR strFPS[6];
-	swprintf_s(strFPS, L"%d", CTimeManager::getInst()->GetFPS());
-	CRenderManager::getInst()->RenderText(strFPS, WINSIZEX - 50, 10, WINSIZEX, 50, 12, RGB(0, 0, 0));
+	render_information();
 
 	CRenderManager::getInst()->GetRenderTarget()->EndDraw();
+}
 
+void CCore::render_information()
+{
+
+	if (CCore::getInst()->DebugMode())
+	{
+		CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"BackInfo", L"texture\\BackInfo.png");
+
+		////////////////////////
+		wstring curScene = {};
+		////////////////////////
+		CScene* pCurScene = CSceneManager::getInst()->GetCurScene();
+		
+		curScene = pCurScene->GetName();
+
+		CRenderManager::getInst()->RenderImage(
+			pImg,
+			WINSIZEX - 105.f,
+			0,
+			WINSIZEX,
+			70.f,
+			0.1f);
+
+		CRenderManager::getInst()->RenderText(
+			L" FPS :   " + std::to_wstring(CTimeManager::getInst()->GetFPS()) + L"\n" +
+			L" "+ curScene + L"\n",
+			WINSIZEX - 100.f,
+			0,
+			WINSIZEX,
+			70.f,
+			13.f,
+			RGB(0, 0, 0));
+	}
 }
 
 void CCore::init()
 {
-
 	CPathManager::getInst()->init();
 	CTimeManager::getInst()->init();
 	CKeyManager::getInst()->init();
@@ -55,8 +84,6 @@ void CCore::init()
 	CCameraManager::getInst()->init();
 	CSceneManager::getInst()->init();
 	CCollisionManager::getInst()->init();
-
-
 }
 
 

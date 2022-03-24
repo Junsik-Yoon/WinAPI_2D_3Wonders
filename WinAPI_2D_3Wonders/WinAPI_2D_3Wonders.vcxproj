@@ -157,6 +157,7 @@
     <ClInclude Include="CBug.h" />
     <ClInclude Include="CButtonUI.h" />
     <ClInclude Include="CCameraManager.h" />
+    <ClInclude Include="CChest.h" />
     <ClInclude Include="CChestnut.h" />
     <ClInclude Include="CCollider.h" />
     <ClInclude Include="CCollisionManager.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="CBug.cpp" />
     <ClCompile Include="CButtonUI.cpp" />
     <ClCompile Include="CCameraManager.cpp" />
+    <ClCompile Include="CChest.cpp" />
     <ClCompile Include="CChestnut.cpp" />
     <ClCompile Include="CCollider.cpp" />
     <ClCompile Include="CCollisionManager.cpp" />

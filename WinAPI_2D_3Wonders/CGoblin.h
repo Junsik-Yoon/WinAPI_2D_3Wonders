@@ -47,6 +47,7 @@ public:
 public:
 	void SetFacedRight(bool facingRight) { isFacedRight = facingRight; }
 	void SetBackflipDir(bool _isBfRight) { isBackflipRight = _isBfRight; }
+	eState_Goblin GetState() { return m_state; }
 public:
 	CGoblin();
 	~CGoblin();

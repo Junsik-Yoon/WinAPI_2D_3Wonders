@@ -2,7 +2,8 @@
 #include "CMissile.h"
 #include "CCollider.h"
 #include "CAnimator.h"
-
+#include "CScene.h"
+#include "CTile.h"
 
 CMissile::CMissile()
 {
@@ -88,12 +89,40 @@ void CMissile::SetDir(float theta)
 
 void CMissile::OnCollisionEnter(CCollider* pOther)
 {
+	vector<CGameObject*> pGroupMonsters = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::MONSTER);
 	CGameObject* pOtherObj = pOther->GetObj();
-	if (pOtherObj->GetName() == L"Monster"||
-		pOtherObj->GetName() == L"Tile")
+
+	for (int i = 0; i < pGroupMonsters.size(); ++i)
 	{
-		GetAnimator()->Play(L"NULL"); //맞으면 이미지 없앰
+		if(pGroupMonsters[i]==pOtherObj
+			&& GetName()==L"Missile_Player")
+		{
+			DeleteObj(this);
+		}
+	}
+	if (GetName() == L"Missile_GolemWood"
+		&& pOtherObj->GetName() == L"Lou")
+	{
+		DeleteObj(this);
+	}
+
+	if (pOtherObj->GetName() == L"Tile")
+	{
+		CTile* pTile = dynamic_cast<CTile*>(pOtherObj);
+		if (pTile->GetGroup() == GROUP_TILE::GROUND
+			||pTile->GetGroup() == GROUP_TILE::WALL)
+		{//그라운드 타일과 wall타일에서만 미사일이 맞으면 사라지게
+			DeleteObj(this);
+		}
+	}
+
+
+	if (pOtherObj->GetName()==L"Chest")
+	{
+		DeleteObj(this); 
 	}//TODO:getgroupobj구현하기 오브젝트 클래스에
+
+	
 }
 
 void CMissile::OnCollision(CCollider* _pOther)

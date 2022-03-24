@@ -107,6 +107,9 @@
     <Filter Include="Engine\02.Manager\12.EffectManager">
       <UniqueIdentifier>{736fc747-ede5-4ba9-86dd-7e578cda1320}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Things\01.Object\Item">
+      <UniqueIdentifier>{2a04df39-e8f9-41c3-a4d1-cbba71e9f49a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -269,6 +272,9 @@
     <ClInclude Include="CEffect.h">
       <Filter>Things\01.Object\Background</Filter>
     </ClInclude>
+    <ClInclude Include="CChest.h">
+      <Filter>Things\01.Object\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -428,6 +434,9 @@
     </ClCompile>
     <ClCompile Include="CEffect.cpp">
       <Filter>Things\01.Object\Background</Filter>
+    </ClCompile>
+    <ClCompile Include="CChest.cpp">
+      <Filter>Things\01.Object\Item</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

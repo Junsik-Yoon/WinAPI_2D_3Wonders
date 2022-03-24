@@ -12,6 +12,7 @@ public:
 	void init();
 	void update();
 	void render();
+	void render_information();
 public:
 	bool DebugMode() { return m_debugOn; }
 };

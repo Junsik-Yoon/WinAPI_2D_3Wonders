@@ -104,18 +104,11 @@ CLou::~CLou()
 {
 }
 
-
 void CLou::update()
 {
-
-	wchar_t szBuffer[255] = {};
-	swprintf_s(szBuffer, L"state : %d \t FaceRight : %d \t Direc : %d", m_state,isFacedRight,m_facing);
-	SetWindowText(hWnd, szBuffer);
-
 	update_move();
 	update_animation();
 }
-
 
 void CLou::update_move()
 {
@@ -134,6 +127,9 @@ void CLou::update_move()
 		effect->SetPos(GetPos());
 		effect->SetDuration(10.f);
 		CreateObj(effect, GROUP_GAMEOBJ::EFFECT);
+
+		//무적 강제켜기(3초)
+		isInvincible = !isInvincible;
 		//GenerateGoblin();
 		//GetAnimator()->Play(L"pShoot_Right");
 		//m_floor = 0;
@@ -795,8 +791,6 @@ void CLou::update_animation()
 	GetAnimator()->update();
 }
 
-
-
 void CLou::CreateMissile()
 {
 	Vec2 fpMissilePos = GetPos();
@@ -932,6 +926,8 @@ void CLou::GenerateGoblin()
 
 void CLou::OnCollisionEnter(CCollider* _pOther)
 {
+	vector<CGameObject*> pGroupMonsters = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::MONSTER);
+	vector<CGameObject*> pGroupEnemyMissiles = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::MISSILE_MONSTER);
 	CGameObject* pOther = _pOther->GetObj();
 
 	if (pOther->GetName() == L"Tile")
@@ -987,14 +983,46 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 
 	}
 
-	if (pOther->GetName() == L"Goblin")
+	for (int i = 0; i < pGroupMonsters.size(); ++i)
 	{
-		if (!(m_state == eState::GOTHIT|| m_state == eState::DEAD ||isInvincible>0.f))
+
+		if (pGroupMonsters[i] == pOther)
 		{
-			int hp = GetHP();
-			SetHP(--hp);
+			if (pOther->GetName() == L"Goblin")
+			{
+				CGoblin* pGoblin = (CGoblin*)pOther;
+				if (pGoblin->GetState() != eState_Goblin::BORN)
+				{//고블린이 리젠모션 중일 때 충돌처리를 안하도록 예외처리
+					if (!(m_state == eState::GOTHIT || m_state == eState::DEAD || isInvincible > 0.f))
+					{
+						int hp = GetHP();
+						SetHP(--hp);
+					}
+				}
+			}
+			else
+			{
+				if (!(m_state == eState::GOTHIT || m_state == eState::DEAD || isInvincible > 0.f))
+				{
+					int hp = GetHP();
+					SetHP(--hp);
+				}
+			}
 		}
 	}
+	for (int i = 0; i < pGroupEnemyMissiles.size(); ++i)
+	{
+		if (pGroupEnemyMissiles[i] == pOther)
+		{
+			if (!(m_state == eState::GOTHIT || m_state == eState::DEAD || isInvincible > 0.f))
+			{
+				int hp = GetHP();
+				SetHP(--hp);
+			}
+		}
+	}
+	
+
 
 	//else if (pOther->GetName() == L"Tile" && (plColSize.y + oColSize.y - 2) <= abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
 	//{

@@ -14,6 +14,7 @@
 #include "CGolemWood.h"
 #include "CMovingTile.h"
 #include "CAnimator.h"
+#include "CChest.h"
 
 CScene_Stage1::CScene_Stage1()
 {
@@ -21,6 +22,7 @@ CScene_Stage1::CScene_Stage1()
 
 CScene_Stage1::~CScene_Stage1()
 {
+	
 }
 
 CSound* pSound = nullptr;
@@ -93,6 +95,10 @@ void CScene_Stage1::Enter()
 	pGreen1->SetPos(Vec2(4480.f, 300.f));
 	AddObject(pGreen1, GROUP_GAMEOBJ::MONSTER);
 
+	CGreen* pGreen2 = new CGreen();
+	pGreen2->SetPos(Vec2(5050.f, 215.f));
+	AddObject(pGreen2, GROUP_GAMEOBJ::MONSTER);
+
 	CShelter* pShelter1 = new CShelter();
 	pShelter1->SetPos(Vec2(1570.f, 230.f));
 	AddObject(pShelter1, GROUP_GAMEOBJ::TILE);
@@ -102,8 +108,45 @@ void CScene_Stage1::Enter()
 	AddObject(pShelter2, GROUP_GAMEOBJ::TILE);
 
 	CShelter* pShelter3 = new CShelter();
-	pShelter3->SetPos(Vec2(7270.f, 280.f));
+	pShelter3->SetPos(Vec2(7260.f, 280.f));
 	AddObject(pShelter3, GROUP_GAMEOBJ::TILE);
+
+	CChest* pChest1 = new CChest();
+	pChest1->SetPos(Vec2(1570.f, 300.f));
+	AddObject(pChest1, GROUP_GAMEOBJ::ITEM);
+
+	CChest* pChest2 = new CChest();
+	pChest2->SetPos(Vec2(2250.f, 140.f));
+	AddObject(pChest2, GROUP_GAMEOBJ::ITEM);
+
+	CChest* pChest3 = new CChest();
+	pChest3->SetPos(Vec2(2800.f, 300.f));
+	pChest3->SetVisibility(false);
+	AddObject(pChest3, GROUP_GAMEOBJ::ITEM);
+
+	CChest* pChest4 = new CChest();
+	pChest4->SetPos(Vec2(4130.f, 200.f));
+	pChest4->SetVisibility(false);
+	AddObject(pChest4, GROUP_GAMEOBJ::ITEM);
+
+	CChest* pChest5 = new CChest();
+	pChest5->SetPos(Vec2(4460.f, 390.f));
+	AddObject(pChest5, GROUP_GAMEOBJ::ITEM);
+
+	CChest* pChest6 = new CChest();
+	pChest6->SetPos(Vec2(5350.f, 55.f));
+	AddObject(pChest6, GROUP_GAMEOBJ::ITEM);
+
+	CChest* pChest7 = new CChest();
+	pChest7->SetPos(Vec2(5910.f, 75.f));
+	pChest7->SetVisibility(false);
+	AddObject(pChest7, GROUP_GAMEOBJ::ITEM);
+
+	CChest* pChest8 = new CChest();
+	pChest8->SetPos(Vec2(7240.f, 355.f));
+	AddObject(pChest8, GROUP_GAMEOBJ::ITEM);
+
+
 
 	CMovingTile* pMovingTile = nullptr;
 	for (int i = 0; i < 8; ++i)
@@ -151,11 +194,14 @@ void CScene_Stage1::Enter()
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::PLAYER, GROUP_GAMEOBJ::MISSILE_MONSTER);
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::PLAYER, GROUP_GAMEOBJ::FIRE);
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::MONSTER, GROUP_GAMEOBJ::FIRE);
+	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::MISSILE_PLAYER, GROUP_GAMEOBJ::ITEM);
 
 	CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
 	//CCameraManager::getInst()->FadeOut(5.f);
 	CCameraManager::getInst()->FadeIn(1.f);
-	CCameraManager::getInst()->SetTargetX(pHalfMoon1);
+
+	//위치확인용
+	CCameraManager::getInst()->SetTargetX(pShelter3);
 
 
 }

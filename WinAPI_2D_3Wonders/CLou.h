@@ -30,8 +30,7 @@ enum class eState
 class CLou :
     public CGameObject
 {
-    static float sCountTime;//¹ü¿ë
-    bool m_counter_toggle;
+
 private:
 
     bool bGravity;
@@ -50,8 +49,9 @@ private:
     float m_velocity;
     float m_upforce;
     float m_gravity;
-    bool isUpside;
-    bool isAir;
+    float isInvincible;
+    float m_stateCounter;
+    float blink;
 
     int prevHP;
     float prevY;

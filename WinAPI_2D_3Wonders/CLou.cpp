@@ -21,13 +21,13 @@
 #define D_FROMGOBMAX 600
 #define D_FROMGOBMIN 100
 
-
 #define SETSTATE m_state = eState
-float CLou::sCountTime = 0.f;
 
 CLou::CLou()
 {
-
+	blink = 0.f;
+	isInvincible = 0.f;
+	m_stateCounter = 0.f;
 	dash = 0.f;
 	bGravity = true;
 	m_state = eState::IDLE;
@@ -39,7 +39,7 @@ CLou::CLou()
 	m_gravity = D_GRAVITY;
 	m_upforce = D_UPFORCE;
 	isFacedRight = true;
-	m_counter_toggle = false;
+
 
 
 	SetHP(2);
@@ -84,11 +84,13 @@ CLou::CLou()
 	GetAnimator()->CreateAnimation(L"Jump_Right_Look_U", m_pImg, Vec2(256.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
 	GetAnimator()->CreateAnimation(L"Jump_Left_Look_U", m_pImg, Vec2(384.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
 
-
 	GetAnimator()->CreateAnimation(L"Dash_Right", m_pImg, Vec2(1280.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.06f, 5, false);
 	GetAnimator()->CreateAnimation(L"Dash_Left", m_pImg, Vec2(1408.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.06f, 5, false);
+	
+	GetAnimator()->CreateAnimation(L"Lou_Hurt_Right", m_pImg, Vec2(1280.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.333f, 3, false);
+	GetAnimator()->CreateAnimation(L"Lou_Hurt_Left", m_pImg, Vec2(1408.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.333f, 3, false);
 
-
+	GetAnimator()->CreateAnimation(L"Lou_NULL", m_pImg, Vec2(1280.f, 1280.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.1f, 1, false);
 
 	//탈의
 
@@ -170,12 +172,15 @@ void CLou::update_move()
 		m_gravity = D_GRAVITY;
 		vPos.y += D_GRAVITY * fDT;
 	}
-
-	if (m_state == eState::IDLE)
+	switch (m_state)
 	{
+	case eState::IDLE:
+	{
+		m_stateCounter += fDT;
 		//if (m_upforce <= 0.f)
 			//&&0==m_floor)
 		//{
+		// 		m_stateCounter = 0.f;
 		//	SETSTATE::FALL;
 		//}
 		if (KEY(VK_UP))
@@ -186,19 +191,21 @@ void CLou::update_move()
 		{
 			if (isFacedRight)
 			{
-				m_facing=D_FACING::RIGHT;
+				m_facing = D_FACING::RIGHT;
 			}
 			else
 			{
-				m_facing=D_FACING::LEFT;
+				m_facing = D_FACING::LEFT;
 			}
 		}
 		if (KEY(VK_DOWN))
 		{
+			m_stateCounter = 0.f;
 			SETSTATE::SIT;
 		}
 		if (KEY(VK_RIGHT))
 		{
+			m_stateCounter = 0.f;
 			isFacedRight = true;
 			SETSTATE::LANDMOVE;
 		}
@@ -209,6 +216,7 @@ void CLou::update_move()
 
 		if (KEY(VK_LEFT))
 		{
+			m_stateCounter = 0.f;
 			isFacedRight = false;
 			SETSTATE::LANDMOVE;
 		}
@@ -219,6 +227,7 @@ void CLou::update_move()
 
 		if (KEYDOWN('X'))
 		{
+			m_stateCounter = 0.f;
 			m_upforce = D_UPFORCE;
 			vPos.y -= 2.f;
 			SETSTATE::JUMP;
@@ -229,22 +238,25 @@ void CLou::update_move()
 		}
 		if (prevHP > GetHP())
 		{
+			m_stateCounter = 0.f;
 			prevHP = GetHP();
 			SETSTATE::GOTHIT;
 		}
 		else if (0 >= GetHP())
 		{
+			m_stateCounter = 0.f;
 			SETSTATE::DEAD;
 		}
 
 	}
-	if (m_state == eState::SIT)
+		break;
+	case eState::SIT:
 	{
-
-		GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y-30.f));
-		GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, -20.f),0);
+		m_stateCounter += fDT;
+		GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y - 30.f));
+		GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, -20.f), 0);
 		GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, -20.f), 0);
-	
+
 		if (KEYDOWN(VK_RIGHT))
 		{
 			isFacedRight = true;
@@ -255,6 +267,7 @@ void CLou::update_move()
 		}
 		if (KEYUP(VK_DOWN))
 		{
+			m_stateCounter = 0.f;
 			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
@@ -262,6 +275,7 @@ void CLou::update_move()
 		}
 		if (KEYDOWN(VK_UP))
 		{
+			m_stateCounter = 0.f;
 			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
@@ -269,6 +283,7 @@ void CLou::update_move()
 		}
 		if (KEYDOWN('X'))
 		{
+			m_stateCounter = 0.f;
 			SETSTATE::DASH;
 		}
 		if (KEYDOWN('Z'))
@@ -277,6 +292,7 @@ void CLou::update_move()
 		}
 		if (prevHP > GetHP())
 		{
+			m_stateCounter = 0.f;
 			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
@@ -285,14 +301,17 @@ void CLou::update_move()
 		}
 		else if (0 >= GetHP())
 		{
+			m_stateCounter = 0.f;
 			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
 			SETSTATE::DEAD;
 		}
 	}
-	if (m_state == eState::LANDMOVE)
+		break;
+	case eState::LANDMOVE:
 	{
+		m_stateCounter += fDT;
 		if (KEYDOWN('Z'))
 		{
 			CreateMissile();
@@ -312,12 +331,14 @@ void CLou::update_move()
 		}
 		if (KEYUP(VK_RIGHT))
 		{
+			m_stateCounter = 0.f;
 			isFacedRight = true;
 			m_facing = D_FACING::RIGHT;
 			SETSTATE::IDLE;
 		}
 		if (KEYUP(VK_LEFT))
 		{
+			m_stateCounter = 0.f;
 			isFacedRight = false;
 			m_facing = D_FACING::LEFT;
 			SETSTATE::IDLE;
@@ -325,6 +346,7 @@ void CLou::update_move()
 
 		if (KEYDOWN('X'))
 		{
+			m_stateCounter = 0.f;
 			m_upforce = D_UPFORCE;
 			vPos.y -= 2.f;
 			SETSTATE::JUMP;
@@ -332,17 +354,69 @@ void CLou::update_move()
 
 		if (prevHP > GetHP())
 		{
+			m_stateCounter = 0.f;
 			prevHP = GetHP();
 			SETSTATE::GOTHIT;
 		}
 		else if (0 >= GetHP())
 		{
+			m_stateCounter = 0.f;
 			SETSTATE::DEAD;
 		}
 	}
-	if (m_state == eState::JUMP)
+		break;
+	case eState::FALL:
 	{
-		m_upforce -= (D_DOWNFORCE*fDT);
+		m_stateCounter += fDT;
+		if (KEY(VK_RIGHT))
+		{
+			isFacedRight = true;
+			m_facing = D_FACING::RIGHT;
+			vPos.x += m_velocity * fDT;
+		}
+		if (KEY(VK_LEFT))
+		{
+			isFacedRight = false;
+			m_facing = D_FACING::LEFT;
+			vPos.x -= m_velocity * fDT;
+		}
+		if (KEYUP(VK_RIGHT))
+		{
+			isFacedRight = true;
+			m_facing = D_FACING::RIGHT;
+		}
+		if (KEYUP(VK_LEFT))
+		{
+			isFacedRight = false;
+			m_facing = D_FACING::LEFT;
+		}
+		if (prevHP > GetHP())
+		{
+			m_stateCounter = 0.f;
+			prevHP = GetHP();
+			SETSTATE::GOTHIT;
+		}
+		else if (0 >= GetHP())
+		{
+			m_stateCounter = 0.f;
+			SETSTATE::DEAD;
+		}
+		if (0 == m_upforce && m_floor > 0)
+		{
+			m_stateCounter = 0.f;
+			SETSTATE::IDLE;
+		}
+		if (KEYDOWN('Z'))
+		{
+			CreateMissile();
+		}
+	}
+
+		break;
+	case eState::JUMP:
+	{
+		m_stateCounter += fDT;
+		m_upforce -= (D_DOWNFORCE * fDT);
 		vPos.y -= m_upforce * fDT;
 
 		if (KEYDOWN('Z'))
@@ -429,86 +503,29 @@ void CLou::update_move()
 
 		if (prevHP > GetHP())
 		{
+			m_stateCounter = 0.f;
 			prevHP = GetHP();
 			SETSTATE::GOTHIT;
 		}
 		else if (0 >= GetHP())
 		{
+			m_stateCounter = 0.f;
 			SETSTATE::DEAD;
 		}
 		if (m_upforce <= 0.f)
 		{
+			m_stateCounter = 0.f;
 			SETSTATE::FALL;
 		}
 	}
-	if (m_state == eState::FALL)
+		break;
+	case eState::DASH:
 	{
-		if (KEY(VK_RIGHT))
-		{
-			isFacedRight = true;
-			m_facing = D_FACING::RIGHT;
-			vPos.x += m_velocity * fDT;
-		}
-		if (KEY(VK_LEFT))
-		{
-			isFacedRight = false;
-			m_facing = D_FACING::LEFT;
-			vPos.x -= m_velocity * fDT;
-		}
-		if (KEYUP(VK_RIGHT))
-		{
-			isFacedRight = true;
-			m_facing = D_FACING::RIGHT;
-		}
-		if (KEYUP(VK_LEFT))
-		{
-			isFacedRight = false;
-			m_facing = D_FACING::LEFT;
-		}
-		if (prevHP > GetHP())
-		{
-			prevHP = GetHP();
-			SETSTATE::GOTHIT;
-		}
-		else if (0 >= GetHP())
-		{
-			SETSTATE::DEAD;
-		}
-		if (0 == m_upforce && m_floor >0)
-		{
-			SETSTATE::IDLE;
-		}
-		if (KEYDOWN('Z'))
-		{
-			CreateMissile();
-		}
-	}
-
-	if (m_state == eState::HOLDCLIFF)
-	{
-		if (KEYDOWN('Z'))
-		{
-			CreateMissile();
-		}
-		if (KEYDOWN('X'))
-		{
-			//TODO:타고올라가게
-		}
-		if (prevHP > GetHP())
-		{
-			prevHP = GetHP();
-			SETSTATE::GOTHIT;
-		}
-		else if (0 >= GetHP())
-		{
-			SETSTATE::DEAD;
-		}
-	}
-	if (m_state == eState::DASH)
-	{
+		m_stateCounter += fDT;
 		dash += fDT;
 		if (dash >= 0.3f)
 		{
+			m_stateCounter = 0.f;
 			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
@@ -525,6 +542,7 @@ void CLou::update_move()
 		}
 		if (prevHP > GetHP())
 		{
+			m_stateCounter = 0.f;
 			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
@@ -533,27 +551,79 @@ void CLou::update_move()
 		}
 		else if (0 >= GetHP())
 		{
+			m_stateCounter = 0.f;
 			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 			SETSTATE::DEAD;
 		}
 	}
-	if (m_state == eState::GOTHIT)
+		break;
+	case eState::GOTHIT:
 	{
-		int hp = GetHP();
-		SetHP(--hp);
-		if (0 >= hp)
+		m_stateCounter += fDT;
+
+		if (m_stateCounter >= 1.f)
 		{
+			isInvincible += fDT;
+			m_stateCounter = 0.f;
+			m_state = eState::IDLE;
+		}
+
+	}
+		break;
+	case eState::DEAD:
+	{
+		//dead상태에서는 state카운터를 애니메이션에서 센다
+	}
+		break;
+	case eState::ATTACK:
+	{
+		m_stateCounter += fDT;
+	}
+		break;
+	case eState::HOLDCLIFF:
+	{
+		m_stateCounter += fDT;
+		if (KEYDOWN('Z'))
+		{
+			CreateMissile();
+		}
+		if (KEYDOWN('X'))
+		{
+			//TODO:타고올라가게
+		}
+		if (prevHP > GetHP())
+		{
+			m_stateCounter = 0.f;
+			prevHP = GetHP();
+			SETSTATE::GOTHIT;
+		}
+		else if (0 >= GetHP())
+		{
+			m_stateCounter = 0.f;
 			SETSTATE::DEAD;
 		}
 	}
-	if (m_state == eState::DEAD)
+		break;
+	case eState::FLY:
 	{
-
+		m_stateCounter += fDT;
+	}
+		break;
 	}
 
-
+///////////////////
+	//무적판정관련
+	if (isInvincible !=0.f)
+	{
+		isInvincible += fDT;
+	}
+	if (isInvincible >= 3.f)
+	{
+		isInvincible = 0.f;
+	}
+////////////////////
 	SetPos(vPos);
 
 }
@@ -665,6 +735,17 @@ void CLou::update_animation()
 		{
 
 		}break;
+		case eState::GOTHIT:
+		{
+			if (isFacedRight)
+			{
+				GetAnimator()->Play(L"Lou_Hurt_Right");
+			}
+			else
+			{
+				GetAnimator()->Play(L"Lou_Hurt_Left");
+			}
+		}break;
 		case eState::DASH:
 		{
 			if (true == isFacedRight)
@@ -676,8 +757,40 @@ void CLou::update_animation()
 				GetAnimator()->Play(L"Dash_Left");
 			}
 		}break;
+		case eState::DEAD:
+		{
+			//TODO: naked폼 dead로 변경
+			 
+			if (m_stateCounter == 0.f)
+			{
+				//////////////////////이펙트///////////////
+				CEffect* effectDie = new CEffect(L"Effect_Lou_Dead", L"texture\\Animation\\Effect_Lou_Dead.png",
+					L"Effect_Lou_Dead", Vec2(0.f, 0.f), Vec2(192.f, 512.f), Vec2(192.f, 0.f), 0.03f, 14, false, false, L"Effect_Lou_Dead");
+				effectDie->SetPos(Vec2(GetPos().x,GetPos().y-200.f));
+				effectDie->SetDuration(0.42f);
+				CreateObj(effectDie, GROUP_GAMEOBJ::EFFECT);
+				///////////////////////////////////////////
+			}
+			m_stateCounter += fDT;
+
+		}
 	}
-	
+	if (isInvincible > 0.f)
+	{
+		blink += fDT;
+	}
+	if (blink >=0.1f)
+	{
+		if (isInvincible)
+		{
+			GetAnimator()->Play(L"Lou_NULL");
+		}
+		if (blink >= 0.2f)
+		{
+			blink = 0.f;
+		}	
+	}
+
 	prevY = GetPos().y;
 	GetAnimator()->update();
 }
@@ -806,6 +919,14 @@ void CLou::GenerateGoblin()
 	{
 		pGoblin->SetFacedRight(false);
 	}
+
+	//////////////////////이펙트///////////////
+	CEffect* effectGobGen = new CEffect(L"GoblinGenEff", L"texture\\Animation\\Effect_Goblin_Gen.png",
+		L"Goblin_Gen_Eff", Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.1f, 10, false, false, L"GoblinGenEff");
+	effectGobGen->SetPos(Vec2(pGoblin->GetPos().x,pGoblin->GetPos().y+60.f));
+	effectGobGen->SetDuration(2.f);
+	CreateObj(effectGobGen, GROUP_GAMEOBJ::EFFECT);
+	///////////////////////////////////////////
 	CreateObj(pGoblin, GROUP_GAMEOBJ::MONSTER);
 }
 
@@ -861,20 +982,20 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 		}break;
 		}
 
-		//if (plColSize.x / 2.f + oColSize.x / 2.f >= abs(GetPos().x + pOther->GetPos().x))
-		//{
-			//Vec2 tPos = GetPos();
-			//if (true == isFacedRight)
-			//{
-			//	tPos.x -= 2.f;
-			//}
-			//else
-			//{
-			//	tPos.x += 2.f;
-			//}
+
 		SetPos(vPos);
 
 	}
+
+	if (pOther->GetName() == L"Goblin")
+	{
+		if (!(m_state == eState::GOTHIT|| m_state == eState::DEAD ||isInvincible>0.f))
+		{
+			int hp = GetHP();
+			SetHP(--hp);
+		}
+	}
+
 	//else if (pOther->GetName() == L"Tile" && (plColSize.y + oColSize.y - 2) <= abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
 	//{
 	//	++m_floor;

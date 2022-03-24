@@ -31,6 +31,8 @@ private:
 	bool isFacedRight;
 	float m_timeCounter;
 	bool isBackflipRight;
+	bool isEffectOn;
+	int prevPlayerHP;
 public:
 	void OnCollisionEnter(CCollider* _pOther);
 	void OnCollision(CCollider* _pOther);

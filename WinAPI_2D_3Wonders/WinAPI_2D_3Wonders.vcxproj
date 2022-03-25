@@ -160,6 +160,7 @@
     <ClInclude Include="CCameraManager.h" />
     <ClInclude Include="CChest.h" />
     <ClInclude Include="CChestnut.h" />
+    <ClInclude Include="CCoin.h" />
     <ClInclude Include="CCollider.h" />
     <ClInclude Include="CCollisionManager.h" />
     <ClInclude Include="CCore.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="CGolemWood.h" />
     <ClInclude Include="CGreen.h" />
     <ClInclude Include="CHalfMoon.h" />
+    <ClInclude Include="CItem.h" />
     <ClInclude Include="CKeyManager.h" />
     <ClInclude Include="CGameObject.h" />
     <ClInclude Include="CLou.h" />
@@ -179,6 +181,7 @@
     <ClInclude Include="CMonster.h" />
     <ClInclude Include="CMovingTile.h" />
     <ClInclude Include="COpening.h" />
+    <ClInclude Include="COptionFire.h" />
     <ClInclude Include="CPanelUI.h" />
     <ClInclude Include="CPathManager.h" />
     <ClInclude Include="CRenderManager.h" />
@@ -218,6 +221,7 @@
     <ClCompile Include="CCameraManager.cpp" />
     <ClCompile Include="CChest.cpp" />
     <ClCompile Include="CChestnut.cpp" />
+    <ClCompile Include="CCoin.cpp" />
     <ClCompile Include="CCollider.cpp" />
     <ClCompile Include="CCollisionManager.cpp" />
     <ClCompile Include="CCore.cpp" />
@@ -230,6 +234,7 @@
     <ClCompile Include="CGolemWood.cpp" />
     <ClCompile Include="CGreen.cpp" />
     <ClCompile Include="CHalfMoon.cpp" />
+    <ClCompile Include="CItem.cpp" />
     <ClCompile Include="CKeyManager.cpp" />
     <ClCompile Include="CGameObject.cpp" />
     <ClCompile Include="CLou.cpp" />
@@ -237,6 +242,7 @@
     <ClCompile Include="CMonster.cpp" />
     <ClCompile Include="CMovingTile.cpp" />
     <ClCompile Include="COpening.cpp" />
+    <ClCompile Include="COptionFire.cpp" />
     <ClCompile Include="CPanelUI.cpp" />
     <ClCompile Include="CPathManager.cpp" />
     <ClCompile Include="CRenderManager.cpp" />

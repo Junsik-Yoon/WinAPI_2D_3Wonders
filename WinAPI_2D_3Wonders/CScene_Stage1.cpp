@@ -14,6 +14,8 @@
 #include "CShelter.h"
 #include "CMovingTile.h"
 #include "CChest.h"
+#include "CCoin.h"
+#include "COptionFire.h"
 
 #include "CLou.h"
 #include "CGoblin.h"
@@ -68,7 +70,7 @@ void CScene_Stage1::update()
 void CScene_Stage1::Enter()
 {
 	wstring path = CPathManager::getInst()->GetContentPath();
-	//path += L"tile\\stage1.tile";
+	//path += L"tile\\4pixel_test.tile";
 	path += L"tile\\stage1-1.tile";
 	LoadTile(path);
 	
@@ -127,10 +129,12 @@ void CScene_Stage1::Enter()
 
 	CChest* pChest1 = new CChest();
 	pChest1->SetPos(Vec2(1570.f, 300.f));
+	pChest1->Set_Item(new COptionFire());
 	AddObject(pChest1, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest2 = new CChest();
 	pChest2->SetPos(Vec2(2250.f, 140.f));
+	pChest2->Set_Item(new CCoin());
 	AddObject(pChest2, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest3 = new CChest();
@@ -211,13 +215,14 @@ void CScene_Stage1::Enter()
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::PLAYER, GROUP_GAMEOBJ::FIRE);
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::MONSTER, GROUP_GAMEOBJ::FIRE);
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::MISSILE_PLAYER, GROUP_GAMEOBJ::ITEM);
+	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::PLAYER, GROUP_GAMEOBJ::ITEM);
 
 	CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
 	//CCameraManager::getInst()->FadeOut(5.f);
 	CCameraManager::getInst()->FadeIn(1.f);
 
 	//위치확인용
-	CCameraManager::getInst()->SetTargetX(pLou);
+	//CCameraManager::getInst()->SetTargetX(pLou);
 
 
 }

@@ -61,6 +61,7 @@ public:
     void GenerateGoblin();
 public:
     eState GetState() {return m_state;}
+    bool GetRight() { return isFacedRight; }
 public:
     void OnCollisionEnter(CCollider* _pOther);
     void OnCollision(CCollider* _pOther);

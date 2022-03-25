@@ -278,6 +278,15 @@
     <ClInclude Include="CBG2.h">
       <Filter>Things\01.Object\Background</Filter>
     </ClInclude>
+    <ClInclude Include="CCoin.h">
+      <Filter>Things\01.Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="CItem.h">
+      <Filter>Things\01.Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="COptionFire.h">
+      <Filter>Things\01.Object\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -443,6 +452,15 @@
     </ClCompile>
     <ClCompile Include="CBG2.cpp">
       <Filter>Things\01.Object\Background</Filter>
+    </ClCompile>
+    <ClCompile Include="CCoin.cpp">
+      <Filter>Things\01.Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="CItem.cpp">
+      <Filter>Things\01.Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="COptionFire.cpp">
+      <Filter>Things\01.Object\Item</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

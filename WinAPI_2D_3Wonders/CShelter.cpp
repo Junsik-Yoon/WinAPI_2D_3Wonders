@@ -11,7 +11,8 @@
 
 CShelter::CShelter()
 {
-	isExploding = false;
+	m_explodeTimer = 0.f;
+	explosionCount = 0;
 	SetName(L"Tile");
 	SetHP(4);
 	SetGroup(GROUP_TILE::WALL);
@@ -63,10 +64,18 @@ void CShelter::update()
 	}
 	if (0 >= GetHP())
 	{
-		if(isExploding)
-		//GetCollider()->SetScale(Vec2(0.f, 0.f));
-		GetCollider()->SetOffsetPos(Vec2(0.f, -650.f));
-		
+		m_explodeTimer += fDT;
+		if (m_explodeTimer >= 0.1f && explosionCount<6)
+		{
+			++explosionCount;
+			m_explodeTimer = 0.f;
+			Explode();
+		}
+		if (explosionCount >= 6)
+		{
+			GetCollider()->SetOffsetPos(Vec2(0.f, -650.f));
+		}
+	
 	}
 	GetAnimator()->update();
 }
@@ -88,6 +97,7 @@ void CShelter::Explode()
 	CreateObj(effectExplode, GROUP_GAMEOBJ::EFFECT);
 	///////////////////////////////////////////
 }
+
 
 void CShelter::render()
 {

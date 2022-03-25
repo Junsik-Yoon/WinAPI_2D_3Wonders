@@ -5,9 +5,11 @@
 #include "CEffect.h"
 #include "CAnimation.h"
 #include "CScene.h"
+#include "CItem.h"
 
 CChest::CChest()
 {
+	itemContains = nullptr;
 	m_vanishTimer = 0.f;
 	isVisible = true;
 	m_state = eState_Chest::IDLE;
@@ -94,6 +96,7 @@ void CChest::update()
 		GetAnimator()->Play(L"Destroyed_Chest");
 		if (m_vanishTimer >= 0.2f)
 		{
+			Put_Item();
 			DeleteObj(this);
 			m_vanishTimer = 0.f;
 			//////////////////////이펙트///////////////
@@ -105,9 +108,6 @@ void CChest::update()
 			///////////////////////////////////////////
 		}
 
-
-
-		//아이템 놓는 함수 추가
 	}
 		break;
 	}
@@ -117,6 +117,12 @@ void CChest::update()
 
 void CChest::Put_Item()
 {
+	if (nullptr != itemContains)
+	{
+		CItem* pItem = itemContains;
+		pItem->SetPos(Vec2(GetPos()));
+		CreateObj(pItem, GROUP_GAMEOBJ::ITEM);
+	}
 }
 
 

@@ -93,7 +93,7 @@ void CRenderManager::RenderFrame(CD2DImage* img, float dstX, float dstY, float d
 
 	if (nullptr != img)
 	{
-		m_pRenderTarget->DrawBitmap(img->GetImage(), imgRect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, srcRect);
+		m_pRenderTarget->DrawBitmap(img->GetImage(), imgRect, 1.f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, srcRect);
 	}
 }
 

@@ -12,6 +12,7 @@ enum class eState_Chest
 };
 
 class CD2DImage;
+class CItem; 
 
 class CChest : public CGameObject
 {
@@ -21,11 +22,11 @@ private:
 	CD2DImage* m_pImg;
 	float m_vanishTimer;
 	bool isVisible;
-	CGameObject* itemContains;
+	CItem* itemContains;
 
 public:
 	void Put_Item();
-	void Set_Item();
+	void Set_Item(CItem* _pObj) { itemContains = _pObj; }
 public:
 	void SetVisibility(bool _visible) { isVisible = _visible; }
 public:

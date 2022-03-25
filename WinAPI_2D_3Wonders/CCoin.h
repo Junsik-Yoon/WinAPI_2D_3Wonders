@@ -1,29 +1,23 @@
 #pragma once
-#include "CTile.h"
+#include "CItem.h"
 
 class CD2DImage;
 
-class CShelter :public CTile
+class CCoin : public CItem
 {
-
 private:
 	CD2DImage* m_pImg;
-	GROUP_TILE m_eGroup;
-	int explosionCount;
-	float m_explodeTimer;
-public:
-	void Explode();
+	float create_motion;
 public:
 	virtual void update();
 	virtual void render();
-	void render_information();
 public:
 	void OnCollisionEnter(CCollider* _pOther);
 	void OnCollision(CCollider* _pOther);
 	void OnCollisionExit(CCollider* _pOther);
-
 public:
-	CShelter();
-	~CShelter();
+	CCoin();
+	~CCoin();
+	//CCoin* Clone() { return new CCoin(*this); }
 };
 

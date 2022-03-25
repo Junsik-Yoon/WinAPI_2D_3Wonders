@@ -443,8 +443,8 @@ void CScene_Tool::PrintMap()
         m_pMap,
         0 - pos.x,
         0 - pos.y,
-        m_pMap->GetWidth() - pos.x,
-        m_pMap->GetHeight() - pos.y
+        m_pMap->GetWidth()*8.f - pos.x,
+        m_pMap->GetHeight()*8.f - pos.y
     );
 }
 

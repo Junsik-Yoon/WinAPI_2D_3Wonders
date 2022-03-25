@@ -147,7 +147,7 @@ void CGolemWood::CreateMissile()
 	CMissile* pMissile = new CMissile;
 
 
-	pMissile->SetScale(Vec2(50.f, 50.f));
+	pMissile->SetScale(Vec2(30.f, 30.f));
 	pMissile->SetPos(Vec2(fpMissilePos.x + 3.f, fpMissilePos.y + 13.f));
 	pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
 	pMissile->GetCollider()->SetScale(Vec2(pMissile->GetScale().x, pMissile->GetScale().y));

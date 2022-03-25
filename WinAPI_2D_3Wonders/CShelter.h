@@ -9,6 +9,9 @@ class CShelter :public CTile
 private:
 	CD2DImage* m_pImg;
 	GROUP_TILE m_eGroup;
+	int isExploding;
+public:
+	void Explode();
 public:
 	virtual void update();
 	virtual void render();

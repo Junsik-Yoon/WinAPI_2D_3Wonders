@@ -275,6 +275,9 @@
     <ClInclude Include="CChest.h">
       <Filter>Things\01.Object\Item</Filter>
     </ClInclude>
+    <ClInclude Include="CBG2.h">
+      <Filter>Things\01.Object\Background</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -437,6 +440,9 @@
     </ClCompile>
     <ClCompile Include="CChest.cpp">
       <Filter>Things\01.Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="CBG2.cpp">
+      <Filter>Things\01.Object\Background</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

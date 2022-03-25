@@ -1,19 +1,22 @@
 #include "pch.h"
 #include "CLou.h"
+
 #include "CScene.h"
-#include "CTexture.h"
+#include "CEffect.h"
+#include "CSound.h"
+
 #include "CCollider.h"
 #include "CAnimator.h"
 #include "CAnimation.h"
+
 #include "CMissile.h"
 #include "CTile.h"
 #include "CGoblin.h"
 #include "CD2DImage.h"
-#include "CEffect.h"
 
 #include <iostream>
 #include <random>
-//1:800,400 / 2:900,500 / 3: 1000,600
+
 #define D_GRAVITY 400
 #define D_DOWNFORCE 700
 #define D_VELOCITY 200
@@ -69,8 +72,13 @@ CLou::CLou()
 	GetAnimator()->CreateAnimation(L"Sit_Right", m_pImg, Vec2(768.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
 	GetAnimator()->CreateAnimation(L"Sit_Left", m_pImg, Vec2(896.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
 
-	GetAnimator()->CreateAnimation(L"pShoot_Right", m_pImg, Vec2(768.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.05f, 3, false,false);
-	GetAnimator()->CreateAnimation(L"pShoot_Left", m_pImg, Vec2(896.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.05f, 3, false,false);
+	GetAnimator()->CreateAnimation(L"pShoot_Right", m_pImg, Vec2(768.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.0666f, 3, false,false);
+	GetAnimator()->CreateAnimation(L"pShoot_Left", m_pImg, Vec2(896.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.0666f, 3, false,false);
+	
+	GetAnimator()->CreateAnimation(L"pShoot_Sit_Right", m_pImg, Vec2(768.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Sit_Left", m_pImg, Vec2(896.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Up_Right", m_pImg, Vec2(768.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Up_Left", m_pImg, Vec2(896.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false, false);
 
 
 	GetAnimator()->CreateAnimation(L"Jump_Right_U", m_pImg, Vec2(256.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
@@ -230,7 +238,9 @@ void CLou::update_move()
 		}
 		if (KEYDOWN('Z'))
 		{
+			m_stateCounter = 0.f;
 			CreateMissile();
+			m_state = eState::ATTACK;
 		}
 		if (prevHP > GetHP())
 		{
@@ -284,7 +294,9 @@ void CLou::update_move()
 		}
 		if (KEYDOWN('Z'))
 		{
+			m_stateCounter = 0.f;
 			CreateMissile();
+			SETSTATE::ATTACK;
 		}
 		if (prevHP > GetHP())
 		{
@@ -310,7 +322,9 @@ void CLou::update_move()
 		m_stateCounter += fDT;
 		if (KEYDOWN('Z'))
 		{
+			m_stateCounter = 0.f;
 			CreateMissile();
+			m_state = eState::ATTACK;
 		}
 
 		if (KEY(VK_RIGHT))
@@ -361,6 +375,26 @@ void CLou::update_move()
 		}
 	}
 		break;
+	case eState::ATTACK:
+	{
+		m_stateCounter += fDT;
+		if (m_stateCounter >= 0.2f)
+		{
+			m_stateCounter = 0.f;
+			if (KEY(VK_DOWN))
+			{
+				SETSTATE::SIT;
+			}
+			else
+			{//TODO:앉아서 쏘다가 일어나면 애니메이션 요동치는것 수정
+				GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
+				GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
+				GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
+				m_state = eState::IDLE;
+			}
+
+		}
+	}break;
 	case eState::FALL:
 	{
 		m_stateCounter += fDT;
@@ -573,11 +607,6 @@ void CLou::update_move()
 		//dead상태에서는 state카운터를 애니메이션에서 센다
 	}
 		break;
-	case eState::ATTACK:
-	{
-		m_stateCounter += fDT;
-	}
-		break;
 	case eState::HOLDCLIFF:
 	{
 		m_stateCounter += fDT;
@@ -663,6 +692,44 @@ void CLou::update_animation()
 			{
 				GetAnimator()->Play(L"Sit_Left");
 			}
+		}break;
+		case eState::ATTACK:
+		{
+			if (KEY(VK_DOWN))
+			{
+				if (isFacedRight)
+				{
+					GetAnimator()->Play(L"pShoot_Sit_Right");
+				}
+				else
+				{
+					GetAnimator()->Play(L"pShoot_Sit_Left");
+				}
+				GetAnimator()->GetCurrentAnimation()->SetOffset(Vec2(0.f, -20.f), 0);
+			}
+			else if (KEY(VK_UP))
+			{
+				if (isFacedRight)
+				{
+					GetAnimator()->Play(L"pShoot_Up_Right");
+				}
+				else
+				{
+					GetAnimator()->Play(L"pShoot_Up_Left");
+				}
+			}
+			else
+			{
+				if (isFacedRight)
+				{
+					GetAnimator()->Play(L"pShoot_Right");
+				}
+				else
+				{
+					GetAnimator()->Play(L"pShoot_Left");
+				}
+			}
+
 		}break;
 		case eState::JUMP:
 		{
@@ -802,52 +869,63 @@ void CLou::CreateMissile()
 	{
 	case D_FACING::RIGHT:
 		{
-			fpMissilePos.x += 50;
+			fpMissilePos.x += 70;
 			pMissile->SetPos(fpMissilePos);
 			pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
 			pMissile->GetAnimator()->Play(L"N_Shoot_Right");
-			pMissile->GetCollider()->SetOffsetPos(Vec2(30.f, 0.f));
-			pMissile->SetDir(Vec2(1, 0));
-			
+			pMissile->GetCollider()->SetOffsetPos(Vec2(-30.f, 0.f));
+			pMissile->SetDir(Vec2(1, 0));		
 		}break;
 	case D_FACING::LEFT:
-		{//TODO:충돌체offset때문에 조금만 피격체가 가까이있으면 애니메이션이 안보임
-			fpMissilePos.x -= 50;
+		{
+			fpMissilePos.x -= 70;
 			pMissile->SetPos(fpMissilePos);
 			pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
 			pMissile->GetAnimator()->Play(L"N_Shoot_Left");
-			pMissile->GetCollider()->SetOffsetPos(Vec2(-30.f, 0.f));
+			pMissile->GetCollider()->SetOffsetPos(Vec2(30.f, 0.f));
 			pMissile->SetDir(Vec2(-1, 0));
-
 		}break;
 	case D_FACING::UP:
 		{
+		if (0 == m_floor)
+		{
+			if (isFacedRight)
+			{
+				fpMissilePos.x += 25.f;
+			}
+			else
+			{
+				fpMissilePos.x -= 25.f;
+			}
+		}
 			fpMissilePos.y -= 50;
 			pMissile->SetPos(fpMissilePos);
 			pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
 			pMissile->GetAnimator()->Play(L"N_Shoot_Up");
-			pMissile->GetCollider()->SetOffsetPos(Vec2(0.f, -30.f));
+			pMissile->GetCollider()->SetOffsetPos(Vec2(0.f, 30.f));
 			pMissile->SetDir(Vec2(0, -1));
-
-
-
 		}break;
 	case D_FACING::DOWN:
 		{
-
 			if (0 == m_floor)
 			{
+				if (isFacedRight)
+				{
+					fpMissilePos.x += 15.f;
+				}
+				else
+				{
+					fpMissilePos.x -= 15.f;
+				}
 				fpMissilePos.y += 50;
 				pMissile->SetPos(fpMissilePos);
 				pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
 				pMissile->GetAnimator()->Play(L"N_Shoot_Down");
-				pMissile->GetCollider()->SetOffsetPos(Vec2(0.f, 30.f));
-				pMissile->SetDir(Vec2(0, 1));
-				
+				pMissile->GetCollider()->SetOffsetPos(Vec2(0.f, -30.f));
+				pMissile->SetDir(Vec2(0, 1));			
 			}
 			else
 			{
-
 				if (isFacedRight)
 				{
 					fpMissilePos.x += 50;
@@ -898,30 +976,34 @@ void CLou::GenerateGoblin()
 			}		
 		}
 	}
-	std::uniform_int_distribution<int> dis(0, pTiles.size()-1);
-	CGameObject* pTile = pTiles[dis(gen)];
-	Vec2 tilePos = pTile->GetPos();
-	
-	CGoblin* pGoblin = new CGoblin();
-	tilePos.y -= (pGoblin->GetScale().y / 2.f + pTile->GetScale().y / 2.f);
-	pGoblin->SetPos(tilePos);
-	if (pGoblin->GetPos().x < GetPos().x)
+	if (pTiles.size() > 1)
 	{
-		pGoblin->SetFacedRight(true);
-	}
-	else
-	{
-		pGoblin->SetFacedRight(false);
-	}
+		std::uniform_int_distribution<int> dis(0, pTiles.size() - 1);
+		CGameObject* pTile = pTiles[dis(gen)];
+		Vec2 tilePos = pTile->GetPos();
 
-	//////////////////////이펙트///////////////
-	CEffect* effectGobGen = new CEffect(L"GoblinGenEff", L"texture\\Animation\\Effect_Goblin_Gen.png",
-		L"Goblin_Gen_Eff", Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.1f, 10, false, false, L"GoblinGenEff");
-	effectGobGen->SetPos(Vec2(pGoblin->GetPos().x,pGoblin->GetPos().y+60.f));
-	effectGobGen->SetDuration(2.f);
-	CreateObj(effectGobGen, GROUP_GAMEOBJ::EFFECT);
-	///////////////////////////////////////////
-	CreateObj(pGoblin, GROUP_GAMEOBJ::MONSTER);
+		CGoblin* pGoblin = new CGoblin();
+		tilePos.y -= (pGoblin->GetScale().y / 2.f + pTile->GetScale().y / 2.f);
+		pGoblin->SetPos(tilePos);
+		if (pGoblin->GetPos().x < GetPos().x)
+		{
+			pGoblin->SetFacedRight(true);
+		}
+		else
+		{
+			pGoblin->SetFacedRight(false);
+		}
+
+		//////////////////////이펙트///////////////
+		CEffect* effectGobGen = new CEffect(L"GoblinGenEff", L"texture\\Animation\\Effect_Goblin_Gen.png",
+			L"Goblin_Gen_Eff", Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.1f, 10, false, false, L"GoblinGenEff");
+		effectGobGen->SetPos(Vec2(pGoblin->GetPos().x, pGoblin->GetPos().y + 60.f));
+		effectGobGen->SetDuration(2.f);
+		CreateObj(effectGobGen, GROUP_GAMEOBJ::EFFECT);
+		///////////////////////////////////////////
+		CreateObj(pGoblin, GROUP_GAMEOBJ::MONSTER);
+	}	
+
 }
 
 void CLou::OnCollisionEnter(CCollider* _pOther)

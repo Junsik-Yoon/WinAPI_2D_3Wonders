@@ -5,6 +5,7 @@
 #include "CAnimator.h"
 #include "CAnimation.h"
 #include "CTile.h"
+#include "CEffect.h"
 
 #define D_VELOCITY 150
 #define D_GRAVITY 500

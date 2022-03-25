@@ -20,6 +20,7 @@ private:
 	CD2DImage* m_pImg;
 
 	bool isRight;
+	bool isDead;
 	eState_HM m_state;
 
 	bool isProducing;

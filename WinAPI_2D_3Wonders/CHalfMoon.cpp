@@ -5,9 +5,11 @@
 #include "CAnimator.h"
 #include "CAnimation.h"
 #include "CBug.h"
+#include "CEffect.h"
 
 CHalfMoon::CHalfMoon()
 {
+	isDead = false;
 	bugCounter = 0;
 	CBug* pBug = nullptr;
 	for (int i = 0; i < 4; ++i)
@@ -43,7 +45,7 @@ CHalfMoon::CHalfMoon()
 	GetAnimator()->CreateAnimation(L"Summon_Left", m_pImg, Vec2(640.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 4.f, 1, false);
 
 	GetAnimator()->CreateAnimation(L"Close_Right", m_pImg, Vec2(768.f, 128.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 4, false);
-	GetAnimator()->CreateAnimation(L"Close_Left", m_pImg, Vec2(768.f, 128.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 4, false);
+	GetAnimator()->CreateAnimation(L"Close_Left", m_pImg, Vec2(768.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 4, false);
 
 	GetAnimator()->CreateAnimation(L"Dead_Left" ,m_pImg, Vec2(1280.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, false);
 	GetAnimator()->CreateAnimation(L"Dead_Right", m_pImg, Vec2(1280.f, 128.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, false);
@@ -123,6 +125,13 @@ void CHalfMoon::update()
 		{
 			if (0 >= pBugs[i]->GetHP())
 			{
+				//////////////////////ÀÌÆåÆ®///////////////
+				CEffect* effectDie = new CEffect(L"Effect_Die_Small", L"texture\\Animation\\Effect_Die_Small.png",
+					L"Effect_Die_Small", Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 10, false, false, L"Effect_Die_Small");
+				effectDie->SetPos(Vec2(pBugs[i]->GetPos()));
+				effectDie->SetDuration(1.f);
+				CreateObj(effectDie, GROUP_GAMEOBJ::EFFECT);
+				///////////////////////////////////////////
 				pBugs[i]->SetPos((Vec2(-500.f, 0.f)));
 			}
 		}
@@ -131,7 +140,14 @@ void CHalfMoon::update()
 	{
 		for (int i = 0; i < pBugs.size(); ++i)
 		{
-			DeleteObj(pBugs[i]);//TODO: »èÁ¦¿¡·¯
+			//////////////////////ÀÌÆåÆ®///////////////
+			CEffect* effectDie = new CEffect(L"Effect_Die_Small", L"texture\\Animation\\Effect_Die_Small.png",
+				L"Effect_Die_Small", Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 10, false, false, L"Effect_Die_Small");
+			effectDie->SetPos(Vec2(pBugs[i]->GetPos()));
+			effectDie->SetDuration(1.f);
+			CreateObj(effectDie, GROUP_GAMEOBJ::EFFECT);
+			///////////////////////////////////////////
+			DeleteObj(pBugs[i]);
 		}
 		pBugs.clear();
 	}
@@ -248,6 +264,18 @@ void CHalfMoon::OnCollisionEnter(CCollider* _pOther)
 	}
 	if (GetHP() <= 0)
 	{
+		if (!isDead)
+		{
+			//////////////////////ÀÌÆåÆ®///////////////
+			CEffect* effectHMDie = new CEffect(L"Effect_Die_Big", L"texture\\Animation\\Effect_Die_Big.png",
+				L"Effect_Die_Big", Vec2(0.f, 0.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.15f, 10, false, false, L"Effect_Die_Big");
+			effectHMDie->SetPos(Vec2(GetPos()));
+			effectHMDie->SetDuration(1.5f);
+			CreateObj(effectHMDie, GROUP_GAMEOBJ::EFFECT);
+			///////////////////////////////////////////
+			isDead = true;
+		}
+
 		if (isRight)
 		{
 			GetAnimator()->Play(L"Dead_Right");

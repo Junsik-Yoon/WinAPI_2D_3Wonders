@@ -17,7 +17,7 @@ CChest::CChest()
 	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"ChestImg", L"texture\\Animation\\Animation_Chest.png");
 
 	CreateCollider();
-	SetScale(Vec2(80.f, 90.f));
+	SetScale(Vec2(80.f, 50.f));
 	GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 	GetCollider()->SetOffsetPos(Vec2(0.f, -10.f));
 	CreateAnimator();
@@ -97,11 +97,11 @@ void CChest::update()
 			DeleteObj(this);
 			m_vanishTimer = 0.f;
 			//////////////////////ÀÌÆåÆ®///////////////
-			CEffect* effectDie = new CEffect(L"Effect_Explode", L"texture\\Animation\\Effect_Explode.png",
+			CEffect* effectExplode = new CEffect(L"Effect_Explode", L"texture\\Animation\\Effect_Explode.png",
 				L"Effect_Explode", Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 9, false, false, L"Effect_Explode");
-			effectDie->SetPos(Vec2(GetPos()));
-			effectDie->SetDuration(0.9f);
-			CreateObj(effectDie, GROUP_GAMEOBJ::EFFECT);
+			effectExplode->SetPos(Vec2(GetPos()));
+			effectExplode->SetDuration(0.9f);
+			CreateObj(effectExplode, GROUP_GAMEOBJ::EFFECT);
 			///////////////////////////////////////////
 		}
 

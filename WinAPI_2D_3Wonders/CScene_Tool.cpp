@@ -18,10 +18,10 @@ CScene_Tool::CScene_Tool()
 {
     m_pMap = nullptr;
     m_gTile = GROUP_TILE::NONE;
-
+    //TODO: 카메라를 target지정했을 때 툴씬에서도 target이 안풀림
     m_hWnd = 0;
     m_iIdx = 0;
-    m_velocity = 300;
+    m_velocity = 500;
     m_iTileX = 0;
     m_iTileY = 0;
 }

@@ -1,20 +1,27 @@
 #include "pch.h"
 #include "CScene_Stage1.h"
-#include "CGameObject.h"
 #include "CScene_Tool.h"
+
 #include "CSound.h"
+#include "CCollider.h"
+#include "CAnimator.h"
+
+#include "CGameObject.h"
+
 #include "CBG1.h"
+#include "CBG2.h"
+
+#include "CShelter.h"
+#include "CMovingTile.h"
+#include "CChest.h"
+
 #include "CLou.h"
 #include "CGoblin.h"
 #include "CGreen.h"
 #include "CHalfMoon.h"
 #include "CBug.h"
-#include "CCollider.h"
-#include "CShelter.h"
 #include "CGolemWood.h"
-#include "CMovingTile.h"
-#include "CAnimator.h"
-#include "CChest.h"
+
 
 CScene_Stage1::CScene_Stage1()
 {
@@ -61,22 +68,29 @@ void CScene_Stage1::update()
 void CScene_Stage1::Enter()
 {
 	wstring path = CPathManager::getInst()->GetContentPath();
-	path += L"tile\\stage1.tile";
-
+	//path += L"tile\\stage1.tile";
+	path += L"tile\\stage1-1.tile";
 	LoadTile(path);
 	
+
 	CBG1* pBG1 = new CBG1();
 	pBG1->SetPos(Vec2(0.f, 0.f));
 	pBG1->SetScale(Vec2(1.f, 1.f));
-	AddObject(pBG1, GROUP_GAMEOBJ::BACKGROUND);
+	AddObject(pBG1, GROUP_GAMEOBJ::MAP);
+
+	CBG2* pBG_back = new CBG2();
+	pBG_back->setIndex(2);
+	AddObject(pBG_back, GROUP_GAMEOBJ::BACKGROUND);
+
+	CBG2* pBG2 = new CBG2();
+	pBG2->setIndex(1);
+	AddObject(pBG2, GROUP_GAMEOBJ::BACKGROUND);
+
+
 
 	CLou* pLou = new CLou();
 	pLou->SetPos(Vec2(200.f, 0.f));
 	AddObject(pLou, GROUP_GAMEOBJ::PLAYER);
-
-	CGolemWood* pGolemWood = new CGolemWood();
-	pGolemWood->SetPos(Vec2(8200.f, 150.f));
-	AddObject(pGolemWood, GROUP_GAMEOBJ::MONSTER);
 
 	CHalfMoon* pHalfMoon1 = new CHalfMoon();
 	pHalfMoon1->SetPos(Vec2(2985.f, 70.f));
@@ -146,27 +160,29 @@ void CScene_Stage1::Enter()
 	pChest8->SetPos(Vec2(7240.f, 355.f));
 	AddObject(pChest8, GROUP_GAMEOBJ::ITEM);
 
-
+	CGolemWood* pGolemWood = new CGolemWood();
+	pGolemWood->SetPos(Vec2(9160.f, 150.f));
+	AddObject(pGolemWood, GROUP_GAMEOBJ::MONSTER);
 
 	CMovingTile* pMovingTile = nullptr;
 	for (int i = 0; i < 8; ++i)
 	{
 		pMovingTile = new CMovingTile();
-		pMovingTile->SetPos(Vec2(7600.f+(32.f*i), 400.f+(float)i*-10.f));
+		pMovingTile->SetPos(Vec2(8570.f+(32.f*i), 400.f+(float)i*-10.f));
 		pMovingTile->SetRight(false);
 		AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);		
 	}
 	for (int i = 8; i < 15; ++i)
 	{
 		pMovingTile = new CMovingTile();
-		pMovingTile->SetPos(Vec2(7600.f + (32.f * i), 320.f + (float)(i-6) * +10.f));
+		pMovingTile->SetPos(Vec2(8570.f + (32.f * i), 320.f + (float)(i-6) * +10.f));
 		pMovingTile->SetRight(true);
 		AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);
 	}
 	for (int i = 15; i < 22; ++i)
 	{
 		pMovingTile = new CMovingTile();
-		pMovingTile->SetPos(Vec2(7600.f + (32.f * i), 400.f + (float)(i - 14) * -10.f));
+		pMovingTile->SetPos(Vec2(8570.f + (32.f * i), 400.f + (float)(i - 14) * -10.f));
 		pMovingTile->SetRight(false);
 		AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);
 	}
@@ -201,7 +217,7 @@ void CScene_Stage1::Enter()
 	CCameraManager::getInst()->FadeIn(1.f);
 
 	//위치확인용
-	CCameraManager::getInst()->SetTargetX(pShelter3);
+	CCameraManager::getInst()->SetTargetX(pLou);
 
 
 }

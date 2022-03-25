@@ -3,9 +3,15 @@
 #include "CCollider.h"
 #include "CAnimator.h"
 #include "CAnimation.h"
+#include "CEffect.h"
+#include "CD2DImage.h"
+
+#include <iostream>
+#include <random>
 
 CShelter::CShelter()
 {
+	isExploding = false;
 	SetName(L"Tile");
 	SetHP(4);
 	SetGroup(GROUP_TILE::WALL);
@@ -57,11 +63,30 @@ void CShelter::update()
 	}
 	if (0 >= GetHP())
 	{
+		if(isExploding)
 		//GetCollider()->SetScale(Vec2(0.f, 0.f));
 		GetCollider()->SetOffsetPos(Vec2(0.f, -650.f));
 		
 	}
 	GetAnimator()->update();
+}
+
+void CShelter::Explode()
+{
+	int iHeight = m_pImg->GetHeight();
+	int iWidth = m_pImg->GetWidth();
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> dis(0, iHeight/2);
+
+
+	//////////////////////ÀÌÆåÆ®///////////////
+	CEffect* effectExplode = new CEffect(L"Effect_Explode_Small", L"texture\\Animation\\Effect_Explode_Small.png",
+		L"Effect_Explode_Small", Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.05f, 10, false, 1.f);
+	effectExplode->SetPos(Vec2(GetPos().x-GetScale().x/2.f + dis(gen), GetPos().y - GetScale().y / 2.f + dis(gen)));
+	effectExplode->SetDuration(1.f);
+	CreateObj(effectExplode, GROUP_GAMEOBJ::EFFECT);
+	///////////////////////////////////////////
 }
 
 void CShelter::render()
@@ -119,6 +144,7 @@ void CShelter::OnCollisionEnter(CCollider* _pOther)
 	CGameObject* pOther = _pOther->GetObj();
 	if(pOther->GetName()== L"Missile_Player")
 	{
+		Explode();
 		int hp = GetHP();
 		if (0 < hp) SetHP(--hp);
 	}

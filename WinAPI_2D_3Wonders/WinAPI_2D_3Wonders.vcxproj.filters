@@ -287,6 +287,12 @@
     <ClInclude Include="COptionFire.h">
       <Filter>Things\01.Object\Item</Filter>
     </ClInclude>
+    <ClInclude Include="CFlyingChest.h">
+      <Filter>Things\01.Object\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="CCard.h">
+      <Filter>Things\01.Object\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -460,6 +466,12 @@
       <Filter>Things\01.Object\Item</Filter>
     </ClCompile>
     <ClCompile Include="COptionFire.cpp">
+      <Filter>Things\01.Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="CFlyingChest.cpp">
+      <Filter>Things\01.Object\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="CCard.cpp">
       <Filter>Things\01.Object\Item</Filter>
     </ClCompile>
   </ItemGroup>

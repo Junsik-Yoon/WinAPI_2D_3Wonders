@@ -12,17 +12,20 @@ CShootFire::CShootFire()
 
 	
 
-	SetName(L"Missile_Player");
+	SetName(L"Shoot_Fire");
 	SetScale(Vec2(20.f, 20.f));
-	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"GreenFireImg", L"texture\\Animation\\Animation_Green_Fire.png");
-	
+	m_pGreenFireImg = CResourceManager::getInst()->LoadD2DImage(L"GreenFireImg", L"texture\\Animation\\Animation_Green_Fire.png");
+	m_pOptionFireImg = CResourceManager::getInst()->LoadD2DImage(L"OptionFireImg", L"texture\\Animation\\Animation_FireOp_Fire.png");
+
 	CreateCollider();
 	GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 	GetCollider()->SetOffsetPos(Vec2(0.f, 0.f));
 
 	CreateAnimator();
 
-	GetAnimator()->CreateAnimation(L"GreenFire", m_pImg, Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.2f, 13, false);
+	GetAnimator()->CreateAnimation(L"GreenFire", m_pGreenFireImg, Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.2f, 13, false);
+
+	GetAnimator()->CreateAnimation(L"OptionFire", m_pOptionFireImg, Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.2f, 13, false);
 
 	CCameraManager::getInst()->GetRenderPos(GetPos());
 
@@ -73,6 +76,13 @@ void CShootFire::OnCollisionEnter(CCollider* _pOther)
 	CGameObject* pOther = _pOther->GetObj();
 	if (GetName() == L"GreenFire" &&
 		pOther->GetName() == L"Lou")
+	{
+		DeleteObj(this);
+	}
+
+	if (GetName() == L"Missile_Player" &&
+			pOther->GetName() != L"Tile"&&
+			pOther->GetName()!=L"Option_Fire")
 	{
 		DeleteObj(this);
 	}

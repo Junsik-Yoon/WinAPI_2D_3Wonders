@@ -25,7 +25,7 @@ CGreen::CGreen()
 	CreateCollider();
 	SetScale(Vec2(120.f, 120.f));
 	GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
-	GetCollider()->SetOffsetPos(Vec2(0.f, 0.f));
+	GetCollider()->SetOffsetPos(Vec2(0.f, 20.f));
 
 	CreateAnimator();
 

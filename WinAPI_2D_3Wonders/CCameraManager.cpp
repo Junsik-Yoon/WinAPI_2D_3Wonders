@@ -76,6 +76,7 @@ void CCameraManager::update()
 	CD2DImage* pStage1BG = CResourceManager::getInst()->FindD2DImage(L"BGImg");
 	
 	//카메라가 배경화면 바깥을 비추지 않도록
+	//if(GROUP_SCENE::STAGE1==CSceneManager::getInst()->GetCurScene())
 	if (m_fptCurLookAt.x - WINSIZEX / 2 < 0)
 	{
 		m_fptCurLookAt.x = WINSIZEX / 2;

@@ -22,9 +22,15 @@ private:
 	CD2DImage* m_pImg;
 	eState_OpFire m_state;
 	CLou* m_owner;
+	float attackTimer;
+	float fireTimer;
+	Vec2 prevPos;
+public:
+	void FireBreathing();
 public:
 	virtual void update();
 	virtual void render();
+	virtual void render_information();
 public:
 	void OnCollisionEnter(CCollider* _pOther);
 	void OnCollision(CCollider* _pOther);

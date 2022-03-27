@@ -47,7 +47,6 @@ CBug::CBug()
 
 	GetAnimator()->Play(L"NULL");
 
-	CCameraManager::getInst()->GetRenderPos(GetPos());
 }
 
 CBug::~CBug()

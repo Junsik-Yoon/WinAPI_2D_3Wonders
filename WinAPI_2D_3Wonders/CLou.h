@@ -2,6 +2,7 @@
 #include "CGameObject.h"
 
 class CD2DImage;
+class COwl;
 enum class D_FACING
 {
     UP = 1,     //1
@@ -21,7 +22,7 @@ enum class eState
     DEAD,       //7
     ATTACK,     //8
     HOLDCLIFF,  //9
-    INVINCIBLE, //10
+    HEALED, //10
     FLY,        //11
   
     SIZE
@@ -32,6 +33,14 @@ class CLou :
 {
 
 private:
+    //image
+    CD2DImage* m_pClothedImg;
+    CD2DImage* m_pUnclothedImg;
+    //enum state / direction
+    D_FACING m_facing;
+    eState m_state;
+
+    COwl* pOwl;
 
     bool bGravity;
     float dash;
@@ -41,9 +50,7 @@ private:
 
     map<int,wstring> m_stateText;
 
-    D_FACING m_facing;
-    eState m_state;
-    CD2DImage* m_pImg;
+
     UINT m_floor;
     UINT m_wall;
     float m_velocity;
@@ -52,6 +59,9 @@ private:
     float isInvincible;
     float m_stateCounter;
     float blink;
+
+    bool isClothed;
+    wstring missileType; //NONE / HYPER / BOUND / TAIL;
 
     int prevHP;
     float prevY;

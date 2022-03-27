@@ -13,9 +13,9 @@
 
 CFlyingChest::CFlyingChest()
 {
-	m_velUD = 200.f;
-	m_velLR = 800.f;
-	m_resist = 150.f;
+	m_center = { 4500.f,100.f };
+	m_appearTimer = 0.f;
+	m_fTheta = 0.f;
 
 	m_state = eState_FChest::IDLE;
 
@@ -63,6 +63,33 @@ void CFlyingChest::update()
 		break;
 	case eState_FChest::FLY:
 	{
+
+		if (m_appearTimer < 2.f)
+		{
+			m_fTheta += m_fSpd * fDT;
+			m_width -= 900.f * fDT;
+			vPos.x = m_width * (float)cos(m_fTheta);
+			vPos.y = m_height * (float)sin(m_fTheta);
+
+			vPos.x += m_center.x;
+			vPos.y += m_center.y;
+		}
+		else if (m_appearTimer >= 11.f)
+		{
+			m_appearTimer = 0.f;
+			m_state = eState_FChest::FLYAWAY;
+		}
+		else if (m_appearTimer > 2.f)
+		{
+			m_fSpd += 0.1f*fDT;
+			m_fTheta += m_fSpd * fDT;
+			vPos.x = m_width * (float)cos(m_fTheta);
+			vPos.y = m_height * (float)sin(m_fTheta);
+
+			vPos.x += m_center.x;
+			vPos.y += m_center.y;
+		}
+
 		m_appearTimer += fDT;
 		m_effectTimer += fDT;
 		if (m_effectTimer >= 0.05f)
@@ -70,28 +97,7 @@ void CFlyingChest::update()
 			m_effectTimer = 0.f;
 			TwinkleEffect();
 		}
-		if (vPos.y >= 100.f)
-		{
-			m_velUD -= m_resist * fDT;
-			m_velLR -= m_resist *0.5f * fDT;
-			vPos.x -= m_velLR * fDT;
-			vPos.y += m_velUD *0.4f * fDT;
-		}
-		else if (vPos.y < 100.f)
-		{
-			m_velUD += m_resist * fDT;
-			m_velLR += m_resist *0.4f* fDT;
 
-			vPos.x += m_velLR * fDT;
-			vPos.y += m_velUD * 0.5f * fDT;
-		}
-
-
-		if (m_appearTimer >= 8.f)
-		{
-			m_appearTimer = 0.f;
-			m_state = eState_FChest::FLYAWAY;
-		}
 		if (GetHP() <= 0)
 		{
 			m_state = eState_FChest::DESTROYED;
@@ -100,27 +106,21 @@ void CFlyingChest::update()
 		break;
 	case eState_FChest::DESTROYED:
 	{
+		//////////////////////ÀÌÆåÆ®///////////////
+		CEffect* effectExplode = new CEffect(L"Effect_Explode", L"texture\\Animation\\Effect_Explode.png",
+			L"Effect_Explode", Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 9, false, false, L"Effect_Explode");
+		effectExplode->SetPos(Vec2(GetPos()));
+		effectExplode->SetDuration(0.9f);
+		CreateObj(effectExplode, GROUP_GAMEOBJ::EFFECT);
+		///////////////////////////////////////////
 		Put_Item();
 		DeleteObj(this);
 	}
 		break;
 	case eState_FChest::FLYAWAY:
 	{
-		if (vPos.y >= 100.f)
-		{
-			m_velUD -= m_resist * fDT;
-			m_velLR -= m_resist * 0.5f * fDT;
-			vPos.x -= m_velLR * fDT;
-			vPos.y -= abs(m_velUD) * 0.4f * fDT;
-		}
-		else if (vPos.y < 100.f)
-		{
-			m_velUD -= m_resist * fDT;
-			m_velLR += m_resist * 0.4f * fDT;
-
-			vPos.x += m_velLR * fDT;
-			vPos.y -= abs(m_velUD) * 0.5f * fDT;
-		}
+		vPos.x -= 300.f * fDT;
+		vPos.y -= 70.f * fDT;
 
 		if (GetPos().y <= -100.f)
 		{

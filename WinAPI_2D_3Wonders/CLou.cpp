@@ -10,9 +10,11 @@
 #include "CAnimation.h"
 
 #include "CMissile.h"
+#include "CHyperMissile.h"
 #include "CTile.h"
 #include "CGoblin.h"
 #include "CD2DImage.h"
+#include "COwl.h"
 
 #include <iostream>
 #include <random>
@@ -28,6 +30,8 @@
 
 CLou::CLou()
 {
+	pOwl = nullptr;
+	missileType = L"NONE";
 	blink = 0.f;
 	isInvincible = 0.f;
 	m_stateCounter = 0.f;
@@ -42,67 +46,121 @@ CLou::CLou()
 	m_gravity = D_GRAVITY;
 	m_upforce = D_UPFORCE;
 	isFacedRight = true;
-
-
+	isClothed = true;
 
 	SetHP(2);
 	prevHP = GetHP();
 	prevY = GetPos().y;
 
 	SetName(L"Lou");
-	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"PlayerImg", L"texture\\Animation\\Animation_Lou.png");
+	m_pClothedImg = CResourceManager::getInst()->LoadD2DImage(L"PlayerClothedImg", L"texture\\Animation\\Animation_Lou.png");
+	m_pUnclothedImg = CResourceManager::getInst()->LoadD2DImage(L"PlayerUnclothedImg", L"texture\\Animation\\Animation_Lou_Naked.png");
 	CreateCollider();
 	SetScale(Vec2(60.f, 80.f));
 	GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 	GetCollider()->SetOffsetPos(Vec2(0.f, -10.f));
 
 	CreateAnimator();
-	//옷 입음
-	GetAnimator()->CreateAnimation(L"Idle_Right", m_pImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
-	GetAnimator()->CreateAnimation(L"Idle_Left", m_pImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
-
-	GetAnimator()->CreateAnimation(L"Still_Right", m_pImg, Vec2(0.f, 256.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
-	GetAnimator()->CreateAnimation(L"Still_Left", m_pImg, Vec2(128.f, 256.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
-
-	GetAnimator()->CreateAnimation(L"Move_Right", m_pImg, Vec2(0.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 6, false);
-	GetAnimator()->CreateAnimation(L"Move_Left", m_pImg, Vec2(128.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 6, false);
 	
-	GetAnimator()->CreateAnimation(L"Lookup_Right", m_pImg, Vec2(768.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
-	GetAnimator()->CreateAnimation(L"Lookup_Left", m_pImg, Vec2(896.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
-	GetAnimator()->CreateAnimation(L"Sit_Right", m_pImg, Vec2(768.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
-	GetAnimator()->CreateAnimation(L"Sit_Left", m_pImg, Vec2(896.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
-
-	GetAnimator()->CreateAnimation(L"pShoot_Right", m_pImg, Vec2(768.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.0666f, 3, false,false);
-	GetAnimator()->CreateAnimation(L"pShoot_Left", m_pImg, Vec2(896.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.0666f, 3, false,false);
 	
-	GetAnimator()->CreateAnimation(L"pShoot_Sit_Right", m_pImg, Vec2(768.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false, false);
-	GetAnimator()->CreateAnimation(L"pShoot_Sit_Left", m_pImg, Vec2(896.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false, false);
-	GetAnimator()->CreateAnimation(L"pShoot_Up_Right", m_pImg, Vec2(768.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false, false);
-	GetAnimator()->CreateAnimation(L"pShoot_Up_Left", m_pImg, Vec2(896.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false, false);
+	////////////////////////////////옷 입음////////////////////////////////
 
+	GetAnimator()->CreateAnimation(L"Idle_Right", m_pClothedImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
+	GetAnimator()->CreateAnimation(L"Idle_Left", m_pClothedImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
 
-	GetAnimator()->CreateAnimation(L"Jump_Right_U", m_pImg, Vec2(256.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
-	GetAnimator()->CreateAnimation(L"Jump_Left_U", m_pImg, Vec2(384.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
-	GetAnimator()->CreateAnimation(L"Jump_Right_D", m_pImg, Vec2(256.f, 128.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
-	GetAnimator()->CreateAnimation(L"Jump_Left_D", m_pImg, Vec2(384.f, 128.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
-	GetAnimator()->CreateAnimation(L"Jump_Right_Onland", m_pImg, Vec2(384.f, 256.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
-	GetAnimator()->CreateAnimation(L"Jump_Left_Onland", m_pImg, Vec2(384.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
-	GetAnimator()->CreateAnimation(L"Jump_Right_Look_D", m_pImg, Vec2(256.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
-	GetAnimator()->CreateAnimation(L"Jump_Left_Look_D", m_pImg, Vec2(384.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
-	GetAnimator()->CreateAnimation(L"Jump_Right_Look_U", m_pImg, Vec2(256.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
-	GetAnimator()->CreateAnimation(L"Jump_Left_Look_U", m_pImg, Vec2(384.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"Still_Right", m_pClothedImg, Vec2(0.f, 256.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
+	GetAnimator()->CreateAnimation(L"Still_Left", m_pClothedImg, Vec2(128.f, 256.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
 
-	GetAnimator()->CreateAnimation(L"Dash_Right", m_pImg, Vec2(1280.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.06f, 5, false);
-	GetAnimator()->CreateAnimation(L"Dash_Left", m_pImg, Vec2(1408.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.06f, 5, false);
+	GetAnimator()->CreateAnimation(L"Move_Right", m_pClothedImg, Vec2(0.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 6, false);
+	GetAnimator()->CreateAnimation(L"Move_Left", m_pClothedImg, Vec2(128.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 6, false);
 	
-	GetAnimator()->CreateAnimation(L"Lou_Hurt_Right", m_pImg, Vec2(1280.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.333f, 3, false);
-	GetAnimator()->CreateAnimation(L"Lou_Hurt_Left", m_pImg, Vec2(1408.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.333f, 3, false);
+	GetAnimator()->CreateAnimation(L"Lookup_Right", m_pClothedImg, Vec2(768.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Lookup_Left", m_pClothedImg, Vec2(896.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Sit_Right", m_pClothedImg, Vec2(768.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Sit_Left", m_pClothedImg, Vec2(896.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
 
-	GetAnimator()->CreateAnimation(L"Lou_NULL", m_pImg, Vec2(1280.f, 1280.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.1f, 1, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Right", m_pClothedImg, Vec2(768.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.0666f, 3, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Left", m_pClothedImg, Vec2(896.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.0666f, 3, false);
+	
+	GetAnimator()->CreateAnimation(L"pShoot_Sit_Right", m_pClothedImg, Vec2(768.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Sit_Left", m_pClothedImg, Vec2(896.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Up_Right", m_pClothedImg, Vec2(768.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Up_Left", m_pClothedImg, Vec2(896.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
 
-	//탈의
+
+	GetAnimator()->CreateAnimation(L"Jump_Right_U", m_pClothedImg, Vec2(256.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_U", m_pClothedImg, Vec2(384.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Right_D", m_pClothedImg, Vec2(256.f, 128.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_D", m_pClothedImg, Vec2(384.f, 128.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Right_Onland", m_pClothedImg, Vec2(384.f, 256.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_Onland", m_pClothedImg, Vec2(384.f, 384.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Right_Look_D", m_pClothedImg, Vec2(256.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_Look_D", m_pClothedImg, Vec2(384.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Right_Look_U", m_pClothedImg, Vec2(256.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_Look_U", m_pClothedImg, Vec2(384.f, 768.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 1, false);
+
+	GetAnimator()->CreateAnimation(L"Dash_Right", m_pClothedImg, Vec2(1280.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.06f, 5, false);
+	GetAnimator()->CreateAnimation(L"Dash_Left", m_pClothedImg, Vec2(1408.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.06f, 5, false);
+	
+	GetAnimator()->CreateAnimation(L"Lou_Hurt_Right", m_pClothedImg, Vec2(1280.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.166f, 3, false);
+	GetAnimator()->CreateAnimation(L"Lou_Hurt_Left", m_pClothedImg, Vec2(1408.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.166f, 3, false);
+
+	GetAnimator()->CreateAnimation(L"Lou_Fly_Right", m_pClothedImg, Vec2(1024.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.1f, 1, false);
+	GetAnimator()->CreateAnimation(L"Lou_Fly_Left", m_pClothedImg, Vec2(1024.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.1f, 1, true);
+
+	GetAnimator()->CreateAnimation(L"Lou_NULL", m_pClothedImg, Vec2(1280.f, 1280.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.1f, 1, false);
+
+	
+	//naked폼///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	GetAnimator()->CreateAnimation(L"GetUp_Right_N", m_pUnclothedImg, Vec2(2944.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.125f, 4, false);
+	GetAnimator()->CreateAnimation(L"GetUp_Left_N", m_pUnclothedImg, Vec2(2944.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.125f, 4, true);
+
+	GetAnimator()->CreateAnimation(L"Idle_Right_N", m_pUnclothedImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"Idle_Left_N", m_pUnclothedImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.5f, 1, true);
+
+	GetAnimator()->CreateAnimation(L"Still_Right_N", m_pUnclothedImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.5f, 2, false);
+	GetAnimator()->CreateAnimation(L"Still_Left_N", m_pUnclothedImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.5f, 2, true);
+
+	GetAnimator()->CreateAnimation(L"Move_Right_N", m_pUnclothedImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 6, false);
+	GetAnimator()->CreateAnimation(L"Move_Left_N", m_pUnclothedImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 6, true);
+
+	GetAnimator()->CreateAnimation(L"Lookup_Right_N", m_pUnclothedImg, Vec2(1152.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Lookup_Left_N", m_pUnclothedImg, Vec2(1152.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, true);
+	GetAnimator()->CreateAnimation(L"Sit_Right_N", m_pUnclothedImg, Vec2(2048.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Sit_Left_N", m_pUnclothedImg, Vec2(2048.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, true);
+
+	GetAnimator()->CreateAnimation(L"pShoot_Right_N", m_pUnclothedImg, Vec2(896.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 2, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Left_N", m_pUnclothedImg, Vec2(896.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 2, true);
+
+	GetAnimator()->CreateAnimation(L"pShoot_Sit_Right_N", m_pUnclothedImg, Vec2(2176.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Sit_Left_N", m_pUnclothedImg, Vec2(2176.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, true);
+	GetAnimator()->CreateAnimation(L"pShoot_Up_Right_N", m_pUnclothedImg, Vec2(1280.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"pShoot_Up_Left_N", m_pUnclothedImg, Vec2(1280.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, true);
+
+	GetAnimator()->CreateAnimation(L"Jump_Right_U_N", m_pUnclothedImg, Vec2(1536.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_U_N", m_pUnclothedImg, Vec2(1536.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, true);
+	GetAnimator()->CreateAnimation(L"Jump_Right_Onland_N", m_pUnclothedImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_Onland_N", m_pUnclothedImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, true);
+	GetAnimator()->CreateAnimation(L"Jump_Right_Look_D_N", m_pUnclothedImg, Vec2(1792.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_Left_Look_D_N", m_pUnclothedImg, Vec2(1792.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.5f, 1, true);
+	GetAnimator()->CreateAnimation(L"Jump_R_Up_Shoot_N", m_pUnclothedImg, Vec2(1408.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_L_Up_Shoot_N", m_pUnclothedImg, Vec2(1408.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, true);
+	GetAnimator()->CreateAnimation(L"Jump_R_Shoot_N", m_pUnclothedImg, Vec2(1664.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_L_Shoot_N", m_pUnclothedImg, Vec2(1664.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, true);
+	GetAnimator()->CreateAnimation(L"Jump_R_Dn_Shoot_N", m_pUnclothedImg, Vec2(1920.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, false);
+	GetAnimator()->CreateAnimation(L"Jump_L_Dn_Shoot_N", m_pUnclothedImg, Vec2(1920.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, true);
+
+	GetAnimator()->CreateAnimation(L"Dash_Right_N", m_pUnclothedImg, Vec2(2432.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 1, false);
+	GetAnimator()->CreateAnimation(L"Dash_Left_N", m_pUnclothedImg, Vec2(2432.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 1, true);
+
+	GetAnimator()->CreateAnimation(L"Lou_Hurt_Right_N", m_pUnclothedImg, Vec2(2560.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.333f, 3, false);
+	GetAnimator()->CreateAnimation(L"Lou_Hurt_Left_N", m_pUnclothedImg, Vec2(2560.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.333f, 3, true);
+
+	GetAnimator()->CreateAnimation(L"GetHealed", m_pUnclothedImg, Vec2(3456.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.125f, 8, false);
 
 	GetAnimator()->Play(L"Idle_Right");
+
 
 	CCameraManager::getInst()->GetRenderPos(GetPos());
 
@@ -120,28 +178,11 @@ void CLou::update()
 
 void CLou::update_move()
 {
-
-
 	Vec2 vPos = GetPos();
 	
-
 	//////////////////////////////////////
 	//////////////////////////////////////
-	//모션,기능 시험용
-	if (KEYDOWN('Q'))
-	{
-		CEffect* effect = new CEffect(L"GoblinGenEff", L"texture\\Animation\\Effect_Goblin_Gen.png",
-			L"Goblin_Gen_Eff", Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.1f, 10, false, false, L"GoblinGenEff");
-		effect->SetPos(GetPos());
-		effect->SetDuration(10.f);
-		CreateObj(effect, GROUP_GAMEOBJ::EFFECT);
 
-		//무적 강제켜기(3초)
-		isInvincible = !isInvincible;
-		//GenerateGoblin();
-		//GetAnimator()->Play(L"pShoot_Right");
-		//m_floor = 0;
-	}
 	if (KEY('W'))//누르고있으면 속도 부스터:테스트용
 	{
 		m_velocity = 1000.f;
@@ -174,7 +215,10 @@ void CLou::update_move()
 	else				//충돌off
 	{
 		m_gravity = D_GRAVITY;
-		vPos.y += D_GRAVITY * fDT;
+		if (m_state != eState::FLY)
+		{
+			vPos.y += D_GRAVITY * fDT;
+		}
 	}
 	switch (m_state)
 	{
@@ -262,6 +306,8 @@ void CLou::update_move()
 		GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y - 30.f));
 		GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, -20.f), 0);
 		GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, -20.f), 0);
+		GetAnimator()->FindAnimation(L"Sit_Right_N")->SetOffset(Vec2(0.f, -10.f), 0);
+		GetAnimator()->FindAnimation(L"Sit_Left_N")->SetOffset(Vec2(0.f, -10.f), 0);
 
 		if (KEYDOWN(VK_RIGHT))
 		{
@@ -377,6 +423,9 @@ void CLou::update_move()
 		break;
 	case eState::ATTACK:
 	{
+		//GetAnimator()->FindAnimation(L"pShoot_Sit_Right_N")->SetOffset(Vec2(0.f, 50.f), 0);
+		//GetAnimator()->FindAnimation(L"pShoot_Sit_Left_N")->SetOffset(Vec2(0.f, 50.f), 0);
+
 		m_stateCounter += fDT;
 		if (m_stateCounter >= 0.2f)
 		{
@@ -591,20 +640,57 @@ void CLou::update_move()
 		break;
 	case eState::GOTHIT:
 	{
+		if (m_stateCounter == 0.f)
+		{
+			//////////////////////이펙트///////////////
+			CEffect* effectExplode = new CEffect(L"Effect_Explode", L"texture\\Animation\\Effect_Explode.png",
+				L"Effect_Explode", Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 9, false, false, L"Effect_Explode");
+			effectExplode->SetPos(Vec2(GetPos()));
+			effectExplode->SetDuration(0.9f);
+			CreateObj(effectExplode, GROUP_GAMEOBJ::EFFECT);
+			///////////////////////////////////////////
+		}
 		m_stateCounter += fDT;
 
 		if (m_stateCounter >= 1.f)
 		{
 			isInvincible += fDT;
 			m_stateCounter = 0.f;
-			m_state = eState::IDLE;
+			if (GetHP() > 0)
+			{
+				isClothed = false;
+				m_state = eState::IDLE;
+			}
+			else
+			{
+				m_state = eState::DEAD;
+			}
+
 		}
 
 	}
 		break;
 	case eState::DEAD:
 	{
-		//dead상태에서는 state카운터를 애니메이션에서 센다
+		if (m_stateCounter == 0.f)
+		{
+			//////////////////////이펙트///////////////
+			CEffect* effectDie = new CEffect(L"Effect_Lou_Dead", L"texture\\Animation\\Effect_Lou_Dead.png",
+				L"Effect_Lou_Dead", Vec2(0.f, 0.f), Vec2(192.f, 512.f), Vec2(192.f, 0.f), 0.03f, 14, false, false, L"Effect_Lou_Dead");
+			effectDie->SetPos(Vec2(GetPos().x, GetPos().y - 200.f));
+			effectDie->SetDuration(0.42f);
+			CreateObj(effectDie, GROUP_GAMEOBJ::EFFECT);
+			///////////////////////////////////////////
+		}
+		m_stateCounter += fDT;
+		if (m_stateCounter >= 5.f)
+		{
+			pOwl = new COwl(vPos);
+			CreateObj(pOwl, GROUP_GAMEOBJ::ITEM);
+			m_stateCounter = 0.f;
+			//TODO:목숨이 남았다면
+			SETSTATE::FLY;
+		}
 	}
 		break;
 	case eState::HOLDCLIFF:
@@ -633,9 +719,42 @@ void CLou::update_move()
 		break;
 	case eState::FLY:
 	{
+		if (KEY(VK_LEFT))
+		{
+			vPos.x -= m_velocity * fDT;
+		}
+		if (KEY(VK_RIGHT))
+		{
+			vPos.x += m_velocity * fDT;
+		}
 		m_stateCounter += fDT;
+		isInvincible += fDT;
+		vPos.y = 50.f;
+		missileType = L"NONE";
+		SetHP(2);
+		prevHP = 2;
+		isClothed = true;
+		if (KEYDOWN('X') || m_stateCounter >= 5.f)
+		{ 
+			pOwl->AttackEntireWindow();
+			DeleteObj(pOwl);
+			m_stateCounter = 0.f;
+			SETSTATE::FALL;
+		}
+
 	}
 		break;
+	case eState::HEALED:
+	{
+		//isInvincible += fDT;
+		m_stateCounter += fDT;
+		SetHP(2);
+		isClothed = true;
+		if (m_stateCounter >= 1.f)
+		{
+			SETSTATE::IDLE;
+		}
+	}break;
 	}
 
 ///////////////////
@@ -663,22 +782,51 @@ void CLou::update_animation()
 			{
 				if (KEY(VK_UP))
 				{
-					GetAnimator()->Play(L"Lookup_Right");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"Lookup_Right");
+					}
+					else
+					{
+						GetAnimator()->Play(L"Lookup_Right_N");
+					}
 				}
 				else
 				{
-					GetAnimator()->Play(L"Idle_Right");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"Idle_Right");
+					}
+					else
+					{
+						GetAnimator()->Play(L"Idle_Right_N");
+					}
 				}
 			}
 			else
 			{
 				if (KEY(VK_UP))
 				{
-					GetAnimator()->Play(L"Lookup_Left");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"Lookup_Left");
+					}
+					else
+					{
+						GetAnimator()->Play(L"Lookup_Left_N");
+					}
+					
 				}
 				else
 				{
-					GetAnimator()->Play(L"Idle_Left");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"Idle_Left");
+					}
+					else
+					{
+						GetAnimator()->Play(L"Idle_Left_N");
+					}
 				}
 			}
 		}break;
@@ -686,11 +834,25 @@ void CLou::update_animation()
 		{
 			if (isFacedRight)
 			{
-				GetAnimator()->Play(L"Sit_Right");
+				if (isClothed)
+				{
+					GetAnimator()->Play(L"Sit_Right");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Sit_Right_N");
+				}
 			}
 			else
 			{
-				GetAnimator()->Play(L"Sit_Left");
+				if (isClothed)
+				{
+					GetAnimator()->Play(L"Sit_Left");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Sit_Left_N");
+				}
 			}
 		}break;
 		case eState::ATTACK:
@@ -699,11 +861,25 @@ void CLou::update_animation()
 			{
 				if (isFacedRight)
 				{
-					GetAnimator()->Play(L"pShoot_Sit_Right");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"pShoot_Sit_Right");
+					}
+					else
+					{
+						GetAnimator()->Play(L"pShoot_Sit_Right_N");
+					}
 				}
 				else
 				{
-					GetAnimator()->Play(L"pShoot_Sit_Left");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"pShoot_Sit_Left");
+					}
+					else
+					{
+						GetAnimator()->Play(L"pShoot_Sit_Left_N");
+					}
 				}
 				GetAnimator()->GetCurrentAnimation()->SetOffset(Vec2(0.f, -20.f), 0);
 			}
@@ -711,62 +887,178 @@ void CLou::update_animation()
 			{
 				if (isFacedRight)
 				{
-					GetAnimator()->Play(L"pShoot_Up_Right");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"pShoot_Up_Right");
+					}
+					else
+					{
+						GetAnimator()->Play(L"pShoot_Up_Right_N");
+					}
 				}
 				else
 				{
-					GetAnimator()->Play(L"pShoot_Up_Left");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"pShoot_Up_Left");
+					}
+					else
+					{
+						GetAnimator()->Play(L"pShoot_Up_Left_N");
+					}
 				}
 			}
 			else
 			{
 				if (isFacedRight)
 				{
-					GetAnimator()->Play(L"pShoot_Right");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"pShoot_Right");
+					}
+					else
+					{
+						GetAnimator()->Play(L"pShoot_Right_N");
+					}
 				}
 				else
 				{
-					GetAnimator()->Play(L"pShoot_Left");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"pShoot_Left");
+					}
+					else
+					{
+						GetAnimator()->Play(L"pShoot_Left_N");
+					}
 				}
 			}
 
 		}break;
 		case eState::JUMP:
-		{
+		{		
 			if (isFacedRight)
 			{
 				if(KEY(VK_DOWN))
 				{
-					GetAnimator()->Play(L"Jump_Right_Look_D");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"Jump_Right_Look_D");
+					}
+					else if (KEY('Z') && !isClothed)
+					{
+						GetAnimator()->Play(L"Jump_R_Dn_Shoot_N");
+					}
+					else if (!isClothed)
+					{
+						GetAnimator()->Play(L"Jump_Right_Look_D_N");
+					}
 				}
 				else if (KEY(VK_UP))
 				{
-					GetAnimator()->Play(L"Jump_Right_Look_U");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"Jump_Right_Look_U");
+					}
+					else if (KEY('Z') && !isClothed)
+					{
+						GetAnimator()->Play(L"Jump_R_Up_Shoot_N");
+					}
+					else if(!isClothed)
+					{
+						GetAnimator()->Play(L"Jump_Right_U_N");
+					}
+				}
+				else if (KEY('Z') && !isClothed)
+				{
+					GetAnimator()->Play(L"Jump_R_Shoot_N");
 				}
 				else
 				{
 					if (prevY < GetPos().y)
-						GetAnimator()->Play(L"Jump_Right_D");
+					{
+						if (isClothed)
+						{
+							GetAnimator()->Play(L"Jump_Right_D");
+						}
+						else
+						{
+							GetAnimator()->Play(L"Jump_Right_U_N");
+						}
+					}
 					else
-						GetAnimator()->Play(L"Jump_Right_U");
+					{
+						if (isClothed)
+						{
+							GetAnimator()->Play(L"Jump_Right_U");
+						}
+						else
+						{
+							GetAnimator()->Play(L"Jump_Right_U_N");
+						}
+					}
 				}
 			}
-			else
+			else//왼쪽볼때
 			{
 				if (KEY(VK_DOWN))
 				{
-					GetAnimator()->Play(L"Jump_Left_Look_D");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"Jump_Left_Look_D");
+					}
+					else if (KEY('Z') && !isClothed)
+					{
+						GetAnimator()->Play(L"Jump_R_Dn_Shoot_N");
+					}
+					else if (!isClothed)
+					{
+						GetAnimator()->Play(L"Jump_Left_Look_D_N");
+					}
 				}
 				else if (KEY(VK_UP))
 				{
-					GetAnimator()->Play(L"Jump_Left_Look_U");
+					if (isClothed)
+					{
+						GetAnimator()->Play(L"Jump_Left_Look_U");
+					}
+					else if (KEY('Z') && !isClothed)
+					{
+						GetAnimator()->Play(L"Jump_L_Up_Shoot_N");
+					}
+					else if (!isClothed)
+					{
+						GetAnimator()->Play(L"Jump_Left_U_N");
+					}
+				}
+				else if (KEY('Z') && !isClothed)
+				{
+					GetAnimator()->Play(L"Jump_L_Shoot_N");
 				}
 				else
 				{
 					if (prevY < GetPos().y)
-						GetAnimator()->Play(L"Jump_Left_D");
+					{
+						if (isClothed)
+						{
+							GetAnimator()->Play(L"Jump_Left_D");
+						}
+						else
+						{
+							GetAnimator()->Play(L"Jump_Left_U_N");
+						}
+					}
 					else
-						GetAnimator()->Play(L"Jump_Left_U");
+					{
+						if (isClothed)
+						{
+							GetAnimator()->Play(L"Jump_Left_U");
+						}
+						else
+						{
+							GetAnimator()->Play(L"Jump_Left_U_N");
+						}
+					}
 				}
 			}
 
@@ -775,23 +1067,51 @@ void CLou::update_animation()
 		{
 			if (isFacedRight)
 			{
-				GetAnimator()->Play(L"Jump_Right_D");
+				if (isClothed)
+				{
+					GetAnimator()->Play(L"Jump_Right_D");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Jump_Right_U_N");
+				}
 			}
 			else
 			{
-				GetAnimator()->Play(L"Jump_Left_D");
+				if (isClothed)
+				{
+					GetAnimator()->Play(L"Jump_Left_D");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Jump_Left_U_N");
+				}
 			}
 		}break;
 			
 		case eState::LANDMOVE:
 		{
-			if (true == isFacedRight)
+			if (isFacedRight)
 			{
-				GetAnimator()->Play(L"Move_Right");
+				if (isClothed)
+				{
+					GetAnimator()->Play(L"Move_Right");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Move_Right_N");
+				}
 			}
-			else if (false == isFacedRight)
+			else
 			{
-				GetAnimator()->Play(L"Move_Left");
+				if (isClothed)
+				{
+					GetAnimator()->Play(L"Move_Left");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Move_Left_N");
+				}
 			}
 		}break;
 		case eState::HOLDCLIFF:
@@ -800,43 +1120,89 @@ void CLou::update_animation()
 		}break;
 		case eState::GOTHIT:
 		{
-			if (isFacedRight)
+			if (isClothed)
 			{
-				GetAnimator()->Play(L"Lou_Hurt_Right");
+				if (m_stateCounter < 0.5f)
+				{
+					if (isFacedRight)
+					{
+						GetAnimator()->Play(L"Lou_Hurt_Right");
+					}
+					else
+					{
+						GetAnimator()->Play(L"Lou_Hurt_Left");
+					}
+				}
+				else if (m_stateCounter >= 0.5f)
+				{
+					if (isFacedRight)
+					{
+						GetAnimator()->Play(L"GetUp_Right_N");
+					}
+					else
+					{
+						GetAnimator()->Play(L"GetUp_Left_N");
+					}
+				}
 			}
 			else
 			{
-				GetAnimator()->Play(L"Lou_Hurt_Left");
+				if (isFacedRight)
+				{
+					GetAnimator()->Play(L"Lou_Hurt_Right_N");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Lou_Hurt_Left_N");
+				}
 			}
+
+
 		}break;
 		case eState::DASH:
 		{
-			if (true == isFacedRight)
+			if (isFacedRight)
 			{
-				GetAnimator()->Play(L"Dash_Right");
+				if (isClothed)
+				{
+					GetAnimator()->Play(L"Dash_Right");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Dash_Right_N");
+				}
 			}
-			else if (false == isFacedRight)
+			else
 			{
-				GetAnimator()->Play(L"Dash_Left");
+				if (isClothed)
+				{
+					GetAnimator()->Play(L"Dash_Left");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Dash_Left_N");
+				}
 			}
 		}break;
 		case eState::DEAD:
 		{
-			//TODO: naked폼 dead로 변경
-			 
-			if (m_stateCounter == 0.f)
-			{
-				//////////////////////이펙트///////////////
-				CEffect* effectDie = new CEffect(L"Effect_Lou_Dead", L"texture\\Animation\\Effect_Lou_Dead.png",
-					L"Effect_Lou_Dead", Vec2(0.f, 0.f), Vec2(192.f, 512.f), Vec2(192.f, 0.f), 0.03f, 14, false, false, L"Effect_Lou_Dead");
-				effectDie->SetPos(Vec2(GetPos().x,GetPos().y-200.f));
-				effectDie->SetDuration(0.42f);
-				CreateObj(effectDie, GROUP_GAMEOBJ::EFFECT);
-				///////////////////////////////////////////
-			}
-			m_stateCounter += fDT;
 
-		}
+		}break;
+		case eState::HEALED:
+		{
+			GetAnimator()->Play(L"GetHealed");
+		}break;
+		case eState::FLY:
+		{
+			if (isFacedRight)
+			{
+				GetAnimator()->Play(L"Lou_Fly_Right");
+			}
+			else
+			{
+				GetAnimator()->Play(L"Lou_Fly_Left");
+			}
+		}break;
 	}
 	if (isInvincible > 0.f)
 	{
@@ -861,27 +1227,45 @@ void CLou::update_animation()
 void CLou::CreateMissile()
 {
 	Vec2 fpMissilePos = GetPos();
-
+	CMissile* pMissile = new CMissile();
+	CHyperMissile* pHyper = nullptr;
 	// Misiile Object
-	CMissile* pMissile = new CMissile;
-	
+
+
 	switch(m_facing)
 	{
 	case D_FACING::RIGHT:
 		{
+		if (missileType == L"NONE")
+		{
+			pMissile->GetAnimator()->Play(L"N_Shoot_Right");
+		}
+		else if (missileType == L"HYPER")
+		{
+			pMissile->GetAnimator()->Play(L"N_Hyper_Right");
+			pHyper = new CHyperMissile(Vec2(1.f,0.f));
+		}
 			fpMissilePos.x += 70;
 			pMissile->SetPos(fpMissilePos);
 			pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-			pMissile->GetAnimator()->Play(L"N_Shoot_Right");
+			
 			pMissile->GetCollider()->SetOffsetPos(Vec2(-30.f, 0.f));
 			pMissile->SetDir(Vec2(1, 0));		
 		}break;
 	case D_FACING::LEFT:
 		{
+		if (missileType == L"NONE")
+		{
+			pMissile->GetAnimator()->Play(L"N_Shoot_Left");
+		}
+		else if (missileType == L"HYPER")
+		{
+			pHyper = new CHyperMissile(Vec2(-1.f, 0.f));
+			pMissile->GetAnimator()->Play(L"N_Hyper_Left");
+		}
 			fpMissilePos.x -= 70;
 			pMissile->SetPos(fpMissilePos);
 			pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-			pMissile->GetAnimator()->Play(L"N_Shoot_Left");
 			pMissile->GetCollider()->SetOffsetPos(Vec2(30.f, 0.f));
 			pMissile->SetDir(Vec2(-1, 0));
 		}break;
@@ -898,10 +1282,27 @@ void CLou::CreateMissile()
 				fpMissilePos.x -= 25.f;
 			}
 		}
+		if (missileType == L"NONE")
+		{
+			pMissile->GetAnimator()->Play(L"N_Shoot_Up");
+		}
+		else if (missileType == L"HYPER")
+		{
+
+			if (isFacedRight)
+			{
+				pHyper = new CHyperMissile(Vec2(0.1f, -1.f));
+
+			}
+			else
+			{
+				pHyper = new CHyperMissile(Vec2(-0.1f, -1.f));
+			}
+			pMissile->GetAnimator()->Play(L"N_Hyper_Up");
+		}
 			fpMissilePos.y -= 50;
 			pMissile->SetPos(fpMissilePos);
 			pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-			pMissile->GetAnimator()->Play(L"N_Shoot_Up");
 			pMissile->GetCollider()->SetOffsetPos(Vec2(0.f, 30.f));
 			pMissile->SetDir(Vec2(0, -1));
 		}break;
@@ -917,10 +1318,18 @@ void CLou::CreateMissile()
 				{
 					fpMissilePos.x -= 15.f;
 				}
+				if (missileType == L"NONE")
+				{
+					pMissile->GetAnimator()->Play(L"N_Shoot_Down");
+				}
+				else if (missileType == L"HYPER")
+				{
+					pHyper = new CHyperMissile(Vec2(0.f, 1.f));
+					pMissile->GetAnimator()->Play(L"N_Hyper_Down");
+				}
 				fpMissilePos.y += 50;
 				pMissile->SetPos(fpMissilePos);
 				pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-				pMissile->GetAnimator()->Play(L"N_Shoot_Down");
 				pMissile->GetCollider()->SetOffsetPos(Vec2(0.f, -30.f));
 				pMissile->SetDir(Vec2(0, 1));			
 			}
@@ -932,7 +1341,15 @@ void CLou::CreateMissile()
 					fpMissilePos.y += 20;
 					pMissile->SetPos(fpMissilePos);
 					pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-					pMissile->GetAnimator()->Play(L"N_Shoot_Right");
+					if (missileType == L"NONE")
+					{
+						pMissile->GetAnimator()->Play(L"N_Shoot_Right");
+					}
+					else if (missileType == L"HYPER")
+					{
+						pHyper = new CHyperMissile(Vec2(1.f, 0.f));
+						pMissile->GetAnimator()->Play(L"N_Hyper_Right");
+					}
 					pMissile->GetCollider()->SetOffsetPos(Vec2(30.f, 0.f));
 					pMissile->SetDir(Vec2(1, 0));
 				}
@@ -942,15 +1359,28 @@ void CLou::CreateMissile()
 					fpMissilePos.y += 20;
 					pMissile->SetPos(fpMissilePos);
 					pMissile->GetCollider()->SetFinalPos(pMissile->GetPos());
-					pMissile->GetAnimator()->Play(L"N_Shoot_Left");
+					if (missileType == L"NONE")
+					{
+						pMissile->GetAnimator()->Play(L"N_Shoot_Left");
+					}
+					else if (missileType == L"HYPER")
+					{
+						pHyper = new CHyperMissile(Vec2(-1.f, 0.f));
+						pMissile->GetAnimator()->Play(L"N_Hyper_Left");
+					}
 					pMissile->GetCollider()->SetOffsetPos(Vec2(30.f, 0.f));
 					pMissile->SetDir(Vec2(-1, 0));
 				}
 			}
-		}break;		
-	}
-	pMissile->SetName(L"Missile_Player");
+		}break;	
 
+	}
+
+	if (nullptr != pHyper)
+	{
+		pHyper->SetPos(fpMissilePos);
+		CreateObj(pHyper, GROUP_GAMEOBJ::MISSILE_PLAYER);
+	}
 	CreateObj(pMissile, GROUP_GAMEOBJ::MISSILE_PLAYER);
 }
 
@@ -1104,7 +1534,15 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 		}
 	}
 	
-
+	if (pOther->GetName() == L"Hyper")
+	{
+		missileType = L"HYPER";
+	}
+	if (pOther->GetName() == L"Lamp"&& 1==GetHP())
+	{
+		m_stateCounter = 0.f;
+		SETSTATE::HEALED;
+	}
 
 	//else if (pOther->GetName() == L"Tile" && (plColSize.y + oColSize.y - 2) <= abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
 	//{
@@ -1243,7 +1681,7 @@ void CLou::render_information()
 			break;
 		case eState::HOLDCLIFF:stateName = L"HOLDCLIFF";
 			break;
-		case eState::INVINCIBLE:stateName = L"INVINCIBLE";
+		case eState::HEALED:stateName = L"HEALED";
 			break;
 		case eState::FLY:stateName = L"FLY";
 			break;
@@ -1275,6 +1713,7 @@ void CLou::render_information()
 			L" drctn  : " + direction + L"\n" +
 			L" curAm : " + curAni + L"\n"+
 			L" HP:  " + std::to_wstring(GetHP()) + L"\n" +
+			L" MsileType: "+ missileType +L"\n"+
 			L" wallCount : "  + std::to_wstring(m_floor)
 			, vPos.x+30.f
 			, vPos.y+ -40.f

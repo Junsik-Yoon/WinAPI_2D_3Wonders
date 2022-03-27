@@ -14,6 +14,7 @@ CMissile::CMissile()
 	SetScale(Vec2(20.f, 20.f));
 	m_pImgPlayer = CResourceManager::getInst()->LoadD2DImage(L"PlayerMissileImg", L"texture\\Animation\\Animation_PlayerMissile.png");
 	m_pImgGW = CResourceManager::getInst()->LoadD2DImage(L"GWMissileImg", L"texture\\Animation\\Animation_Missile_GW.png");
+	m_pImgHyper = CResourceManager::getInst()->LoadD2DImage(L"PlayerSPMissileImg", L"texture\\Animation\\Animation_Hyper_Missile.png");
 	CreateCollider();
 	GetCollider()->SetScale(Vec2(GetScale().x,GetScale().y));
 	GetCollider()->SetOffsetPos(Vec2(0.f, 0.f));
@@ -32,9 +33,11 @@ CMissile::CMissile()
 	GetAnimator()->CreateAnimation(L"N_Hit_Right", m_pImgPlayer, Vec2(192.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, false);
 	GetAnimator()->CreateAnimation(L"N_Hit_Left", m_pImgPlayer, Vec2(192.f, 0.f), Vec2(192.f, 48.f), Vec2(192.f, 0.f), 0.5f, 1, true);
 
+	GetAnimator()->CreateAnimation(L"N_Hyper_Right", m_pImgHyper, Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"N_Hyper_Left", m_pImgHyper, Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.5f, 1, true);
+	GetAnimator()->CreateAnimation(L"N_Hyper_Up", m_pImgHyper, Vec2(64.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.5f, 1, false);
+	GetAnimator()->CreateAnimation(L"N_Hyper_Down", m_pImgHyper, Vec2(128.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.5f, 1, false);
 	
-
-	CCameraManager::getInst()->GetRenderPos(GetPos());
 
 }
 
@@ -62,16 +65,16 @@ void CMissile::update()
 
 void CMissile::render()
 {
-	Vec2 vPos = GetPos();
-	Vec2 vScale = GetScale();
+	//Vec2 vPos = GetPos();
+	//Vec2 vScale = GetScale();
 
-	Vec2 fptRenderPos = CCameraManager::getInst()->GetRenderPos(vPos);
-	
-	CRenderManager::getInst()->RenderRectangle(
-		fptRenderPos.x-vScale.x/2.f,
-		fptRenderPos.y-vScale.y/2.f,
-		fptRenderPos.x+vScale.x / 2.f,
-		fptRenderPos.y-vScale.y / 2.f);
+	//Vec2 fptRenderPos = CCameraManager::getInst()->GetRenderPos(vPos);
+	//
+	//CRenderManager::getInst()->RenderRectangle(
+	//	fptRenderPos.x-vScale.x/2.f,
+	//	fptRenderPos.y-vScale.y/2.f,
+	//	fptRenderPos.x+vScale.x / 2.f,
+	//	fptRenderPos.y-vScale.y / 2.f);
 
 	component_render();
 }

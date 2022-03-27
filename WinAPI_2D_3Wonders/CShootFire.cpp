@@ -39,7 +39,7 @@ CShootFire::~CShootFire()
 void CShootFire::update()
 {
 	Vec2 vPos = GetPos();
-	m_fvDir.y -= 0.3f * fDT;
+	m_fvDir.y -= 0.4f * fDT;
 	vPos.x += m_fSpeed * m_fvDir.x * fDT;
 	vPos.y += m_fSpeed * m_fvDir.y * fDT;
 

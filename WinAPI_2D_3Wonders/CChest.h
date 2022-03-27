@@ -27,6 +27,7 @@ private:
 public:
 	void Put_Item();
 	void Set_Item(CItem* _pObj) { itemContains = _pObj; }
+	CItem* Get_Item() { return itemContains; }
 public:
 	void SetVisibility(bool _visible) { isVisible = _visible; }
 public:

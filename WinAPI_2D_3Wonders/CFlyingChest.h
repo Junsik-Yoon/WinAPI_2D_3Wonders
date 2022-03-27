@@ -28,9 +28,12 @@ private:
 	vector<CItem*> itemsContain;
 	float m_appearTimer;
 	float m_effectTimer;
-	float m_velUD;
-	float m_velLR;
-	float m_resist;
+	float  m_width = 2500.f;
+	float  m_height = 50.f;
+	float  m_fSpd = 1.f;
+
+	Vec2 m_center;
+	float m_fTheta;
 
 public:
 	void Put_Item();

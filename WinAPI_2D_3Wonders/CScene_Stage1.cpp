@@ -19,6 +19,8 @@
 #include "CCard.h"
 #include "CCoin.h"
 #include "COptionFire.h"
+#include "CMissileItem.h"
+#include "CLamp.h"
 
 #include "CLou.h"
 #include "CGoblin.h"
@@ -137,19 +139,22 @@ void CScene_Stage1::Enter()
 
 	CChest* pChest2 = new CChest();
 	pChest2->SetPos(Vec2(2250.f, 140.f));
-	pChest2->Set_Item(new CCoin());
+	pChest2->Set_Item(new CLamp());
 	AddObject(pChest2, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest3 = new CChest();
 	pChest3->SetPos(Vec2(2800.f, 300.f));
 	pChest3->SetVisibility(false);
-	pChest3->Set_Item(new CCard(2));
+	pChest3->Set_Item(new CMissileItem());
+	CMissileItem* pMissileItem = (CMissileItem*)pChest3->Get_Item();
+	//pMissileItem->SetRandomMissile();
+	pMissileItem->SetMissileType(eType::HYPER);
 	AddObject(pChest3, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest4 = new CChest();
 	pChest4->SetPos(Vec2(4130.f, 200.f));
 	pChest4->SetVisibility(false);
-	pChest4->Set_Item(new CCard(4));
+	pChest4->Set_Item(new CCoin());
 	AddObject(pChest4, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest5 = new CChest();

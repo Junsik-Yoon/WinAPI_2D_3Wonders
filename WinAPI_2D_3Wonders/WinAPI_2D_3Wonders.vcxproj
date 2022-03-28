@@ -170,6 +170,7 @@
     <ClInclude Include="CEffect.h" />
     <ClInclude Include="CEffectManager.h" />
     <ClInclude Include="CEventManager.h" />
+    <ClInclude Include="CGameManager.h" />
     <ClInclude Include="CGameSelect.h" />
     <ClInclude Include="CGoblin.h" />
     <ClInclude Include="CGolemWood.h" />
@@ -238,6 +239,7 @@
     <ClCompile Include="CEffect.cpp" />
     <ClCompile Include="CEffectManager.cpp" />
     <ClCompile Include="CEventManager.cpp" />
+    <ClCompile Include="CGameManager.cpp" />
     <ClCompile Include="CGameSelect.cpp" />
     <ClCompile Include="CGoblin.cpp" />
     <ClCompile Include="CGolemWood.cpp" />

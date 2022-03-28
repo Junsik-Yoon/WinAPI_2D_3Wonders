@@ -23,8 +23,8 @@
 #define D_DOWNFORCE 700
 #define D_VELOCITY 200
 #define D_UPFORCE 800
-#define D_FROMGOBMAX 600
-#define D_FROMGOBMIN 100
+#define D_FROMGOBMAX 400
+#define D_FROMGOBMIN 80
 
 #define SETSTATE m_state = eState
 
@@ -286,7 +286,15 @@ void CLou::update_move()
 		{
 			m_stateCounter = 0.f;
 			m_upforce = D_UPFORCE;
-			vPos.y -= 2.f;
+			if (moveTileCounter>0)
+			{
+				vPos.y -= 10.f;
+			}
+			else
+			{
+				vPos.y -= 2.f;
+			}
+
 			SETSTATE::JUMP;
 		}
 		if (KEYDOWN('Z'))
@@ -432,7 +440,15 @@ void CLou::update_move()
 		{
 			m_stateCounter = 0.f;
 			m_upforce = D_UPFORCE;
-			vPos.y -= 2.f;
+
+			if (moveTileCounter > 0)
+			{
+				vPos.y -= 10.f;
+			}
+			else
+			{
+				vPos.y -= 2.f;
+			}
 			SETSTATE::JUMP;
 		}
 
@@ -1586,6 +1602,7 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 		}break;
 		case GROUP_TILE::MOVE:
 		{
+			++moveTileCounter;
 			++m_floor;
 		}break;
 		case GROUP_TILE::WALL:
@@ -1716,7 +1733,7 @@ void CLou::OnCollision(CCollider* _pOther)
 			int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
 			int sum = abs(a - b);
 			if (1 < sum)
-				--vPos.y;
+				vPos.y-=3;
 		}break;
 		case GROUP_TILE::WALL:
 		{
@@ -1756,6 +1773,7 @@ void CLou::OnCollisionExit(CCollider* _pOther)
 		case  GROUP_TILE::MOVE:
 		{
 			--m_floor;
+			--moveTileCounter;
 		}break;
 		case GROUP_TILE::WALL:
 		{

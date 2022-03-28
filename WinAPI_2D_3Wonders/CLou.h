@@ -43,6 +43,7 @@ private:
 
     COwl* pOwl;
 
+    int moveTileCounter = 0;
     bool bGravity;
     float dash;
     float m_goblinCounter;

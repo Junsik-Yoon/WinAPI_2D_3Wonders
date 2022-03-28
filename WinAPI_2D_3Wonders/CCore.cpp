@@ -27,6 +27,7 @@ void CCore::update()
 	CCollisionManager::getInst()->update();
 	CCameraManager::getInst()->update();
 	CUIManager::getInst()->update();
+	CGameManager::getInst()->update();
 }
 
 void CCore::render()
@@ -76,6 +77,7 @@ void CCore::render_information()
 
 void CCore::init()
 {
+	CGameManager::getInst()->init();
 	CPathManager::getInst()->init();
 	CTimeManager::getInst()->init();
 	CKeyManager::getInst()->init();

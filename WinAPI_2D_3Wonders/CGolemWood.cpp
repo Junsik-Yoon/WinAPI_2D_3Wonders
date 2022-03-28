@@ -13,10 +13,10 @@
 #include <random>
 
 #define D_GRAVITY 400
-#define D_TILESPEED 2500
+#define D_TILESPEED 500
 
-#define MINY 430.f
-#define MAXY 320.f
+#define MINY 420.f
+#define MAXY 300.f
 
 CGolemWood::CGolemWood()
 {
@@ -40,7 +40,7 @@ CGolemWood::CGolemWood()
 	m_floor = 0;
 	SetHP(30);
 	m_gravity = D_GRAVITY;
-	m_tileSpeed = D_TILESPEED;
+	m_dTileSpeed = D_TILESPEED;
 	m_bossTimer = 0.f;
 	m_shootTimer = 0.f;
 	SetName(L"GolemWood");
@@ -66,10 +66,10 @@ CGolemWood::CGolemWood()
 
 CGolemWood::~CGolemWood()
 {
-	for (int i = 0; i < pChestnuts.size(); ++i)
-	{
-		DeleteObj(pChestnuts[i]);
-	}
+	//for (int i = 0; i < pChestnuts.size(); ++i)
+	//{
+	//	DeleteObj(pChestnuts[i]);
+	//}
 
 }
 
@@ -78,12 +78,6 @@ void CGolemWood::update()
 {
 	Vec2 vPos = GetPos();
 
-	if (KEYDOWN('Q'))
-	{
-		CChestnut* pNut = new CChestnut();
-		pNut->SetPos(GetPos());
-		CreateObj(pNut, GROUP_GAMEOBJ::MONSTER);
-	}
 
 	switch (m_state)
 	{
@@ -92,18 +86,47 @@ void CGolemWood::update()
 		vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
 		if (abs(pPlayer[0]->GetPos().x - GetPos().x) <= 1000.f)
 		{
+			m_dMoveTimer = 0;
 			CSoundManager::getInst()->Stop(L"stage1_1_bgm");
 			CSoundManager::getInst()->Play(L"stage1_1_boss_bgm");
 			m_state = eState_GW::PREPARE;
 		}
+		if (tileActivate)
+		{
+			m_dMoveTimer += DT;
+			if (m_dMoveTimer >= 0.05)
+			{
+				m_dMoveTimer = 0;
+				MoveTiles();
+			}
+		}
+
 	}
 		break;
 	case eState_GW::PREPARE:
 	{
 		if (positionAdjust)
 		{
+			if (m_floor == 0)
+			{
+				m_gravity = D_GRAVITY;
+				vPos.y += D_GRAVITY * fDT;
+			}
+			else
+			{
+				m_gravity = 0;
+			}
 			m_bossTimer += fDT;
 			vPos.x += 25.f * fDT;
+			if (tileActivate)
+			{
+				m_dMoveTimer += DT;
+				if (m_dMoveTimer >= 0.05)
+				{
+					m_dMoveTimer = 0;
+					MoveTiles();
+				}
+			}
 		}
 		if (vPos.x <= 8810.f)
 		{
@@ -116,6 +139,7 @@ void CGolemWood::update()
 				vPos.x -= 300.f * fDT;
 			}
 		}
+
 		if (m_bossTimer >= 2.f)
 		{
 			m_bossTimer = 0.f;
@@ -141,7 +165,7 @@ void CGolemWood::update()
 		m_bossTimer += fDT;
 		m_chestnutTimer += fDT;
 		m_dMoveTimer += DT;
-		if (m_dMoveTimer >= 0.1)
+		if (m_dMoveTimer >= 0.05)
 		{
 			for (int i = 0; i < pChestnuts.size(); ++i)
 			{
@@ -150,6 +174,7 @@ void CGolemWood::update()
 			m_dMoveTimer = 0;
 			MoveTiles();
 		}
+
 		GetAnimator()->Play(L"Idle");
 		if (m_chestnutTimer >= 1.5f)
 		{
@@ -319,29 +344,33 @@ void CGolemWood::CreateMissile()
 
 void CGolemWood::MoveTiles()
 {
-	Vec2 vFirstTilePos = pMovingTiles[45]->GetPos();
-	pMovingTiles[45]->prevTilePos = vFirstTilePos;
+	Vec2 vFirstTilePos = pMovingTiles[pMovingTiles.size()-1]->GetPos();
+	pMovingTiles[pMovingTiles.size() - 1]->prevTilePos = vFirstTilePos;
 
-	if (vFirstTilePos.y >= MINY)
-	{
-		pMovingTiles[45]->Y_axis = 1;
-	}
-	if (vFirstTilePos.y <= MAXY)
-	{
-		pMovingTiles[45]->Y_axis = -1;
-	}
-	vFirstTilePos.y -= m_tileSpeed * fDT * pMovingTiles[45]->Y_axis;
-	
-	pMovingTiles[45]->SetPos(vFirstTilePos);
+	m_fTheta += m_fSpd * fDT;
+	vFirstTilePos.y = m_radius * (float)sin(m_fTheta);
+	vFirstTilePos.y += y_center;
 
-	for (int i = 45; i > 0; --i)
+
+	pMovingTiles[pMovingTiles.size() - 1]->SetPos(vFirstTilePos);
+
+	for (int i = 0; i < pMovingTiles.size(); ++i)
 	{
-		if (pMovingTiles[i]->prevTilePos.y != 0)
+		pMovingTiles[i]->SetMaxHeight(430.f - 20.f * (float)i);
+	}
+	for (int i = pMovingTiles.size() - 1; i > 0; --i)
+	{
+		if (pMovingTiles[i - 1]->GetMaxheight() >= pMovingTiles[i]->prevTilePos.y)
+		{
+			pMovingTiles[i - 1]->prevTilePos = pMovingTiles[i - 1]->GetPos();
+			pMovingTiles[i - 1]->SetPos(Vec2(pMovingTiles[i - 1]->GetPos().x, pMovingTiles[i - 1]->GetMaxheight()));
+		}
+		else
 		{
 			pMovingTiles[i - 1]->prevTilePos = pMovingTiles[i - 1]->GetPos();
 			pMovingTiles[i - 1]->SetPos(Vec2(pMovingTiles[i - 1]->GetPos().x, pMovingTiles[i]->prevTilePos.y));
 		}
-			
+		
 	}
 
 
@@ -435,13 +464,13 @@ void CGolemWood::OnCollision(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
 	Vec2 vPos = GetPos();
-	if (pOther->GetName() == L"Tile")
+	if (pOther->GetName() == L"Tile")// && m_state!=eState_GW::PREPARE)
 	{
 		int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
 		int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
 		int sum = abs(a - b);
 		if (1 < sum)
-			--vPos.y;
+			vPos.y-=3.f;
 	}
 
 	SetPos(vPos);

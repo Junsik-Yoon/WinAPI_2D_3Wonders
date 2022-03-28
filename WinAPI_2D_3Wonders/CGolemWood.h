@@ -26,7 +26,7 @@ private:
 	vector<CMovingTile*> pMovingTiles;
 	vector<CChestnut*> pChestnuts;
 
-	float m_tileSpeed;
+	double m_dTileSpeed;
 	int m_floor;
 	float m_gravity;
 
@@ -38,6 +38,13 @@ private:
 	float m_bossTimer;
 	float m_shootTimer;
 	bool canShoot = false;
+
+	bool tileActivate = false;
+
+	float  m_radius = 90.f;
+	float  m_fSpd = 20.f;
+	float  y_center = 330.f;
+	float m_fTheta = 0.f;
 
 public:
 	void OnCollisionEnter(CCollider* _pOther);
@@ -54,6 +61,7 @@ public:
 	void DropChestnut();
 public:
 	void SetMovingTiles(CMovingTile* pMovingTile) { pMovingTiles.push_back(pMovingTile); }
+	void ActivateTiles(bool _trigger) { tileActivate = _trigger; }
 public:
 	CGolemWood();
 	~CGolemWood();

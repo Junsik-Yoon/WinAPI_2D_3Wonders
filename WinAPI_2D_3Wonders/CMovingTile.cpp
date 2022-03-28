@@ -3,8 +3,8 @@
 #include "CCollider.h"
 #include "CAnimator.h"
 
-#define MINY 430.f
-#define MAXY 320.f
+#define MINY 420.f
+#define MAXY 240.f
 
 CMovingTile::CMovingTile()
 {
@@ -37,7 +37,7 @@ CMovingTile::CMovingTile()
 	
 	GetAnimator()->CreateAnimation(L"PlayAll", m_pImg, Vec2(0.f, 0.f), Vec2(32.f, 82.f), Vec2(32.f, 0.f), 0.2f, 12, false);
 
-	GetAnimator()->Play(L"PlayAll");
+	GetAnimator()->Play(L"State01");
 	
 	CCameraManager::getInst()->GetRenderPos(GetPos());
 

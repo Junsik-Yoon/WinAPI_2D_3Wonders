@@ -14,6 +14,7 @@
 CFlyingChest::CFlyingChest()
 {
 	flySound = 0;
+
 	m_center = { 4500.f,100.f };
 	m_appearTimer = 0.f;
 	m_fTheta = 0.f;
@@ -77,6 +78,7 @@ void CFlyingChest::update()
 
 			vPos.x += m_center.x;
 			vPos.y += m_center.y;
+
 		}
 		else if (m_appearTimer >= 11.f)
 		{

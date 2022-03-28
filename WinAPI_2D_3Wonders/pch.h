@@ -114,6 +114,9 @@ private:											\
 //core
 #include "CCore.h"
 //managers
+
+#include "CGameManager.h"
+
 #include "CTimeManager.h"
 #include "CKeyManager.h"
 #include "CSceneManager.h"

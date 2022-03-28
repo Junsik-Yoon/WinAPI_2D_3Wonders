@@ -110,6 +110,9 @@
     <Filter Include="Things\01.Object\Item">
       <UniqueIdentifier>{2a04df39-e8f9-41c3-a4d1-cbba71e9f49a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\02.Manager\13.GameManager">
+      <UniqueIdentifier>{d91ee38a-815e-4d9f-be5c-3cc246d641f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -201,9 +204,6 @@
       <Filter>Things\01.Object\UI</Filter>
     </ClInclude>
     <ClInclude Include="CRenderManager.h">
-      <Filter>Engine\02.Manager\11.RenderManager</Filter>
-    </ClInclude>
-    <ClInclude Include="CD2DImage.h">
       <Filter>Engine\02.Manager\11.RenderManager</Filter>
     </ClInclude>
     <ClInclude Include="CGoblin.h">
@@ -308,6 +308,12 @@
     <ClInclude Include="CBossTrigger.h">
       <Filter>Things\01.Object\Background</Filter>
     </ClInclude>
+    <ClInclude Include="CGameManager.h">
+      <Filter>Engine\02.Manager\13.GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="CD2DImage.h">
+      <Filter>Things\03.Resource\Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -397,9 +403,6 @@
       <Filter>Things\01.Object\UI</Filter>
     </ClCompile>
     <ClCompile Include="CRenderManager.cpp">
-      <Filter>Engine\02.Manager\11.RenderManager</Filter>
-    </ClCompile>
-    <ClCompile Include="CD2DImage.cpp">
       <Filter>Engine\02.Manager\11.RenderManager</Filter>
     </ClCompile>
     <ClCompile Include="CGoblin.cpp">
@@ -503,6 +506,12 @@
     </ClCompile>
     <ClCompile Include="CBossTrigger.cpp">
       <Filter>Things\01.Object\Background</Filter>
+    </ClCompile>
+    <ClCompile Include="CGameManager.cpp">
+      <Filter>Engine\02.Manager\13.GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="CD2DImage.cpp">
+      <Filter>Things\03.Resource\Texture</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

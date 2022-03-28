@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CBossTrigger.h"
 #include "CCollider.h"
+#include "CGolemWood.h"
+#include "CScene.h"
 
 CBossTrigger::CBossTrigger()
 {
@@ -26,9 +28,23 @@ void CBossTrigger::render()
 
 void CBossTrigger::OnCollisionEnter(CCollider* _pOther)
 {
-	if (_pOther->GetObj()->GetName() == L"Lou")
+	CGolemWood* pGolemWood = nullptr;
+	vector<CGameObject*> pObj = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::MONSTER);
+	for (int i = 0; i < pObj.size(); ++i)
 	{
-
+		if (pObj[i]->GetName() == L"GolemWood")
+		{
+			pGolemWood = (CGolemWood*)pObj[i];
+		}
+	}
+	
+	if (GetName() == L"TileTrigger" &&
+		_pOther->GetObj()->GetName() == L"Lou")
+	{
+		if (nullptr != pGolemWood)
+		{
+			pGolemWood->ActivateTiles(true);
+		}
 	}
 }
 

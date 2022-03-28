@@ -15,6 +15,7 @@ private:
 	bool isFirstTile=false;
 	Vec2 currentPt = {};
 	Vec2 prevTilePos = {};
+	float maxHeight = 0.f;
 
 	int Y_axis;
 
@@ -25,6 +26,8 @@ private:
 public:
 	void SetRight(bool _isRight) { isRight = _isRight; }
 	void SetState(UINT _state) { m_state = _state; }
+	void SetMaxHeight(float _maxH) { maxHeight = _maxH; }
+	float GetMaxheight() { return maxHeight; }
 public:
 	virtual void update();
 	virtual void render();

@@ -236,9 +236,14 @@ void CScene_Stage1::Enter()
 	//	}
 	//}
 
-	CBossTrigger* pTrigger = new CBossTrigger();
-	pTrigger->SetPos(Vec2(7600.f, WINSIZEY / 2.f));
-	AddObject(pTrigger, GROUP_GAMEOBJ::TILE);
+	CBossTrigger* pBossTrigger = new CBossTrigger();
+	pBossTrigger->SetPos(Vec2(7600.f, WINSIZEY / 2.f));
+	AddObject(pBossTrigger, GROUP_GAMEOBJ::TILE);
+
+	CBossTrigger* pTileTrigger = new CBossTrigger();
+	pTileTrigger->SetPos(Vec2(6600.f, WINSIZEY / 2.f));
+	pTileTrigger->SetName(L"TileTrigger");
+	AddObject(pTileTrigger, GROUP_GAMEOBJ::TILE);
 
 	CSoundManager::getInst()->AddSound(L"item_change", L"sound\\select_change.wav", false);
 	CSoundManager::getInst()->AddSound(L"stage1_1_bgm", L"sound\\stage1_1_bgm.wav", true);

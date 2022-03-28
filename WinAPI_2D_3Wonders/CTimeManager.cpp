@@ -25,9 +25,9 @@ void CTimeManager::update()
 	++updateCount;
 	updateOneSecond += m_dDT;
 
-	if (m_dDT > 0.01)
+	if (m_dDT > 0.1)
 	{
-		m_dDT = 0.01;
+		m_dDT = 0.1;
 	}
 
 	if (updateOneSecond >= 1.f)

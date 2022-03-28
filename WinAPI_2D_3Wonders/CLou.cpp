@@ -162,12 +162,17 @@ CLou::CLou()
 	GetAnimator()->Play(L"Idle_Right");
 
 
-	CCameraManager::getInst()->GetRenderPos(GetPos());
+	CSoundManager::getInst()->AddSound(L"normalGunSound", L"sound\\normal_gun.wav", false);
+	CSoundManager::getInst()->AddSound(L"hyperGunSound", L"sound\\hyper.wav", false);
+	CSoundManager::getInst()->AddSound(L"hurtSound", L"sound\\hurt.wav", false);
+	CSoundManager::getInst()->AddSound(L"dieSound", L"sound\\die.wav", false);
+	CSoundManager::getInst()->AddSound(L"clothingSound", L"sound\\clothingSound.wav", false);
 
 }
 
 CLou::~CLou()
 {
+
 }
 
 void CLou::update()
@@ -181,6 +186,7 @@ void CLou::update_move()
 	Vec2 vPos = GetPos();
 	
 	//////////////////////////////////////
+
 	//////////////////////////////////////
 
 	if (KEY('W'))//누르고있으면 속도 부스터:테스트용
@@ -197,7 +203,10 @@ void CLou::update_move()
 	{
 		CCameraManager::getInst()->SetTargetX(this);
 	}
-	m_goblinCounter += fDT;
+	if (m_goblinCounter >= 0.f)
+	{
+		m_goblinCounter += fDT;
+	}
 	//n초마다 고블린 리젠
 	if (m_goblinCounter >= 5.f)
 	{
@@ -290,11 +299,21 @@ void CLou::update_move()
 		{
 			m_stateCounter = 0.f;
 			prevHP = GetHP();
+			if (GetHP() > 0)
+			{
+				CSoundManager::getInst()->Play(L"hurtSound");
+			}
+			else
+			{
+				CSoundManager::getInst()->Play(L"dieSound");
+			}
+
 			SETSTATE::GOTHIT;
 		}
 		else if (0 >= GetHP())
 		{
 			m_stateCounter = 0.f;
+			
 			SETSTATE::DEAD;
 		}
 
@@ -351,10 +370,19 @@ void CLou::update_move()
 			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
 			prevHP = GetHP();
+			if (GetHP() > 0)
+			{
+				CSoundManager::getInst()->Play(L"hurtSound");
+			}
+			else
+			{
+				CSoundManager::getInst()->Play(L"dieSound");
+			}
 			SETSTATE::GOTHIT;
 		}
 		else if (0 >= GetHP())
 		{
+			
 			m_stateCounter = 0.f;
 			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
@@ -412,10 +440,19 @@ void CLou::update_move()
 		{
 			m_stateCounter = 0.f;
 			prevHP = GetHP();
+			if (GetHP() > 0)
+			{
+				CSoundManager::getInst()->Play(L"hurtSound");
+			}
+			else
+			{
+				CSoundManager::getInst()->Play(L"dieSound");
+			}
 			SETSTATE::GOTHIT;
 		}
 		else if (0 >= GetHP())
 		{
+			
 			m_stateCounter = 0.f;
 			SETSTATE::DEAD;
 		}
@@ -473,10 +510,19 @@ void CLou::update_move()
 		{
 			m_stateCounter = 0.f;
 			prevHP = GetHP();
+			if (GetHP() > 0)
+			{
+				CSoundManager::getInst()->Play(L"hurtSound");
+			}
+			else
+			{
+				CSoundManager::getInst()->Play(L"dieSound");
+			}
 			SETSTATE::GOTHIT;
 		}
 		else if (0 >= GetHP())
 		{
+			
 			m_stateCounter = 0.f;
 			SETSTATE::DEAD;
 		}
@@ -584,10 +630,19 @@ void CLou::update_move()
 		{
 			m_stateCounter = 0.f;
 			prevHP = GetHP();
+			if (GetHP() > 0)
+			{
+				CSoundManager::getInst()->Play(L"hurtSound");
+			}
+			else
+			{
+				CSoundManager::getInst()->Play(L"dieSound");
+			}
 			SETSTATE::GOTHIT;
 		}
 		else if (0 >= GetHP())
 		{
+			
 			m_stateCounter = 0.f;
 			SETSTATE::DEAD;
 		}
@@ -626,10 +681,19 @@ void CLou::update_move()
 			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 			prevHP = GetHP();
+			if (GetHP() > 0)
+			{
+				CSoundManager::getInst()->Play(L"hurtSound");
+			}
+			else
+			{
+				CSoundManager::getInst()->Play(L"dieSound");
+			}
 			SETSTATE::GOTHIT;
 		}
 		else if (0 >= GetHP())
 		{
+			
 			m_stateCounter = 0.f;
 			GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, 0.f), 0);
 			GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, 0.f), 0);
@@ -663,6 +727,7 @@ void CLou::update_move()
 			}
 			else
 			{
+				
 				m_state = eState::DEAD;
 			}
 
@@ -683,7 +748,7 @@ void CLou::update_move()
 			///////////////////////////////////////////
 		}
 		m_stateCounter += fDT;
-		if (m_stateCounter >= 5.f)
+		if (m_stateCounter >= 3.f)
 		{
 			pOwl = new COwl(vPos);
 			CreateObj(pOwl, GROUP_GAMEOBJ::ITEM);
@@ -708,10 +773,19 @@ void CLou::update_move()
 		{
 			m_stateCounter = 0.f;
 			prevHP = GetHP();
+			if (GetHP() > 0)
+			{
+				CSoundManager::getInst()->Play(L"hurtSound");
+			}
+			else
+			{
+				CSoundManager::getInst()->Play(L"dieSound");
+			}
 			SETSTATE::GOTHIT;
 		}
 		else if (0 >= GetHP())
 		{
+			
 			m_stateCounter = 0.f;
 			SETSTATE::DEAD;
 		}
@@ -754,6 +828,28 @@ void CLou::update_move()
 		{
 			SETSTATE::IDLE;
 		}
+	}break;
+	case eState::BOSS_ENCOUNTER:
+	{
+		if (vPos.x <= 8500.f)
+		{
+			m_goblinCounter = -1.f;//고블린리젠OFF
+					//TODO:고블린이 못따라오도록 죽이던가 방안찾기
+			vPos.x += m_velocity * fDT;
+			CCameraManager::getInst()->SetTargetX(nullptr);
+			CCameraManager::getInst()->Scroll(Vec2(1.f, 0.f), m_velocity + 70.f);
+		}
+		else
+		{
+			m_stateCounter += fDT;
+		}
+			
+		if (m_stateCounter >= 2.f)
+		{
+			m_stateCounter = 0.f;
+			SETSTATE::IDLE;
+		}
+
 	}break;
 	}
 
@@ -1203,6 +1299,32 @@ void CLou::update_animation()
 				GetAnimator()->Play(L"Lou_Fly_Left");
 			}
 		}break;
+		case eState::BOSS_ENCOUNTER:
+		{
+			if (GetPos().x <= 8500.f)
+			{
+				if (isClothed)
+				{
+					GetAnimator()->Play(L"Move_Right");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Move_Right_N");
+				}
+			}
+			else
+			{
+				if (isClothed)
+				{
+					GetAnimator()->Play(L"Idle_Right");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Idle_Right_N");
+				}
+			}
+
+		}break;
 	}
 	if (isInvincible > 0.f)
 	{
@@ -1226,11 +1348,19 @@ void CLou::update_animation()
 
 void CLou::CreateMissile()
 {
+
 	Vec2 fpMissilePos = GetPos();
 	CMissile* pMissile = new CMissile();
 	CHyperMissile* pHyper = nullptr;
 	// Misiile Object
-
+	if (missileType == L"NONE")
+	{
+		CSoundManager::getInst()->Play(L"normalGunSound");
+	}
+	else if (missileType == L"HYPER")
+	{
+		CSoundManager::getInst()->Play(L"hyperGunSound");
+	}
 
 	switch(m_facing)
 	{
@@ -1288,7 +1418,6 @@ void CLou::CreateMissile()
 		}
 		else if (missileType == L"HYPER")
 		{
-
 			if (isFacedRight)
 			{
 				pHyper = new CHyperMissile(Vec2(0.1f, -1.f));
@@ -1540,8 +1669,17 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 	}
 	if (pOther->GetName() == L"Lamp"&& 1==GetHP())
 	{
+		CSoundManager::getInst()->Play(L"clothingSound");	
 		m_stateCounter = 0.f;
 		SETSTATE::HEALED;
+	}
+	else if (pOther->GetName() == L"Lamp" && 1 < GetHP())
+	{
+		CSoundManager::getInst()->Play(L"item_change");
+	}
+	if (pOther->GetName() == L"BossTrigger")
+	{
+		SETSTATE::BOSS_ENCOUNTER;
 	}
 
 	//else if (pOther->GetName() == L"Tile" && (plColSize.y + oColSize.y - 2) <= abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));

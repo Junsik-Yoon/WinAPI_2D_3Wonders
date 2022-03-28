@@ -236,6 +236,7 @@ void COptionFire::OnCollisionEnter(CCollider* _pOther)
 	if (_pOther->GetObj()->GetName() == L"Lou"
 		&& nullptr == m_owner)
 	{
+		CSoundManager::getInst()->Play(L"item_change");
 		m_owner = (CLou*)_pOther->GetObj();
 		m_state = eState_OpFire::IDLE;
 	}

@@ -16,6 +16,7 @@ class CGreen : public CGameObject
 private:
 	float m_shootFire;//½Ã°£
 	bool isRight;
+	int isShootingFire;
 	eState_Green m_state;
 	CD2DImage* m_pImg;
 	UINT m_floor;

@@ -18,6 +18,7 @@ class CHalfMoon : public CGameObject
 private:
 	vector<CBug*> pBugs;
 	CD2DImage* m_pImg;
+	CD2DImage* m_pWhiteImg;
 
 	bool isRight;
 	bool isDead;
@@ -27,6 +28,7 @@ private:
 	float bugTimer;
 	int bugCounter;
 	float m_summonTimer;
+
 
 
 public:

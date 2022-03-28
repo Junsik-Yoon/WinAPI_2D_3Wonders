@@ -3,7 +3,7 @@
 #include "CCollider.h"
 #include "CAnimator.h"
 
-#define MINY 400.f
+#define MINY 430.f
 #define MAXY 320.f
 
 CMovingTile::CMovingTile()

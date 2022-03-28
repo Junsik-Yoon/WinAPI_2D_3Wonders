@@ -89,6 +89,7 @@ void CMissileItem::OnCollisionEnter(CCollider* _pOther)
 {
 	if (_pOther->GetObj()->GetName() == L"Lou")
 	{
+		CSoundManager::getInst()->Play(L"item_change");
 		DeleteObj(this);
 		//TODO: 없어지며 해당 미사일으로 변경하도록
 	}

@@ -9,6 +9,7 @@
 
 CHalfMoon::CHalfMoon()
 {
+
 	isDead = false;
 	bugCounter = 0;
 	CBug* pBug = nullptr;
@@ -28,13 +29,17 @@ CHalfMoon::CHalfMoon()
 	isProducing = false;
 	SetName(L"Halfmoon");
 	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"HalfmoonBugImg", L"texture\\Animation\\Animation_HalfmoonBug.png");
-
+	m_pWhiteImg = CResourceManager::getInst()->LoadD2DImage(L"HalfmoonWhiteImg", L"texture\\Animation\\Animation_halfwhite.png"); 
 	CreateCollider();
 	SetScale(Vec2(60.f, 100.f));
 	GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 
 
 	CreateAnimator();
+
+	GetAnimator()->CreateAnimation(L"White_Right", m_pWhiteImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, false);
+	GetAnimator()->CreateAnimation(L"White_Left", m_pWhiteImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, false);
+
 	GetAnimator()->CreateAnimation(L"Idle_Right", m_pImg, Vec2(0.f, 128.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, false);
 	GetAnimator()->CreateAnimation(L"Idle_Left", m_pImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, false);
 
@@ -53,7 +58,7 @@ CHalfMoon::CHalfMoon()
 
 	GetAnimator()->Play(L"Idle_Right");
 
-	CCameraManager::getInst()->GetRenderPos(GetPos());
+	CSoundManager::getInst()->AddSound(L"halfmoon_die", L"sound\\halfmoon_die.wav", false);
 
 }
 
@@ -125,14 +130,20 @@ void CHalfMoon::update()
 		{
 			if (0 >= pBugs[i]->GetHP())
 			{
-				//////////////////////¿Ã∆Â∆Æ///////////////
-				CEffect* effectDie = new CEffect(L"Effect_Die_Small", L"texture\\Animation\\Effect_Die_Small.png",
-					L"Effect_Die_Small", Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 10, false, false, L"Effect_Die_Small");
-				effectDie->SetPos(Vec2(pBugs[i]->GetPos()));
-				effectDie->SetDuration(1.f);
-				CreateObj(effectDie, GROUP_GAMEOBJ::EFFECT);
-				///////////////////////////////////////////
+				if (pBugs[i]->GetPos().x >= 0.f)
+				{
+					CSoundManager::getInst()->Play(L"monster_die");
+					//////////////////////¿Ã∆Â∆Æ///////////////
+					CEffect* effectDie = new CEffect(L"Effect_Die_Small", L"texture\\Animation\\Effect_Die_Small.png",
+						L"Effect_Die_Small", Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 10, false, false, L"Effect_Die_Small");
+					effectDie->SetPos(Vec2(pBugs[i]->GetPos()));
+					effectDie->SetDuration(1.f);
+					CreateObj(effectDie, GROUP_GAMEOBJ::EFFECT);
+					///////////////////////////////////////////
+				}
 				pBugs[i]->SetPos((Vec2(-500.f, 0.f)));
+				
+
 			}
 		}
 	}
@@ -259,6 +270,15 @@ void CHalfMoon::OnCollisionEnter(CCollider* _pOther)
 	}
 	if (pOther->GetName() == L"Missile_Player")
 	{
+		if(isRight)
+		{
+			GetAnimator()->Play(L"White_Right");
+		}
+		else
+		{
+			GetAnimator()->Play(L"White_Left");
+		}
+
 		int hp = GetHP();
 		SetHP(--hp);
 	}
@@ -266,6 +286,7 @@ void CHalfMoon::OnCollisionEnter(CCollider* _pOther)
 	{
 		if (!isDead)
 		{
+			CSoundManager::getInst()->Play(L"halfmoon_die");
 			//////////////////////¿Ã∆Â∆Æ///////////////
 			CEffect* effectHMDie = new CEffect(L"Effect_Die_Big", L"texture\\Animation\\Effect_Die_Big.png",
 				L"Effect_Die_Big", Vec2(0.f, 0.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.15f, 10, false, false, L"Effect_Die_Big");

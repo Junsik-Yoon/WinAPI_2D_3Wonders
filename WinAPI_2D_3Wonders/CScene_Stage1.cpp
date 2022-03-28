@@ -7,6 +7,7 @@
 #include "CAnimator.h"
 
 #include "CGameObject.h"
+#include "CBossTrigger.h"
 
 #include "CBG1.h"
 #include "CBG2.h"
@@ -96,7 +97,7 @@ void CScene_Stage1::Enter()
 
 
 	CLou* pLou = new CLou();
-	pLou->SetPos(Vec2(200.f, 0.f));
+	pLou->SetPos(Vec2(200.f, 200.f));
 	AddObject(pLou, GROUP_GAMEOBJ::PLAYER);
 
 	CHalfMoon* pHalfMoon1 = new CHalfMoon();
@@ -190,45 +191,62 @@ void CScene_Stage1::Enter()
 	AddObject(pFChest1, GROUP_GAMEOBJ::ITEM);
 
 	CGolemWood* pGolemWood = new CGolemWood();
-	pGolemWood->SetPos(Vec2(9160.f, 150.f));
+	pGolemWood->SetPos(Vec2(9300.f, 240.f));
 	AddObject(pGolemWood, GROUP_GAMEOBJ::MONSTER);
-
+	
 	CMovingTile* pMovingTile = nullptr;
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 46; ++i)
 	{
 		pMovingTile = new CMovingTile();
-		pMovingTile->SetPos(Vec2(8570.f+(32.f*i), 400.f+(float)i*-10.f));
-		pMovingTile->SetRight(false);
-		AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);		
-	}
-	for (int i = 8; i < 15; ++i)
-	{
-		pMovingTile = new CMovingTile();
-		pMovingTile->SetPos(Vec2(8570.f + (32.f * i), 320.f + (float)(i-6) * +10.f));
-		pMovingTile->SetRight(true);
-		AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);
-	}
-	for (int i = 15; i < 22; ++i)
-	{
-		pMovingTile = new CMovingTile();
-		pMovingTile->SetPos(Vec2(8570.f + (32.f * i), 400.f + (float)(i - 14) * -10.f));
+		pMovingTile->SetPos(Vec2(7537.f + (32.f * i), 430.f));
 		pMovingTile->SetRight(false);
 		AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);
+		pGolemWood->SetMovingTiles(pMovingTile);
 	}
 
-	vector<CGameObject*> pTiles = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::TILE);
-	for (int i = 0; i < pTiles.size(); ++i)
-	{
-		CMovingTile* pTile = (CMovingTile*)pTiles[i];
-		if (pTile->GetGroup() == GROUP_TILE::MOVE)
-		{
-			pGolemWood->pMovingTiles.push_back(pTile);
-		}
-	}
+	//for (int i = 0; i < 8; ++i)
+	//{
+	//	pMovingTile = new CMovingTile();
+	//	pMovingTile->SetPos(Vec2(8400.f+(32.f*i), 400.f+(float)i*-10.f));
+	//	pMovingTile->SetRight(false);
+	//	AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);		
+	//}
+	//for (int i = 8; i < 15; ++i)
+	//{
+	//	pMovingTile = new CMovingTile();
+	//	pMovingTile->SetPos(Vec2(8400.f + (32.f * i), 320.f + (float)(i-6) * +10.f));
+	//	pMovingTile->SetRight(true);
+	//	AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);
+	//}
+	//for (int i = 15; i < 22; ++i)
+	//{
+	//	pMovingTile = new CMovingTile();
+	//	pMovingTile->SetPos(Vec2(8400.f + (32.f * i), 400.f + (float)(i - 14) * -10.f));
+	//	pMovingTile->SetRight(false);
+	//	AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);
+	//}
 
+	//vector<CGameObject*> pTiles = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::TILE);
+	//for (int i = 0; i < pTiles.size(); ++i)
+	//{
+	//	CMovingTile* pTile = (CMovingTile*)pTiles[i];
+	//	if (pTile->GetGroup() == GROUP_TILE::MOVE)
+	//	{
+	//		pGolemWood->pMovingTiles.push_back(pTile);
+	//	}
+	//}
 
+	CBossTrigger* pTrigger = new CBossTrigger();
+	pTrigger->SetPos(Vec2(7600.f, WINSIZEY / 2.f));
+	AddObject(pTrigger, GROUP_GAMEOBJ::TILE);
+
+	CSoundManager::getInst()->AddSound(L"item_change", L"sound\\select_change.wav", false);
 	CSoundManager::getInst()->AddSound(L"stage1_1_bgm", L"sound\\stage1_1_bgm.wav", true);
-	//CSoundManager::getInst()->Play(L"stage1_1_bgm");//TODO:사운드되살리기
+	CSoundManager::getInst()->AddSound(L"monster_die", L"sound\\monster_die.wav", false);
+	CSoundManager::getInst()->AddSound(L"explodeSound", L"sound\\explode.wav", false);
+	CSoundManager::getInst()->AddSound(L"stage1_1_boss_bgm", L"sound\\stage1_1_boss_bgm.wav", true);
+
+	CSoundManager::getInst()->Play(L"stage1_1_bgm",0.3f);
 	
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::PLAYER, GROUP_GAMEOBJ::TILE);
 	CCollisionManager::getInst()->CheckGroup(GROUP_GAMEOBJ::PLAYER, GROUP_GAMEOBJ::MONSTER);
@@ -246,6 +264,7 @@ void CScene_Stage1::Enter()
 	CCameraManager::getInst()->SetLookAt(Vec2(float(WINSIZEX / 2.f), float(WINSIZEY / 2.f)));
 	//CCameraManager::getInst()->FadeOut(5.f);
 	CCameraManager::getInst()->FadeIn(1.f);
+
 
 	//위치확인용
 	CCameraManager::getInst()->SetTargetX(pLou);

@@ -42,7 +42,15 @@ void CSoundManager::Play(wstring keyName)
 	map<wstring, CSound*>::iterator iter = m_mapSound.find(keyName);
 	if (iter == m_mapSound.end())
 		return;
-	iter->second->Play();
+	iter->second->Play(1.f);
+}
+
+void CSoundManager::Play(wstring keyName, float volume)
+{
+	map<wstring, CSound*>::iterator iter = m_mapSound.find(keyName);
+	if (iter == m_mapSound.end())
+		return;
+	iter->second->Play(volume);
 }
 
 void CSoundManager::Stop(wstring keyName)

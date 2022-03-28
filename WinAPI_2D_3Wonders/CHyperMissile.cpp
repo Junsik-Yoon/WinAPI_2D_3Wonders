@@ -11,8 +11,9 @@ CHyperMissile::CHyperMissile()
 
 CHyperMissile::CHyperMissile(Vec2 _dirVec)
 {
-	m_fSpeed = 300.f;
+	m_fSpeed = 400.f;
 	m_fvDir = _dirVec;
+	m_gravity = 150.f;
 	SetName(L"Missile_Player");
 
 	SetScale(Vec2(20.f, 20.f));
@@ -45,7 +46,8 @@ void CHyperMissile::update()
 	if (m_fvDir.y < m_fvDir.x
 		&&m_fvDir.y<0.f)
 	{
-		vPos.y += 150.f * fDT;
+		m_gravity += 100.f *fDT;
+		vPos.y += m_gravity * fDT;
 	}
 
 

@@ -30,10 +30,9 @@ CShelter::CShelter()
 	GetAnimator()->CreateAnimation(L"HP1", m_pImg, Vec2(1152.f, 0.f), Vec2(384.f, 384.f), Vec2(384.f, 0.f), 0.5f, 1, false);
 	GetAnimator()->CreateAnimation(L"HP0", m_pImg, Vec2(1536.f, 0.f), Vec2(384.f, 384.f), Vec2(384.f, 0.f), 0.5f, 1, false);
 
-
 	GetAnimator()->Play(L"HP4");
 
-	CCameraManager::getInst()->GetRenderPos(GetPos());
+	CSoundManager::getInst()->AddSound(L"destroyShelter", L"sound\\destroyShelter.wav", false);
 }
 
 CShelter::~CShelter()
@@ -67,6 +66,7 @@ void CShelter::update()
 		m_explodeTimer += fDT;
 		if (m_explodeTimer >= 0.1f && explosionCount<6)
 		{
+			CSoundManager::getInst()->Play(L"destroyShelter");
 			++explosionCount;
 			m_explodeTimer = 0.f;
 			Explode();
@@ -155,6 +155,7 @@ void CShelter::OnCollisionEnter(CCollider* _pOther)
 	if(pOther->GetName()== L"Missile_Player")
 	{
 		Explode();
+		CSoundManager::getInst()->Play(L"destroyShelter");
 		int hp = GetHP();
 		if (0 < hp) SetHP(--hp);
 	}

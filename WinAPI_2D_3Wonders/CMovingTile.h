@@ -12,6 +12,10 @@ private:
 
 	UINT m_state;
 
+	bool isFirstTile=false;
+	Vec2 currentPt = {};
+	Vec2 prevTilePos = {};
+
 	int Y_axis;
 
 	bool isRight;

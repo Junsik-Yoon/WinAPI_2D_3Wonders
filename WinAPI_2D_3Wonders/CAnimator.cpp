@@ -7,7 +7,6 @@ CAnimator::CAnimator()
 {
 	m_pCurAni = nullptr;
 	m_pOwner = nullptr;
-
 }
 
 CAnimator::~CAnimator()

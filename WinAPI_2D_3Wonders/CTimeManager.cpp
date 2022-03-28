@@ -24,6 +24,12 @@ void CTimeManager::update()
 	//1초에 몇 번 업데이트가 되었는지
 	++updateCount;
 	updateOneSecond += m_dDT;
+
+	if (m_dDT > 0.01)
+	{
+		m_dDT = 0.01;
+	}
+
 	if (updateOneSecond >= 1.f)
 	{
 		m_uiFPS = updateCount;

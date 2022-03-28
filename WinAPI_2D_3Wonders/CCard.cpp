@@ -69,6 +69,7 @@ void CCard::OnCollisionEnter(CCollider* _pOther)
 {
 	if (_pOther->GetObj()->GetName() == L"Lou")
 	{
+		CSoundManager::getInst()->Play(L"item_change");
 		DeleteObj(this);
 	}
 	if (_pOther->GetObj()->GetName() == L"Tile")

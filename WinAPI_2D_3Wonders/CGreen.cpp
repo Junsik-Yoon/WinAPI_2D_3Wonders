@@ -13,6 +13,7 @@ CGreen::CGreen()
 {
 	SetHP(10);
 	m_shootFire = 0.f;
+	isShootingFire = 0;
 	isRight = false;
 	m_state = eState_Green::IDLE;
 	m_floor = 0;
@@ -39,7 +40,8 @@ CGreen::CGreen()
 
 	GetAnimator()->Play(L"Move_Left");
 
-	CCameraManager::getInst()->GetRenderPos(GetPos());
+	CSoundManager::getInst()->AddSound(L"fireshootingSound", L"sound\\fireshootingSound.wav", false);
+	
 
 	
 }
@@ -53,12 +55,6 @@ void CGreen::update()
 {
 	Vec2 vPos = GetPos();
 
-	//테스트용///////////////////////
-	if (KEYDOWN('Q'))
-	{
-		ShootFire();
-	}
-	/////////////////////////////////
 	
 	if (m_floor == 0)
 	{
@@ -103,15 +99,18 @@ void CGreen::update()
 		{
 			isRight = false;
 		}
-
 		if (m_shootFire >= 0.2f)
 		{
+			++isShootingFire;
+			if (isShootingFire >= 5)
+			{
+				isShootingFire = 0;
+			}
 			ShootFire();
+			CSoundManager::getInst()->Play(L"fireshootingSound",0.2f);
 			m_shootFire = 0.f;
 		}
 	}
-
-
 
 	SetPos(vPos);
 	GetAnimator()->update();
@@ -163,7 +162,6 @@ void CGreen::render_information()
 
 void CGreen::ShootFire()
 {
-	
 	CShootFire* pShootFire = new CShootFire();
 	Vec2 fptFirePos = GetPos();
 	pShootFire->SetName(L"GreenFire");

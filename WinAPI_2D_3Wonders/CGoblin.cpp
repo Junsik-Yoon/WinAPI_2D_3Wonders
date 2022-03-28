@@ -45,7 +45,8 @@ CGoblin::CGoblin()
 
 	GetAnimator()->Play(L"NULL");
 
-	CCameraManager::getInst()->GetRenderPos(GetPos());
+	CSoundManager::getInst()->AddSound(L"goblin_laugh", L"sound\\goblin_laugh.wav", false);
+	
 }
 
 CGoblin::~CGoblin()
@@ -118,6 +119,7 @@ void CGoblin::update_move()
 		}
 		if (prevPlayerHP > curPlayerHP)
 		{
+			CSoundManager::getInst()->Play(L"goblin_laugh",0.1f);
 			m_state = eState_Goblin::LAUGH;
 		}
 		if (0 >= GetHP())
@@ -186,6 +188,7 @@ void CGoblin::update_move()
 
 		if (m_timeCounter >= 0.5f)
 		{
+			CSoundManager::getInst()->Play(L"monster_die");
 			m_timeCounter = 0.f;
 			DeleteObj(this);
 		}

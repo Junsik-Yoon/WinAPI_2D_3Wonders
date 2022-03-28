@@ -21,6 +21,7 @@ public:
 
 	void AddSound(wstring keyName, wstring filePath, bool bgm);
 	void Play(wstring keyName);
+	void Play(wstring keyName, float volume);
 	void Stop(wstring keyName);
 	void Pause(wstring keyName);
 	void Resume(wstring keyName);

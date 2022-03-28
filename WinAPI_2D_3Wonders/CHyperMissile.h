@@ -8,6 +8,7 @@ class CHyperMissile : public CGameObject
 private:
 	Vec2 m_fvDir;
 	float m_fSpeed;
+	float m_gravity;
 	CD2DImage* m_pImgHyper;
 public:
 

@@ -14,9 +14,10 @@ CSound::~CSound()
 }
 
 
-void CSound::Play()
+void CSound::Play(float _volume)
 {
 	CSoundManager::getInst()->GetSystem()->playSound(m_pSound, 0, false, &m_pChannel);
+	m_pChannel->setVolume(_volume);
 	assert(m_pChannel);
 }
 

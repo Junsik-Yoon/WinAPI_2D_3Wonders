@@ -32,6 +32,7 @@ private:
 	float  m_height = 50.f;
 	float  m_fSpd = 1.f;
 
+	UINT flySound;
 	Vec2 m_center;
 	float m_fTheta;
 

@@ -55,6 +55,7 @@ void CCoin::OnCollisionEnter(CCollider* _pOther)
 {
 	if (_pOther->GetObj()->GetName() == L"Lou")
 	{
+		CSoundManager::getInst()->Play(L"item_change");
 		DeleteObj(this);
 		//TODO: 없어지며 점수숫자 애니메이션이 나오면서 스코어가 오른다
 	}

@@ -24,6 +24,7 @@ enum class eState
     HOLDCLIFF,  //9
     HEALED, //10
     FLY,        //11
+    BOSS_ENCOUNTER,//12
   
     SIZE
 };

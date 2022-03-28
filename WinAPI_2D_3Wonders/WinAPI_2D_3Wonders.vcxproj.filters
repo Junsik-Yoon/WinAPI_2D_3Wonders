@@ -305,6 +305,9 @@
     <ClInclude Include="COwl.h">
       <Filter>Things\01.Object\Player</Filter>
     </ClInclude>
+    <ClInclude Include="CBossTrigger.h">
+      <Filter>Things\01.Object\Background</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -497,6 +500,9 @@
     </ClCompile>
     <ClCompile Include="COwl.cpp">
       <Filter>Things\01.Object\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="CBossTrigger.cpp">
+      <Filter>Things\01.Object\Background</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

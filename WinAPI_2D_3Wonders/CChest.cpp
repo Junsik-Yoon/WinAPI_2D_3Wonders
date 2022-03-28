@@ -36,6 +36,7 @@ CChest::CChest()
 
 CChest::~CChest()
 {
+
 }
 
 
@@ -69,6 +70,7 @@ void CChest::update()
 		}
 		if (GetHP() <= 0)
 		{
+			CSoundManager::getInst()->Play(L"explodeSound");
 			m_state = eState_Chest::DESTROYED;
 		}
 	}
@@ -83,7 +85,8 @@ void CChest::update()
 			m_state = eState_Chest::IDLE;
 		}
 		if (GetHP() <= 0)
-		{
+		{		
+			CSoundManager::getInst()->Play(L"explodeSound");
 			m_vanishTimer = 0.f;
 			m_state = eState_Chest::DESTROYED;
 		}

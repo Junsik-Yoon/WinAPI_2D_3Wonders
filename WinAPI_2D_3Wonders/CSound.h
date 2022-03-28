@@ -14,7 +14,7 @@ private:
 public:
 
 
-	void Play();
+	void Play(float _volume = 1.f);
 	void Stop();
 	void Pause();
 	void Resume();

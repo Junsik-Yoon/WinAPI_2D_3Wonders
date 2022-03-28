@@ -13,6 +13,7 @@
 
 CFlyingChest::CFlyingChest()
 {
+	flySound = 0;
 	m_center = { 4500.f,100.f };
 	m_appearTimer = 0.f;
 	m_fTheta = 0.f;
@@ -33,11 +34,14 @@ CFlyingChest::CFlyingChest()
 	GetAnimator()->CreateAnimation(L"FlyingChest", m_pImg, Vec2(0.f, 0.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.1f, 2, false);
 
 	GetAnimator()->Play(L"FlyingChest");
+	
+	CSoundManager::getInst()->AddSound(L"FlySound", L"sound\\flyingchest.wav",false);
 
 }
 
 CFlyingChest::~CFlyingChest()
 {
+	CSoundManager::getInst()->Stop(L"FlySound");
 }
 
 
@@ -94,12 +98,20 @@ void CFlyingChest::update()
 		m_effectTimer += fDT;
 		if (m_effectTimer >= 0.05f)
 		{
+			++flySound;
+			if(flySound>12)
+			{
+				flySound = 0;
+				CSoundManager::getInst()->Play(L"FlySound",0.3f);
+			}
+
 			m_effectTimer = 0.f;
 			TwinkleEffect();
 		}
 
 		if (GetHP() <= 0)
 		{
+			CSoundManager::getInst()->Play(L"explodeSound");
 			m_state = eState_FChest::DESTROYED;
 		}
 	}

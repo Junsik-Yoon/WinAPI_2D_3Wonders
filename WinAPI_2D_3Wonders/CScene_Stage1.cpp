@@ -23,6 +23,9 @@
 #include "CMissileItem.h"
 #include "CLamp.h"
 
+#include "CScoreUI.h"
+#include "CStatusUI.h"
+
 #include "CLou.h"
 #include "CGoblin.h"
 #include "CGreen.h"
@@ -76,11 +79,9 @@ void CScene_Stage1::update()
 void CScene_Stage1::Enter()
 {
 	wstring path = CPathManager::getInst()->GetContentPath();
-	//path += L"tile\\4pixel_test.tile";
 	path += L"tile\\stage1-1.tile";
 	LoadTile(path);
 	
-
 	CBG1* pBG1 = new CBG1();
 	pBG1->SetPos(Vec2(0.f, 0.f));
 	pBG1->SetScale(Vec2(1.f, 1.f));
@@ -93,6 +94,12 @@ void CScene_Stage1::Enter()
 	CBG2* pBG2 = new CBG2();
 	pBG2->setIndex(1);
 	AddObject(pBG2, GROUP_GAMEOBJ::BACKGROUND);
+
+	CScoreUI* pScoreUI = new CScoreUI();
+	AddObject(pScoreUI, GROUP_GAMEOBJ::UI);
+
+	CStatusUI* pStatusUI = new CStatusUI();
+	AddObject(pStatusUI, GROUP_GAMEOBJ::UI);
 
 
 
@@ -135,12 +142,12 @@ void CScene_Stage1::Enter()
 
 	CChest* pChest1 = new CChest();
 	pChest1->SetPos(Vec2(1570.f, 300.f));
-	pChest1->Set_Item(new COptionFire());
+	pChest1->Set_Item(new CCard(5));
 	AddObject(pChest1, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest2 = new CChest();
 	pChest2->SetPos(Vec2(2250.f, 140.f));
-	pChest2->Set_Item(new CLamp());
+	pChest2->Set_Item(new CCoin);
 	AddObject(pChest2, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest3 = new CChest();
@@ -148,34 +155,40 @@ void CScene_Stage1::Enter()
 	pChest3->SetVisibility(false);
 	pChest3->Set_Item(new CMissileItem());
 	CMissileItem* pMissileItem = (CMissileItem*)pChest3->Get_Item();
-	//pMissileItem->SetRandomMissile();
+	//pMissileItem->SetRandomMissile();//TODO::미사일 다 만들면 바꾸기
 	pMissileItem->SetMissileType(eType::HYPER);
 	AddObject(pChest3, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest4 = new CChest();
-	pChest4->SetPos(Vec2(4130.f, 200.f));
+	pChest4->SetPos(Vec2(4130.f, 215.f));
 	pChest4->SetVisibility(false);
-	pChest4->Set_Item(new CCoin());
+	pChest4->Set_Item(new COptionFire());
 	AddObject(pChest4, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest5 = new CChest();
-	pChest5->SetPos(Vec2(4460.f, 390.f));
-	pChest5->Set_Item(new CCard(5));
+	pChest5->SetPos(Vec2(4450.f, 400.f));
+	pChest5->Set_Item(new CLamp()); //TODO:Bound총알로 변경하기
 	AddObject(pChest5, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest6 = new CChest();
 	pChest6->SetPos(Vec2(5350.f, 55.f));
-	pChest6->Set_Item(new CCard(1));
+	pChest6->Set_Item(new CCoin());
 	AddObject(pChest6, GROUP_GAMEOBJ::ITEM);
+
+	CChest* pChest6_2 = new CChest();
+	pChest6_2->SetPos(Vec2(5250.f, 225.f));
+	pChest6_2->SetVisibility(false);
+	pChest6_2->Set_Item(new CLamp());//TODO:바운드미사일넣기
+	AddObject(pChest6_2, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest7 = new CChest();
 	pChest7->SetPos(Vec2(5910.f, 75.f));
-	pChest7->SetVisibility(false);
-	pChest7->Set_Item(new CCoin());
+	//pChest7->SetVisibility(false);
+	pChest7->Set_Item(new CLamp());
 	AddObject(pChest7, GROUP_GAMEOBJ::ITEM);
 
 	CChest* pChest8 = new CChest();
-	pChest8->SetPos(Vec2(7240.f, 355.f));
+	pChest8->SetPos(Vec2(7250.f, 365.f));
 	pChest8->Set_Item(new CCoin());
 	AddObject(pChest8, GROUP_GAMEOBJ::ITEM);
 
@@ -187,7 +200,6 @@ void CScene_Stage1::Enter()
 			continue;
 		pFChest1->Set_Item(new CCard(i));
 	}
-
 	AddObject(pFChest1, GROUP_GAMEOBJ::ITEM);
 
 	CGolemWood* pGolemWood = new CGolemWood();
@@ -203,38 +215,6 @@ void CScene_Stage1::Enter()
 		AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);
 		pGolemWood->SetMovingTiles(pMovingTile);
 	}
-
-	//for (int i = 0; i < 8; ++i)
-	//{
-	//	pMovingTile = new CMovingTile();
-	//	pMovingTile->SetPos(Vec2(8400.f+(32.f*i), 400.f+(float)i*-10.f));
-	//	pMovingTile->SetRight(false);
-	//	AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);		
-	//}
-	//for (int i = 8; i < 15; ++i)
-	//{
-	//	pMovingTile = new CMovingTile();
-	//	pMovingTile->SetPos(Vec2(8400.f + (32.f * i), 320.f + (float)(i-6) * +10.f));
-	//	pMovingTile->SetRight(true);
-	//	AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);
-	//}
-	//for (int i = 15; i < 22; ++i)
-	//{
-	//	pMovingTile = new CMovingTile();
-	//	pMovingTile->SetPos(Vec2(8400.f + (32.f * i), 400.f + (float)(i - 14) * -10.f));
-	//	pMovingTile->SetRight(false);
-	//	AddObject(pMovingTile, GROUP_GAMEOBJ::TILE);
-	//}
-
-	//vector<CGameObject*> pTiles = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::TILE);
-	//for (int i = 0; i < pTiles.size(); ++i)
-	//{
-	//	CMovingTile* pTile = (CMovingTile*)pTiles[i];
-	//	if (pTile->GetGroup() == GROUP_TILE::MOVE)
-	//	{
-	//		pGolemWood->pMovingTiles.push_back(pTile);
-	//	}
-	//}
 
 	CBossTrigger* pBossTrigger = new CBossTrigger();
 	pBossTrigger->SetPos(Vec2(7600.f, WINSIZEY / 2.f));
@@ -280,6 +260,6 @@ void CScene_Stage1::Enter()
 void CScene_Stage1::Exit()
 {
 	DeleteAll();
-	//CSoundManager::getInst()->Stop(L"stage1_1_bgm");
+	CSoundManager::getInst()->Stop(L"stage1_1_bgm");
 	CCollisionManager::getInst()->Reset();
 }

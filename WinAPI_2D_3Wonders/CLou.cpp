@@ -19,6 +19,7 @@
 #include <iostream>
 #include <random>
 
+///////////////////////
 #define D_GRAVITY 400
 #define D_DOWNFORCE 700
 #define D_VELOCITY 200
@@ -30,16 +31,19 @@
 
 CLou::CLou()
 {
+	m_dir = eDir::STILL;
+	m_state = eState::IDLE;
+	m_facing = D_FACING::RIGHT;
 	pOwl = nullptr;
 	missileType = L"NONE";
 	blink = 0.f;
 	isInvincible = 0.f;
 	m_stateCounter = 0.f;
 	dash = 0.f;
-	bGravity = true;
-	m_state = eState::IDLE;
+	isJumpingDownPlatform = false;
+	
 	m_goblinCounter = 0.f;
-	m_facing = D_FACING::RIGHT;
+
 	m_floor = 0;
 	m_wall = 0;
 	m_velocity = D_VELOCITY;
@@ -50,7 +54,7 @@ CLou::CLou()
 
 	SetHP(2);
 	prevHP = GetHP();
-	prevY = GetPos().y;
+	prevPos = GetPos();
 
 	SetName(L"Lou");
 	m_pClothedImg = CResourceManager::getInst()->LoadD2DImage(L"PlayerClothedImg", L"texture\\Animation\\Animation_Lou.png");
@@ -61,18 +65,15 @@ CLou::CLou()
 	GetCollider()->SetOffsetPos(Vec2(0.f, -10.f));
 
 	CreateAnimator();
-	
-	
-	////////////////////////////////옷 입음////////////////////////////////
-
+	////////////////////////////////CLOTHED 애니메이션////////////////////////////////
 	GetAnimator()->CreateAnimation(L"Idle_Right", m_pClothedImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
 	GetAnimator()->CreateAnimation(L"Idle_Left", m_pClothedImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
 
 	GetAnimator()->CreateAnimation(L"Still_Right", m_pClothedImg, Vec2(0.f, 256.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
 	GetAnimator()->CreateAnimation(L"Still_Left", m_pClothedImg, Vec2(128.f, 256.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.5f, 2, false);
 
-	GetAnimator()->CreateAnimation(L"Move_Right", m_pClothedImg, Vec2(0.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 6, false);
-	GetAnimator()->CreateAnimation(L"Move_Left", m_pClothedImg, Vec2(128.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 6, false);
+	GetAnimator()->CreateAnimation(L"Move_Right", m_pClothedImg, Vec2(0.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.15f, 6, false);
+	GetAnimator()->CreateAnimation(L"Move_Left", m_pClothedImg, Vec2(128.f, 512.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.15f, 6, false);
 	
 	GetAnimator()->CreateAnimation(L"Lookup_Right", m_pClothedImg, Vec2(768.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
 	GetAnimator()->CreateAnimation(L"Lookup_Left", m_pClothedImg, Vec2(896.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.2f, 1, false);
@@ -105,13 +106,15 @@ CLou::CLou()
 	GetAnimator()->CreateAnimation(L"Lou_Hurt_Right", m_pClothedImg, Vec2(1280.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.166f, 3, false);
 	GetAnimator()->CreateAnimation(L"Lou_Hurt_Left", m_pClothedImg, Vec2(1408.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.166f, 3, false);
 
+	GetAnimator()->CreateAnimation(L"Lou_Down_Plat", m_pClothedImg, Vec2(1792.f, 640.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 1.f, 1, true);
+
 	GetAnimator()->CreateAnimation(L"Lou_Fly_Right", m_pClothedImg, Vec2(1024.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.1f, 1, false);
 	GetAnimator()->CreateAnimation(L"Lou_Fly_Left", m_pClothedImg, Vec2(1024.f, 0.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.1f, 1, true);
 
 	GetAnimator()->CreateAnimation(L"Lou_NULL", m_pClothedImg, Vec2(1280.f, 1280.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.1f, 1, false);
 
 	
-	//naked폼///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	///////UNCLOTHED 애니메이션///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	GetAnimator()->CreateAnimation(L"GetUp_Right_N", m_pUnclothedImg, Vec2(2944.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.125f, 4, false);
 	GetAnimator()->CreateAnimation(L"GetUp_Left_N", m_pUnclothedImg, Vec2(2944.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.125f, 4, true);
@@ -122,8 +125,8 @@ CLou::CLou()
 	GetAnimator()->CreateAnimation(L"Still_Right_N", m_pUnclothedImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.5f, 2, false);
 	GetAnimator()->CreateAnimation(L"Still_Left_N", m_pUnclothedImg, Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.5f, 2, true);
 
-	GetAnimator()->CreateAnimation(L"Move_Right_N", m_pUnclothedImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 6, false);
-	GetAnimator()->CreateAnimation(L"Move_Left_N", m_pUnclothedImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 6, true);
+	GetAnimator()->CreateAnimation(L"Move_Right_N", m_pUnclothedImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.15f, 6, false);
+	GetAnimator()->CreateAnimation(L"Move_Left_N", m_pUnclothedImg, Vec2(128.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.15f, 6, true);
 
 	GetAnimator()->CreateAnimation(L"Lookup_Right_N", m_pUnclothedImg, Vec2(1152.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, false);
 	GetAnimator()->CreateAnimation(L"Lookup_Left_N", m_pUnclothedImg, Vec2(1152.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.2f, 1, true);
@@ -157,11 +160,13 @@ CLou::CLou()
 	GetAnimator()->CreateAnimation(L"Lou_Hurt_Right_N", m_pUnclothedImg, Vec2(2560.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.333f, 3, false);
 	GetAnimator()->CreateAnimation(L"Lou_Hurt_Left_N", m_pUnclothedImg, Vec2(2560.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.333f, 3, true);
 
+	GetAnimator()->CreateAnimation(L"Lou_Down_Plat_N", m_pUnclothedImg, Vec2(6912.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, true);
+
 	GetAnimator()->CreateAnimation(L"GetHealed", m_pUnclothedImg, Vec2(3456.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.125f, 8, false);
 
 	GetAnimator()->Play(L"Idle_Right");
 
-
+	/////////////////////////////////사운드//////////////////////////
 	CSoundManager::getInst()->AddSound(L"normalGunSound", L"sound\\normal_gun.wav", false);
 	CSoundManager::getInst()->AddSound(L"hyperGunSound", L"sound\\hyper.wav", false);
 	CSoundManager::getInst()->AddSound(L"hurtSound", L"sound\\hurt.wav", false);
@@ -185,11 +190,9 @@ void CLou::update_move()
 {
 	Vec2 vPos = GetPos();
 	
-	//////////////////////////////////////
-
-	//////////////////////////////////////
-
-	if (KEY('W'))//누르고있으면 속도 부스터:테스트용
+	//////////////////////디버그용//////////////////
+	//누르고있으면 속도 부스터:테스트용	
+	if (KEY('W'))
 	{
 		m_velocity = 1000.f;
 	}
@@ -197,7 +200,6 @@ void CLou::update_move()
 	{
 		m_velocity = D_VELOCITY;
 	}
-	//////////////////////////////////////
 	//카메라 캐릭터 target
 	if (KEYDOWN('V'))
 	{
@@ -207,19 +209,23 @@ void CLou::update_move()
 	{
 		m_goblinCounter += fDT;
 	}
-	//n초마다 고블린 리젠
-	if (m_goblinCounter >= 5.f)
+
+	//////////////////////////////////////
+	//////////////////////////////////////
+
+
+	//n초마다 고블린 플레이어 주위에서 리젠
+	if (m_goblinCounter >= 4.f)
 	{
 		m_goblinCounter = 0.f;
 		GenerateGoblin();
 	}
-	//////////////////////////////////////
-	//////////////////////////////////////
 
 	if (m_floor > 0)	//충돌on
 	{
 		m_gravity = 0.f;
 		m_upforce = 0.f;
+		isJumpingDownPlatform = false;
 	}
 	else				//충돌off
 	{
@@ -229,17 +235,13 @@ void CLou::update_move()
 			vPos.y += D_GRAVITY * fDT;
 		}
 	}
+
+	//enum class로 상태 구분
 	switch (m_state)
 	{
 	case eState::IDLE:
 	{
 		m_stateCounter += fDT;
-		//if (m_upforce <= 0.f)
-			//&&0==m_floor)
-		//{
-		// 		m_stateCounter = 0.f;
-		//	SETSTATE::FALL;
-		//}
 		if (KEY(VK_UP))
 		{
 			m_facing = D_FACING::UP;
@@ -363,7 +365,17 @@ void CLou::update_move()
 		if (KEYDOWN('X'))
 		{
 			m_stateCounter = 0.f;
-			SETSTATE::DASH;
+			if (m_platformCounter == 0)
+			{
+				SETSTATE::DASH;
+			}
+			if (m_platformCounter > 0)
+			{
+				isJumpingDownPlatform = true;
+				vPos.y += 30.f;
+				m_floor = 0;
+				m_platformCounter = 0;
+			}
 		}
 		if (KEYDOWN('Z'))
 		{
@@ -1087,7 +1099,7 @@ void CLou::update_animation()
 				}
 				else
 				{
-					if (prevY < GetPos().y)
+					if (prevPos.y < GetPos().y)
 					{
 						if (isClothed)
 						{
@@ -1149,7 +1161,7 @@ void CLou::update_animation()
 				}
 				else
 				{
-					if (prevY < GetPos().y)
+					if (prevPos.y < GetPos().y)
 					{
 						if (isClothed)
 						{
@@ -1342,6 +1354,15 @@ void CLou::update_animation()
 
 		}break;
 	}
+
+	if (isJumpingDownPlatform)
+	{
+		if(isClothed)
+			GetAnimator()->Play(L"Lou_Down_Plat");
+		else
+			GetAnimator()->Play(L"Lou_Down_Plat_N");
+	}
+
 	if (isInvincible > 0.f)
 	{
 		blink += fDT;
@@ -1358,7 +1379,9 @@ void CLou::update_animation()
 		}	
 	}
 
-	prevY = GetPos().y;
+	DirCheck(prevPos);
+
+	prevPos = GetPos();
 	GetAnimator()->update();
 }
 
@@ -1529,6 +1552,46 @@ void CLou::CreateMissile()
 	CreateObj(pMissile, GROUP_GAMEOBJ::MISSILE_PLAYER);
 }
 
+void CLou::DirCheck(Vec2 _prevPos)
+{
+	if (_prevPos.x < GetPos().x && _prevPos.y ==GetPos().y)
+	{
+		m_dir = eDir::RIGHT;
+	}
+	else if (_prevPos.x > GetPos().x && _prevPos.y == GetPos().y)
+	{
+		m_dir = eDir::LEFT;
+	}
+	else if (_prevPos.x == GetPos().x && _prevPos.y > GetPos().y)
+	{
+		m_dir = eDir::UP;
+	}
+	else if (_prevPos.x == GetPos().x && _prevPos.y < GetPos().y)
+	{
+		m_dir = eDir::DOWN;
+	}
+	else if (_prevPos.x == GetPos().x && _prevPos.y == GetPos().y)
+	{
+		m_dir = eDir::STILL;
+	}
+	else if (_prevPos.x > GetPos().x && _prevPos.y > GetPos().y)
+	{
+		m_dir = eDir::LEFTUP;
+	}
+	else if (_prevPos.x < GetPos().x && _prevPos.y > GetPos().y)
+	{
+		m_dir = eDir::RIGHTUP;
+	}
+	else if (_prevPos.x < GetPos().x && _prevPos.y < GetPos().y)
+	{
+		m_dir = eDir::RIGHTDOWN;
+	}
+	else if (_prevPos.x > GetPos().x && _prevPos.y < GetPos().y)
+	{
+		m_dir = eDir::LEFTDOWN;
+	}
+}
+
 void CLou::GenerateGoblin()
 {
 	std::random_device rd;
@@ -1628,6 +1691,28 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 		}break;
 		case GROUP_TILE::PLATFORM:
 		{
+			if (m_platformCounter == 0)
+			{
+				if (m_dir == eDir::DOWN ||
+					m_dir == eDir::LEFTDOWN ||
+					m_dir == eDir::RIGHTDOWN)
+				{
+					++m_platformCounter;
+					++m_floor;
+				}
+			}
+			else if (m_platformCounter > 0)
+			{
+				if (m_dir == eDir::DOWN ||
+					m_dir == eDir::LEFTDOWN ||
+					m_dir == eDir::RIGHTDOWN ||
+					m_dir == eDir::LEFT ||
+					m_dir == eDir::RIGHT)
+				{
+					++m_platformCounter;
+					++m_floor;
+				}
+			}
 
 		}break;
 		case GROUP_TILE::SLOPE:
@@ -1741,6 +1826,27 @@ void CLou::OnCollision(CCollider* _pOther)
 		}break;
 		case GROUP_TILE::PLATFORM:
 		{
+			if (m_platformCounter > 0)
+			{
+				int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
+				int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
+				int sum = abs(a - b);
+				if (1 < sum)
+					--vPos.y;
+			}
+			else if (m_platformCounter == 0)
+			{
+				if (m_dir == eDir::UP ||
+					m_dir == eDir::LEFTUP ||
+					m_dir == eDir::RIGHTUP)
+				{
+					if (KEYDOWN('C'))
+					{
+						m_state = eState::HOLDCLIFF;
+					}
+				}
+			}
+
 
 		}break;
 		case GROUP_TILE::SLOPE:
@@ -1785,7 +1891,11 @@ void CLou::OnCollisionExit(CCollider* _pOther)
 		}break;
 		case GROUP_TILE::PLATFORM:
 		{
-
+			if(m_platformCounter>0)
+			{
+				--m_platformCounter;
+				--m_floor;
+			}
 		}break;
 		case GROUP_TILE::SLOPE:
 		{
@@ -1813,6 +1923,7 @@ void CLou::render_information()
 		wstring stateName = {};
 		wstring direction = {};
 		wstring curAni = {};
+		wstring dir = {};
 
 		////////////////////////
 		switch (m_state)
@@ -1853,6 +1964,27 @@ void CLou::render_information()
 		case D_FACING::RIGHT:direction = L"RIGHT";
 			break;
 		}
+		switch (m_dir)
+		{
+		case eDir::RIGHTUP:dir = L"RIGHTUP";
+			break;
+		case eDir::RIGHT:dir = L"RIGHT";
+			break;
+		case eDir::RIGHTDOWN:dir = L"RIGHTDOWN";
+			break;
+		case eDir::DOWN:dir = L"DOWN";
+			break;
+		case eDir::LEFTDOWN:dir = L"LEFTDOWN";
+			break;
+		case eDir::LEFT:dir = L"LEFT";
+			break;
+		case eDir::LEFTUP:dir = L"LEFTUP";
+			break;
+		case eDir::UP:dir = L"UP";
+			break;
+		case eDir::STILL:dir = L"STILL";
+			break;
+		}
 		CRenderManager::getInst()->RenderImage(
 			pImg,
 			vPos.x + 30.f,
@@ -1866,11 +1998,13 @@ void CLou::render_information()
 			L" pos X : " + std::to_wstring(GetPos().x) + L"\n" +
 			L" pos Y : " + std::to_wstring(GetPos().y) + L"\n" +
 			L" state  : " + stateName + L"\n" +
-			L" drctn  : " + direction + L"\n" +
+			L" shootDir  : " + direction + L"\n" +
+			L" Dir: " + dir + L"\n" +
 			L" curAm : " + curAni + L"\n"+
 			L" HP:  " + std::to_wstring(GetHP()) + L"\n" +
 			L" MsileType: "+ missileType +L"\n"+
-			L" wallCount : "  + std::to_wstring(m_floor)
+			L" wallCount : "  + std::to_wstring(m_floor) + L"\n" +
+			L" platformCtr: " +std::to_wstring(m_platformCounter)
 			, vPos.x+30.f
 			, vPos.y+ -40.f
 			, vPos.x + 200.f

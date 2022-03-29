@@ -314,6 +314,15 @@
     <ClInclude Include="CD2DImage.h">
       <Filter>Things\03.Resource\Texture</Filter>
     </ClInclude>
+    <ClInclude Include="CScoreUI.h">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CStatusUI.h">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CBossVital.h">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -512,6 +521,15 @@
     </ClCompile>
     <ClCompile Include="CD2DImage.cpp">
       <Filter>Things\03.Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="CScoreUI.cpp">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CStatusUI.cpp">
+      <Filter>Things\01.Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CBossVital.cpp">
+      <Filter>Things\01.Object\UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

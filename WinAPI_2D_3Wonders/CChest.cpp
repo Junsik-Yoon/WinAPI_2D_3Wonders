@@ -31,7 +31,7 @@ CChest::CChest()
 
 	GetAnimator()->Play(L"Idle_Chest");
 
-	CCameraManager::getInst()->GetRenderPos(GetPos());
+
 }
 
 CChest::~CChest()

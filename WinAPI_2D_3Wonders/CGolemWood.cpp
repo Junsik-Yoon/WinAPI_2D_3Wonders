@@ -8,6 +8,9 @@
 #include "CTile.h"
 #include "CMovingTile.h"
 #include "CAnimation.h"
+#include "CBossVital.h"
+#include "CEffect.h"
+#include "CD2DImage.h"
 
 #include <iostream>
 #include <random>
@@ -20,9 +23,11 @@
 
 CGolemWood::CGolemWood()
 {
+	m_bossVital = nullptr;
+	prevVital = 0;
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<int> dis(0, 200);
+	std::uniform_int_distribution<int> dis(0, 200); 
 	CChestnut* pChestnut = nullptr;
 	for (int i = 0; i < 10; ++i)
 	{
@@ -38,7 +43,7 @@ CGolemWood::CGolemWood()
 	pMovingTiles = {};
 	m_state = eState_GW::IDLE;
 	m_floor = 0;
-	SetHP(30);
+	SetHP(50);
 	m_gravity = D_GRAVITY;
 	m_dTileSpeed = D_TILESPEED;
 	m_bossTimer = 0.f;
@@ -46,7 +51,7 @@ CGolemWood::CGolemWood()
 	SetName(L"GolemWood");
 	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"GolemWoodImg", L"texture\\Animation\\Animation_GolemWood.png");
 	CreateCollider();
-	SetScale(Vec2(10.f, 300.f));
+	SetScale(Vec2(10.f, 285.f));
 	GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y));
 	GetCollider()->SetOffsetPos(Vec2(15.f, 0.f));
 
@@ -66,10 +71,6 @@ CGolemWood::CGolemWood()
 
 CGolemWood::~CGolemWood()
 {
-	//for (int i = 0; i < pChestnuts.size(); ++i)
-	//{
-	//	DeleteObj(pChestnuts[i]);
-	//}
 
 }
 
@@ -142,6 +143,9 @@ void CGolemWood::update()
 
 		if (m_bossTimer >= 2.f)
 		{
+			m_bossVital = new CBossVital(this);
+			prevVital = m_bossVital->GetVital();
+			CreateObj(m_bossVital, GROUP_GAMEOBJ::UI);
 			m_bossTimer = 0.f;
 			m_state = eState_GW::TILEMOVE;		
 		}
@@ -165,7 +169,7 @@ void CGolemWood::update()
 		m_bossTimer += fDT;
 		m_chestnutTimer += fDT;
 		m_dMoveTimer += DT;
-		if (m_dMoveTimer >= 0.05)
+		if (m_dMoveTimer >= 0.10)
 		{
 			for (int i = 0; i < pChestnuts.size(); ++i)
 			{
@@ -185,6 +189,19 @@ void CGolemWood::update()
 		{
 			m_bossTimer = 0.f;
 			m_state = eState_GW::ATTACK;
+		}
+		if (prevVital > m_bossVital->GetVital())
+		{
+			CSoundManager::getInst()->Play(L"boss_damaged");
+			m_bossTimer = 0.f;
+			m_state = eState_GW::HURT;
+		}
+		if (GetHP() <= 0)
+		{
+			DeleteObj(m_bossVital);
+			m_bossTimer = 0.f;
+			CSoundManager::getInst()->Play(L"boss_die");
+			m_state = eState_GW::DEAD;
 		}
 	
 	}
@@ -211,57 +228,79 @@ void CGolemWood::update()
 			m_state = eState_GW::TILEMOVE;
 			m_bossTimer = 0.f;
 		}
-
+		if (prevVital > m_bossVital->GetVital())
+		{
+			CSoundManager::getInst()->Play(L"boss_damaged");
+			m_bossTimer = 0.f;
+			m_state = eState_GW::HURT;
+		}
+		if (GetHP() <= 0)
+		{
+			DeleteObj(m_bossVital);
+			m_bossTimer = 0.f;
+			CSoundManager::getInst()->Play(L"boss_die");
+			m_state = eState_GW::DEAD;
+		}
 	}
 		break;
+	case eState_GW::HURT:
+	{
+		m_bossTimer += fDT;
+		if (m_bossTimer>=0.5f)
+		{
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_int_distribution<int> dis(1, 2);
+			if (dis(gen) == 1)
+			{
+				m_state = eState_GW::ATTACK;
+			}
+			else if (dis(gen) == 2)
+			{
+				m_state = eState_GW::TILEMOVE;
+			}
+		}
+		GetAnimator()->Play(L"Damaged");
+		if (GetHP() <= 0)
+		{
+			DeleteObj(m_bossVital);
+			m_bossTimer = 0.f;
+			CSoundManager::getInst()->Play(L"boss_die");
+			m_state = eState_GW::DEAD;
+		}
+
+	}break;
 	case eState_GW::DEAD:
 	{
-		CSoundManager::getInst()->Play(L"boss_die");
+		GetAnimator()->Play(L"Damaged");
+		m_bossTimer += fDT;
+		m_shootTimer += fDT;
+		if (m_shootTimer >= 0.1f)
+		{
+			m_shootTimer = 0.f;
+			Explode();
+		}
+
+		if (m_bossTimer >= 3.f)
+		{
+			m_bossTimer = 0.f;
+			for (int i = 0; i < pChestnuts.size(); ++i)
+			{
+				if (pChestnuts[i]->GetHP() > 0)
+				{
+					DeleteObj(pChestnuts[i]);
+				}
+			}pChestnuts.clear();
+			DeleteObj(this);
+		}
+
+
 	}
 		break;
 	}
 
 
-	//vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
-	//if (abs(pPlayer[0]->GetPos().x - GetPos().x) <= 600.f)
-	//{
 
-		//TODO:플레이어가 일정구역 안에 들어오면 동적할당
-	//	if (m_stopCounter == 0.f)
-	//	{
-	//		m_missileCounter += fDT;
-	//		MoveTiles();
-	//	}
-	//	else
-	//	{
-	//		m_stopCounter += fDT;
-	//	}
-	//	if (m_missileCounter >= 3.f)
-	//	{
-	//		CreateMissile();
-	//		GetAnimator()->Play(L"Shoot");
-	//		m_missileCounter = 0.f;
-	//		m_stopCounter += fDT;
-
-	//	}
-	//	if (m_stopCounter >= 2.f)
-	//	{
-	//		GetAnimator()->Play(L"Idle");
-	//		m_stopCounter = 0.f;
-	//		m_missileCounter += fDT;
-	//	}
-
-
-	//	if (m_floor == 0)
-	//	{
-	//		m_gravity = D_GRAVITY;
-	//		vPos.y += D_GRAVITY * fDT;
-	//	}
-	//	else
-	//	{
-	//		m_gravity = 0;
-	//	}
-	//}
 	for (int i = 0; i < pChestnuts.size(); ++i)
 	{
 		pChestnuts[i]->SetPos(
@@ -271,7 +310,10 @@ void CGolemWood::update()
 
 
 	SetPos(vPos);
-
+	if (nullptr != m_bossVital)
+	{
+		prevVital = m_bossVital->GetVital();
+	}
 	GetAnimator()->update();
 }
 
@@ -344,21 +386,22 @@ void CGolemWood::CreateMissile()
 
 void CGolemWood::MoveTiles()
 {
-	Vec2 vFirstTilePos = pMovingTiles[pMovingTiles.size()-1]->GetPos();
-	pMovingTiles[pMovingTiles.size() - 1]->prevTilePos = vFirstTilePos;
+	Vec2 vFirstTilePos = pMovingTiles[pMovingTiles.size()-4]->GetPos();
+	pMovingTiles[pMovingTiles.size() - 4]->prevTilePos = vFirstTilePos;
 
 	m_fTheta += m_fSpd * fDT;
 	vFirstTilePos.y = m_radius * (float)sin(m_fTheta);
 	vFirstTilePos.y += y_center;
 
 
-	pMovingTiles[pMovingTiles.size() - 1]->SetPos(vFirstTilePos);
+	pMovingTiles[pMovingTiles.size() - 4]->SetPos(vFirstTilePos);
 
 	for (int i = 0; i < pMovingTiles.size(); ++i)
 	{
 		pMovingTiles[i]->SetMaxHeight(430.f - 20.f * (float)i);
 	}
-	for (int i = pMovingTiles.size() - 1; i > 0; --i)
+
+	for (int i = pMovingTiles.size() - 4; i > 0; --i)
 	{
 		if (pMovingTiles[i - 1]->GetMaxheight() >= pMovingTiles[i]->prevTilePos.y)
 		{
@@ -369,8 +412,11 @@ void CGolemWood::MoveTiles()
 		{
 			pMovingTiles[i - 1]->prevTilePos = pMovingTiles[i - 1]->GetPos();
 			pMovingTiles[i - 1]->SetPos(Vec2(pMovingTiles[i - 1]->GetPos().x, pMovingTiles[i]->prevTilePos.y));
-		}
-		
+		}		
+	}
+	for (int i = pMovingTiles.size() - 3; i < pMovingTiles.size() ; ++i)
+	{
+		pMovingTiles[i]->SetPos(Vec2(pMovingTiles[i]->GetPos().x, pMovingTiles[pMovingTiles.size() - 4]->GetPos().y));
 	}
 
 
@@ -438,6 +484,26 @@ void CGolemWood::DropChestnut()
 	CreateObj(pChestnut, GROUP_GAMEOBJ::MONSTER);
 }
 
+void CGolemWood::Explode()
+{
+
+	int iHeight = m_pImg->GetHeight();
+	int iWidth = m_pImg->GetWidth();
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> dis(0, iHeight / 2);
+
+
+	//////////////////////이펙트///////////////
+	CEffect* effectExplode = new CEffect(L"Effect_Explode_Small", L"texture\\Animation\\Effect_Explode_Small.png",
+		L"Effect_Explode_Small", Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.05f, 10, false, 1.f);
+	effectExplode->SetPos(Vec2(GetPos().x - GetScale().x / 2.f + dis(gen), GetPos().y - GetScale().y / 2.f + dis(gen)));
+	effectExplode->SetDuration(1.f);
+	CreateObj(effectExplode, GROUP_GAMEOBJ::EFFECT);
+	///////////////////////////////////////////
+
+}
+
 void CGolemWood::OnCollisionEnter(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
@@ -453,10 +519,6 @@ void CGolemWood::OnCollisionEnter(CCollider* _pOther)
 	{
 		int hp = GetHP();
 		SetHP(--hp);
-	}
-	if (GetHP() <= 0)
-	{
-		DeleteObj(this);
 	}
 }
 

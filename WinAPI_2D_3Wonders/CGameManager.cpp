@@ -3,7 +3,10 @@
 
 CGameManager::CGameManager()
 {
-
+	g_pPlayer = nullptr;
+	g_gameScore = 0;
+	g_playerLife = 0;
+	g_heartsHave = 0;
 }
 CGameManager::~CGameManager()
 {

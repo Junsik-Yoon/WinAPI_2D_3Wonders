@@ -4,6 +4,7 @@
 class CMovingTile;
 class CD2DImage;
 class CChestnut;
+class CBossVital;
 
 enum class eState_GW
 {
@@ -11,6 +12,7 @@ enum class eState_GW
 	PREPARE,
 	TILEMOVE,
 	ATTACK,
+	HURT,
 	DEAD,
 
 	SIZE,
@@ -18,9 +20,12 @@ enum class eState_GW
 
 class CGolemWood : public CGameObject
 {
+	friend class CBossVital;
 private:
-	CD2DImage* m_pImg;
 
+	CD2DImage* m_pImg;
+	CBossVital* m_bossVital;
+	int prevVital;
 	eState_GW m_state;
 
 	vector<CMovingTile*> pMovingTiles;
@@ -41,10 +46,10 @@ private:
 
 	bool tileActivate = false;
 
-	float  m_radius = 90.f;
+	float  m_radius = 70.f;
 	float  m_fSpd = 20.f;
-	float  y_center = 330.f;
-	float m_fTheta = 0.f;
+	float  y_center = 350.f;
+	float  m_fTheta = 0.f;
 
 public:
 	void OnCollisionEnter(CCollider* _pOther);
@@ -59,6 +64,7 @@ public:
 	void CreateMissile();
 	void MoveTiles();
 	void DropChestnut();
+	void Explode();
 public:
 	void SetMovingTiles(CMovingTile* pMovingTile) { pMovingTiles.push_back(pMovingTile); }
 	void ActivateTiles(bool _trigger) { tileActivate = _trigger; }

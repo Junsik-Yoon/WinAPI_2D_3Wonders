@@ -3,14 +3,14 @@
 
 class CD2DImage;
 class COwl;
-enum class D_FACING
+enum class D_FACING //총구방향
 {
     UP = 1,     //1
     DOWN,       //2
     RIGHT,      //3
     LEFT,       //4
 };
-enum class eState
+enum class eState //상태
 {
     IDLE,       //0
     SIT,        //1
@@ -29,6 +29,24 @@ enum class eState
     SIZE
 };
 
+enum class eDir //충돌처리를 위한 방향
+{
+    RIGHTUP,
+    RIGHT,
+    RIGHTDOWN,
+    DOWN,
+    LEFTDOWN,
+    LEFT,
+    LEFTUP,
+    UP,
+    STILL,
+};
+
+struct tPlayerInfo
+{
+
+};
+
 class CLou :
     public CGameObject
 {
@@ -40,11 +58,11 @@ private:
     //enum state / direction
     D_FACING m_facing;
     eState m_state;
-
+    eDir m_dir;
     COwl* pOwl;
 
     int moveTileCounter = 0;
-    bool bGravity;
+    bool isJumpingDownPlatform;
     float dash;
     float m_goblinCounter;
 
@@ -55,6 +73,7 @@ private:
 
     UINT m_floor;
     UINT m_wall;
+    UINT m_platformCounter = 0;
     float m_velocity;
     float m_upforce;
     float m_gravity;
@@ -67,10 +86,12 @@ private:
 
     int prevHP;
     float prevY;
+    Vec2 prevPos;
 
 public:
     void CreateMissile();
     void GenerateGoblin();
+    void DirCheck(Vec2 _prevPos);
 public:
     eState GetState() {return m_state;}
     bool GetRight() { return isFacedRight; }

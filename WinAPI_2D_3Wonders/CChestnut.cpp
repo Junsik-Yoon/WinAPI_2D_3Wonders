@@ -2,6 +2,7 @@
 #include "CChestnut.h"
 #include "CAnimator.h"
 #include "CCollider.h"
+#include "CEffect.h"
 
 #define GRAVITY 400
 #define VELOCITY 20
@@ -107,6 +108,18 @@ void CChestnut::OnCollisionEnter(CCollider* pOther)
 	{
 		int hp = GetHP();
 		SetHP(--hp);
+
+		if (hp <= 0)
+		{
+			DeleteObj(this);
+			//////////////////////ÀÌÆåÆ®///////////////
+			CEffect* effectExplode = new CEffect(L"Effect_Explode_Small", L"texture\\Animation\\Effect_Explode_Small.png",
+				L"Effect_Explode_Small", Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.05f, 10, false, 1.f);
+			effectExplode->SetPos(GetPos());
+			effectExplode->SetDuration(1.f);
+			CreateObj(effectExplode, GROUP_GAMEOBJ::EFFECT);
+			///////////////////////////////////////////
+		}
 	}
 }
 

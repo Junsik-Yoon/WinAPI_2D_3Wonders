@@ -156,6 +156,7 @@
     <ClInclude Include="CBG1.h" />
     <ClInclude Include="CBG2.h" />
     <ClInclude Include="CBossTrigger.h" />
+    <ClInclude Include="CBossVital.h" />
     <ClInclude Include="CBug.h" />
     <ClInclude Include="CButtonUI.h" />
     <ClInclude Include="CCameraManager.h" />
@@ -200,10 +201,12 @@
     <ClInclude Include="CScene_Selection.h" />
     <ClInclude Include="CScene_Stage1.h" />
     <ClInclude Include="CScene_Tool.h" />
+    <ClInclude Include="CScoreUI.h" />
     <ClInclude Include="CShelter.h" />
     <ClInclude Include="CShootFire.h" />
     <ClInclude Include="CSound.h" />
     <ClInclude Include="CSoundManager.h" />
+    <ClInclude Include="CStatusUI.h" />
     <ClInclude Include="CTempTile.h" />
     <ClInclude Include="CTexture.h" />
     <ClInclude Include="CTile.h" />
@@ -225,6 +228,7 @@
     <ClCompile Include="CBG1.cpp" />
     <ClCompile Include="CBG2.cpp" />
     <ClCompile Include="CBossTrigger.cpp" />
+    <ClCompile Include="CBossVital.cpp" />
     <ClCompile Include="CBug.cpp" />
     <ClCompile Include="CButtonUI.cpp" />
     <ClCompile Include="CCameraManager.cpp" />
@@ -269,10 +273,12 @@
     <ClCompile Include="CScene_Selection.cpp" />
     <ClCompile Include="CScene_Stage1.cpp" />
     <ClCompile Include="CScene_Tool.cpp" />
+    <ClCompile Include="CScoreUI.cpp" />
     <ClCompile Include="CShelter.cpp" />
     <ClCompile Include="CShootFire.cpp" />
     <ClCompile Include="CSound.cpp" />
     <ClCompile Include="CSoundManager.cpp" />
+    <ClCompile Include="CStatusUI.cpp" />
     <ClCompile Include="CTempTile.cpp" />
     <ClCompile Include="CTexture.cpp" />
     <ClCompile Include="CTile.cpp" />

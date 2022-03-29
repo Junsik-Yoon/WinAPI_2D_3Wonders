@@ -11,6 +11,7 @@ private:
 	CD2DImage* m_pImgHyper;
 	CD2DImage* m_pImgPlayer;
 	CD2DImage* m_pImgGW;
+	CD2DImage* m_pImgOwl;
 
 public:
 

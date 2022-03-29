@@ -6,13 +6,16 @@
 #include "CAnimation.h"
 #include "CShootFire.h"
 #include "CLou.h"
+#include "CEffect.h"
+#include "CTile.h"
 
 #define D_VELOCITY 150
 #define D_GRAVITY 400
 CGreen::CGreen()
 {
+	m_state = eState_Green::IDLE;
 	SetHP(10);
-	m_shootFire = 0.f;
+	m_stateTimer = 0.f;
 	isShootingFire = 0;
 	isRight = false;
 	m_state = eState_Green::IDLE;
@@ -20,7 +23,7 @@ CGreen::CGreen()
 	m_wall = 0;
 	m_velocity = D_VELOCITY;
 	m_gravity = D_GRAVITY;
-
+	prevHP = GetHP();
 	SetName(L"Green");
 	m_pImg = CResourceManager::getInst()->LoadD2DImage(L"GreenImg", L"texture\\Animation\\Animation_Green.png");
 	CreateCollider();
@@ -35,6 +38,9 @@ CGreen::CGreen()
 
 	GetAnimator()->CreateAnimation(L"Fire_Right", m_pImg, Vec2(0.f, 576.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.2f, 2, false,false);
 	GetAnimator()->CreateAnimation(L"Fire_Left", m_pImg, Vec2(0.f, 192.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.2f, 2, false,false);
+
+	GetAnimator()->CreateAnimation(L"Damaged_Right", m_pImg, Vec2(384.f, 192.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.05f, 2, false);
+	GetAnimator()->CreateAnimation(L"Damaged_Left", m_pImg, Vec2(384.f, 576.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.05f, 2, false);
 
 
 
@@ -54,8 +60,20 @@ CGreen::~CGreen()
 void CGreen::update()
 {
 	Vec2 vPos = GetPos();
-
+	vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
+	CLou* pLou = (CLou*)pPlayer[0];
+	int hp = GetHP();
 	
+
+	if (pPlayer[0]->GetPos().x >= GetPos().x)
+	{
+		isRight = true;
+	}
+	else
+	{
+		isRight = false;
+	}
+
 	if (m_floor == 0)
 	{
 		m_gravity = D_GRAVITY;
@@ -66,40 +84,58 @@ void CGreen::update()
 		m_gravity = 0;
 	}
 
-	vector<CGameObject*> pPlayer = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::PLAYER);
-	CLou* pLou = (CLou*) pPlayer[0];
-	if (abs(pPlayer[0]->GetPos().x-GetPos().x)<400.f
-		&& abs(pPlayer[0]->GetPos().x - GetPos().x) > 200.f)//idle->trace로 변경
+	switch (m_state)
 	{
-		if (pPlayer[0]->GetPos().x >= GetPos().x)
+	case eState_Green::IDLE:
+	{
+		if (abs(pPlayer[0]->GetPos().x - GetPos().x) < 400.f
+			&& abs(pPlayer[0]->GetPos().x - GetPos().x) > 200.f)
 		{
-			isRight = true;
+			m_state = eState_Green::TRACE;
+		}	
+	}
+		break;
+	case eState_Green::TRACE:
+	{
+		if (abs(pPlayer[0]->GetPos().x - GetPos().x) >= 400.f)
+		{
+			m_state = eState_Green::IDLE;
+		}
+		else if (abs(pPlayer[0]->GetPos().x - GetPos().x) <= 200.f
+			&& (pLou->GetState() != eState::DEAD ||
+				pLou->GetState() != eState::GOTHIT))
+		{
+			m_state = eState_Green::SHOOT;
+		}
+
+		if(isRight)
+		{
 			vPos.x += 50.f * fDT;
 			GetAnimator()->Play(L"Move_Right");
 		}
 		else
 		{
-			isRight = false;
 			vPos.x -= 50.f * fDT;
 			GetAnimator()->Play(L"Move_Left");
 		}
+		if (prevHP > GetHP())
+		{
+			m_stateTimer = 0.f;
+			m_state = eState_Green::DAMAGED;
+		}
 	}
-	if (abs(pPlayer[0]->GetPos().x - GetPos().x) <= 200.f
-		&& (pLou->GetState() != eState::DEAD||
-			pLou->GetState() != eState::GOTHIT))//trace->attack으로변경
+		break;
+	case eState_Green::SHOOT:
 	{
-		
-		m_shootFire += fDT;
+		m_stateTimer += fDT;
 
-		if (pPlayer[0]->GetPos().x >= GetPos().x)
+		if (abs(pPlayer[0]->GetPos().x - GetPos().x) >= 200.f)
 		{
-			isRight = true;
+			m_stateTimer = 0.f;
+			m_state = eState_Green::TRACE;
 		}
-		else
-		{
-			isRight = false;
-		}
-		if (m_shootFire >= 0.2f)
+
+		if (m_stateTimer >= 0.2f)
 		{
 			++isShootingFire;
 			if (isShootingFire >= 5)
@@ -107,11 +143,62 @@ void CGreen::update()
 				isShootingFire = 0;
 			}
 			ShootFire();
-			CSoundManager::getInst()->Play(L"fireshootingSound",0.2f);
-			m_shootFire = 0.f;
+			CSoundManager::getInst()->Play(L"fireshootingSound", 0.2f);
+			m_stateTimer = 0.f;
+		}
+		if (prevHP > GetHP())
+		{
+			m_stateTimer = 0.f;
+			m_state = eState_Green::DAMAGED;
 		}
 	}
-
+		break;
+	case eState_Green::DAMAGED:
+	{
+		m_stateTimer += fDT;
+		if (m_stateTimer >= 0.1f)
+		{
+			m_stateTimer = 0.f;			
+			m_state = eState_Green::TRACE;
+		}
+		if (isRight)
+		{
+			GetAnimator()->Play(L"Damaged_Left");
+			vPos.x -= 100.f * fDT;
+		}
+		else
+		{
+			GetAnimator()->Play(L"Damaged_Right");
+			vPos.x += 100.f * fDT;
+		}
+		if (GetHP() <= 0)
+		{
+			CSoundManager::getInst()->Play(L"monster_die");
+			CSoundManager::getInst()->Play(L"halfmoon_die");
+			//////////////////////이펙트///////////////
+			CEffect* effectHMDie = new CEffect(L"Effect_Die_Big", L"texture\\Animation\\Effect_Die_Big.png",
+				L"Effect_Die_Big", Vec2(0.f, 0.f), Vec2(192.f, 192.f), Vec2(192.f, 0.f), 0.15f, 10, false, false, L"Effect_Die_Big");
+			effectHMDie->SetPos(Vec2(GetPos()));
+			effectHMDie->SetDuration(1.5f);
+			CreateObj(effectHMDie, GROUP_GAMEOBJ::EFFECT);
+			///////////////////////////////////////////
+			m_stateTimer = 0.f;
+			m_state = eState_Green::DEAD;
+		}
+	}
+		break;
+	case eState_Green::DEAD:
+	{
+		m_stateTimer += fDT;
+		if (m_stateTimer >= 0.5f)
+		{
+			DeleteObj(this);
+		}
+	}
+		break;
+	}
+	
+	prevHP = GetHP();
 	SetPos(vPos);
 	GetAnimator()->update();
 }
@@ -200,24 +287,26 @@ void CGreen::OnCollisionEnter(CCollider* _pOther)
 	{
 		int hp = GetHP();
 		SetHP(--hp);
+		m_state = eState_Green::DAMAGED;
 	}
-	if (GetHP() <= 0)
-	{
-		DeleteObj(this);
-	}
+
 }
 
 void CGreen::OnCollision(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
+	CTile* pTile = (CTile*)pOther;
 	Vec2 vPos = GetPos();
 	if (pOther->GetName() == L"Tile")
 	{
-		int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
-		int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
-		int sum = abs(a - b);
-		if (1 < sum)
-			--vPos.y;
+		if (pTile->GetGroup() == GROUP_TILE::GROUND)
+		{
+			int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
+			int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
+			int sum = abs(a - b);
+			if (1 < sum)
+				--vPos.y;
+		}
 	}
 
 	SetPos(vPos);

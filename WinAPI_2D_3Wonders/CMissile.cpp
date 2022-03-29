@@ -15,6 +15,8 @@ CMissile::CMissile()
 	m_pImgPlayer = CResourceManager::getInst()->LoadD2DImage(L"PlayerMissileImg", L"texture\\Animation\\Animation_PlayerMissile.png");
 	m_pImgGW = CResourceManager::getInst()->LoadD2DImage(L"GWMissileImg", L"texture\\Animation\\Animation_Missile_GW.png");
 	m_pImgHyper = CResourceManager::getInst()->LoadD2DImage(L"PlayerSPMissileImg", L"texture\\Animation\\Animation_Hyper_Missile.png");
+	m_pImgOwl = CResourceManager::getInst()->LoadD2DImage(L"OwlMissileImg", L"texture\\Animation\\Animation_OwlMissile.png");
+	
 	CreateCollider();
 	GetCollider()->SetScale(Vec2(GetScale().x,GetScale().y));
 	GetCollider()->SetOffsetPos(Vec2(0.f, 0.f));
@@ -38,7 +40,7 @@ CMissile::CMissile()
 	GetAnimator()->CreateAnimation(L"N_Hyper_Up", m_pImgHyper, Vec2(64.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.5f, 1, false);
 	GetAnimator()->CreateAnimation(L"N_Hyper_Down", m_pImgHyper, Vec2(128.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.5f, 1, false);
 	
-
+	GetAnimator()->CreateAnimation(L"N_OwlMissile", m_pImgOwl, Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.1f, 3, false,false);
 }
 
 CMissile::~CMissile()
@@ -54,12 +56,24 @@ void CMissile::update()
 
 	SetPos(vPos);
 
-	Vec2 fptRenderPos = CCameraManager::getInst()->GetRenderPos(vPos);
-	if (fptRenderPos.x < 0			||
-		fptRenderPos.x > WINSIZEX	||
-		fptRenderPos.y < 0			||
-		fptRenderPos.y > WINSIZEY)
-		DeleteObj(this);
+	if (GetName() != L"Owl_Missile")
+	{
+		Vec2 fptRenderPos = CCameraManager::getInst()->GetRenderPos(vPos);
+		if (fptRenderPos.x < 0 ||
+			fptRenderPos.x > WINSIZEX ||
+			fptRenderPos.y < 0 ||
+			fptRenderPos.y > WINSIZEY)
+			DeleteObj(this);
+	}
+	else
+	{
+		Vec2 fptRenderPos = CCameraManager::getInst()->GetRenderPos(vPos);
+		if (fptRenderPos.x < 0 ||
+			fptRenderPos.x > WINSIZEX ||
+			fptRenderPos.y > WINSIZEY)
+			DeleteObj(this);
+	}
+
 	GetAnimator()->update();
 }
 

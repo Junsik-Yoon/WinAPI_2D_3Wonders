@@ -104,7 +104,7 @@ void CScene_Stage1::Enter()
 
 
 	CLou* pLou = new CLou();
-	pLou->SetPos(Vec2(200.f, 200.f));
+	pLou->SetPos(Vec2(200.f, 150.f));
 	AddObject(pLou, GROUP_GAMEOBJ::PLAYER);
 
 	CHalfMoon* pHalfMoon1 = new CHalfMoon();

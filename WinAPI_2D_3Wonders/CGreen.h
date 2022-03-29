@@ -8,13 +8,16 @@ enum class eState_Green
 	IDLE,
 	TRACE,
 	SHOOT,
+	DAMAGED,
+	DEAD,
+
 	SIZE,
 };
 
 class CGreen : public CGameObject
 {
 private:
-	float m_shootFire;//시간
+	float m_stateTimer;//시간
 	bool isRight;
 	int isShootingFire;
 	eState_Green m_state;
@@ -23,6 +26,7 @@ private:
 	UINT m_wall;
 	float m_velocity;
 	float m_gravity;
+	int prevHP;
 public:
 	void ShootFire();
 

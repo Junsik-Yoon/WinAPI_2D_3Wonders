@@ -266,7 +266,6 @@ void CHalfMoon::OnCollisionEnter(CCollider* _pOther)
 		{
 			vPlayerPos.x += 2.f;
 		}
-		pOther->SetHP(--iPlayerHP);
 	}
 	if (pOther->GetName() == L"Missile_Player")
 	{

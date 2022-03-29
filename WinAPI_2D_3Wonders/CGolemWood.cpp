@@ -291,6 +291,10 @@ void CGolemWood::update()
 					DeleteObj(pChestnuts[i]);
 				}
 			}pChestnuts.clear();
+			for (int i = 0; i < pMovingTiles.size(); ++i)
+			{
+				DeleteObj(pMovingTiles[i]);
+			}
 			DeleteObj(this);
 		}
 

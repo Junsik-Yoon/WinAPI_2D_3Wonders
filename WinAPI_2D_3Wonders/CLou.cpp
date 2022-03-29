@@ -340,10 +340,12 @@ void CLou::update_move()
 
 		if (KEYDOWN(VK_RIGHT))
 		{
+			m_facing=D_FACING::RIGHT;
 			isFacedRight = true;
 		}
 		if (KEYDOWN(VK_LEFT))
 		{
+			m_facing=D_FACING::LEFT;
 			isFacedRight = false;
 		}
 		if (KEYUP(VK_DOWN))
@@ -839,7 +841,7 @@ void CLou::update_move()
 		if (KEYDOWN('X') || m_stateCounter >= 5.f)
 		{ 
 			pOwl->AttackEntireWindow();
-			DeleteObj(pOwl);
+			pOwl->SetDead(true);
 			m_stateCounter = 0.f;
 			SETSTATE::FALL;
 		}
@@ -874,6 +876,7 @@ void CLou::update_move()
 			
 		if (m_stateCounter >= 2.f)
 		{
+			//CCameraManager::getInst()->FadeIn(0.1f);
 			m_stateCounter = 0.f;
 			SETSTATE::IDLE;
 		}
@@ -1608,7 +1611,8 @@ void CLou::GenerateGoblin()
 		if (D_FROMGOBMAX > abs(vPos.x - pTile->GetPos().x)&&
 			D_FROMGOBMIN < abs(vPos.x - pTile->GetPos().x))
 		{
-			if (pTile->GetGroup() == GROUP_TILE::GROUND)
+			if (pTile->GetGroup() == GROUP_TILE::GROUND ||
+				pTile->GetGroup() == GROUP_TILE::PLATFORM)
 			{
 				pTiles.push_back(pTile);
 			}		
@@ -1764,6 +1768,14 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 			}
 		}
 	}
+	if (pOther->GetName() == L"GreenFire")
+	{
+		if (!(m_state == eState::GOTHIT || m_state == eState::DEAD || isInvincible > 0.f))
+		{
+			int hp = GetHP();
+			SetHP(--hp);
+		}
+	}
 	
 	if (pOther->GetName() == L"Hyper")
 	{
@@ -1783,6 +1795,7 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 	{
 		SETSTATE::BOSS_ENCOUNTER;
 	}
+
 
 	//else if (pOther->GetName() == L"Tile" && (plColSize.y + oColSize.y - 2) <= abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
 	//{

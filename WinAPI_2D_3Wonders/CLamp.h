@@ -7,6 +7,9 @@ class CLamp : public CItem
 {
 private:
 	CD2DImage* m_pImg;
+	float twinkle;
+public:
+	void TwinkleEffect();
 public:
 	virtual void update();
 	virtual void render();

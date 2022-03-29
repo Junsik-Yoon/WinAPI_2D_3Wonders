@@ -13,8 +13,8 @@
 #define IDC_WINAPI2D3WONDERS            109
 #define IDR_MAINFRAME                   128
 #define IDD_TILEBOX                     129
+#define IDI_ICON1                       132
 #define IDC_MAP                         1000
-#define IDC_BUTTON1                     1001
 #define IDC_BUTTON_SIZE                 1001
 #define IDC_EDIT_SIZEX                  1003
 #define IDC_EDIT_SIZEY                  1004
@@ -27,7 +27,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        130
+#define _APS_NEXT_RESOURCE_VALUE        133
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1008
 #define _APS_NEXT_SYMED_VALUE           110

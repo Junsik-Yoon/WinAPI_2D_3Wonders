@@ -145,12 +145,12 @@ void CBug::update_move()
 		m_gravity = D_GRAVITY;
 		m_upforce -= m_gravity * fDT;
 		vPos.y -= m_upforce * fDT;
-		if (pPlayerPos.x < vPos.x)
+		if (pPlayerPos.x < vPos.x &&abs(pPlayerPos.x-vPos.x)>10.f)
 		{
 			isFacingRight = false;
 			vPos.x -= m_velocity * fDT;
 		}
-		else if (pPlayerPos.x > vPos.x)
+		else if (pPlayerPos.x > vPos.x && abs(pPlayerPos.x - vPos.x) > 10.f)
 		{
 			isFacingRight = true;
 			vPos.x += m_velocity * fDT;
@@ -172,8 +172,9 @@ void CBug::update_move()
 	}break;
 	case eState_Bug::IDLE:
 	{
+		m_gravity = 0.f;
 		m_upforce = D_UPFORCE;
-		vPos.y -= 2.f;
+		vPos.y -= 5.f;
 		if (m_floor == 0)
 		{
 			m_state = eState_Bug::HOP;
@@ -288,14 +289,18 @@ void CBug::OnCollisionEnter(CCollider* _pOther)
 void CBug::OnCollision(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
+	CTile* pTile = (CTile*)pOther;
 	Vec2 vPos = GetPos();
 	if (pOther->GetName() == L"Tile")
 	{
-		int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
-		int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
-		int sum = abs(a - b);
-		if (1 < sum)
-			--vPos.y;
+		if (pTile->GetGroup() == GROUP_TILE::GROUND)
+		{
+			int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
+			int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
+			int sum = abs(a - b);
+			if (1 < sum)
+				--vPos.y;
+		}
 	}
 	SetPos(vPos);
 }

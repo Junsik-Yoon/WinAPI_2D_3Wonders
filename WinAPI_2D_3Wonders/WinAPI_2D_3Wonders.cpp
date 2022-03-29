@@ -1,6 +1,7 @@
 ﻿
 #include "pch.h"
 #include "framework.h"
+#include "resource.h"
 #include "WinAPI_2D_3Wonders.h"
 #include <locale.h>
 
@@ -100,8 +101,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     wcex.cbClsExtra = 0;//윈도우클래스에서 사용하고자하는 여분의 메모리 양//잘안씀
     wcex.cbWndExtra = 0;
     wcex.hInstance = hInstance;//윈도우 클래스를 등록한 인스턴스 핸들 지정
-    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDC_WINAPI2D3WONDERS));//윈도우의 아이콘
-    wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));//스몰아이콘
+    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));//윈도우의 아이콘
+    wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_ICON1));//스몰아이콘
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW); //윈도우에서 제공하는 기본커서중에 하나 골라서 쓰거나 커서를 추가해서 사용할 수 있음 
     wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);//윈도우 백그라운드 컬러,게임은 어차피 렌더링하면서 계속 그리기떄문에 큰 의미가 없다
     wcex.lpszMenuName = nullptr;//윈도우의 메뉴 지정 -> nullptr로 지정하면 메뉴가 사라지게 할 수 있다

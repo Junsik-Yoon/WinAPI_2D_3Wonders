@@ -336,6 +336,12 @@
     <Image Include="WinAPI_2D_3Wonders.ico">
       <Filter>DEFAULT\리소스 파일</Filter>
     </Image>
+    <Image Include="icon1.ico">
+      <Filter>DEFAULT\리소스 파일</Filter>
+    </Image>
+    <Image Include="gameicon.ico">
+      <Filter>DEFAULT\리소스 파일</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinAPI_2D_3Wonders.cpp" />

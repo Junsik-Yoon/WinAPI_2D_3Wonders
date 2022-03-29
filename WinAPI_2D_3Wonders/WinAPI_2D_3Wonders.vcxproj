@@ -293,6 +293,8 @@
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="gameicon.ico" />
+    <Image Include="icon1.ico" />
     <Image Include="small.ico" />
     <Image Include="WinAPI_2D_3Wonders.ico" />
   </ItemGroup>

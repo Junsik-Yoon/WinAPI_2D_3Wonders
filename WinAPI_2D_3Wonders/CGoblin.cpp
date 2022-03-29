@@ -5,6 +5,7 @@
 #include "CAnimator.h"
 #include "CAnimation.h"
 #include "CEffect.h"
+#include "CTile.h"
 
 #define D_VELOCITY 150
 #define D_GRAVITY 400
@@ -117,7 +118,7 @@ void CGoblin::update_move()
 		{
 			vPos.x -= 50.f * fDT;
 		}
-		if (prevPlayerHP > curPlayerHP)
+		if (prevPlayerHP > curPlayerHP && abs(vPlayerPos.x-vPos.x)<100.f)
 		{
 			CSoundManager::getInst()->Play(L"goblin_laugh",0.1f);
 			m_state = eState_Goblin::LAUGH;
@@ -179,14 +180,14 @@ void CGoblin::update_move()
 
 		if (isBackflipRight)
 		{
-			vPos.x += m_velocity * 2.f * fDT;
+			vPos.x += m_velocity * 3.f * fDT;
 		}
 		else
 		{
-			vPos.x -= m_velocity * 2.f * fDT;
+			vPos.x -= m_velocity * 3.f * fDT;
 		}
 
-		if (m_timeCounter >= 0.5f)
+		if (m_timeCounter >= 0.25f)
 		{
 			CSoundManager::getInst()->Play(L"monster_die");
 			m_timeCounter = 0.f;
@@ -255,7 +256,7 @@ void CGoblin::update_animation()
 		break;
 	case eState_Goblin::DEAD: 
 	{
-		if (m_timeCounter >= 0.49f && isEffectOn)
+		if (m_timeCounter >= 0.23f && isEffectOn)
 		{
 			isEffectOn = false;
 			//////////////////////ÀÌÆåÆ®///////////////
@@ -338,9 +339,18 @@ void CGoblin::render_information()
 void CGoblin::OnCollisionEnter(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
+	CTile* pTile = (CTile*)pOther;
+	Vec2 vPos = GetPos();
 	if (pOther->GetName() == L"Tile")
 	{
-		++m_floor;
+		if (pTile->GetGroup() == GROUP_TILE::GROUND)
+		{
+			++m_floor;
+		}
+		else if (pTile->GetGroup() == GROUP_TILE::PLATFORM)
+		{
+			++m_floor;
+		}
 	}
 	if (pOther->GetName() == L"Lou")
 	{
@@ -366,14 +376,18 @@ void CGoblin::OnCollisionEnter(CCollider* _pOther)
 void CGoblin::OnCollision(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
+	CTile* pTile = (CTile*)pOther;
 	Vec2 vPos = GetPos();
 	if (pOther->GetName() == L"Tile")
 	{
-		int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
-		int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
-		int sum = abs(a - b);
-		if(1<sum)
-			--vPos.y;
+		if (pTile->GetGroup() == GROUP_TILE::GROUND)
+		{
+			int a = abs((int)(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y));
+			int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
+			int sum = abs(a - b);
+			if (1 < sum)
+				--vPos.y;
+		}
 	}
 	
 	SetPos(vPos);
@@ -382,9 +396,18 @@ void CGoblin::OnCollision(CCollider* _pOther)
 void CGoblin::OnCollisionExit(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
+	CTile* pTile = (CTile*)pOther;
+	Vec2 vPos = GetPos();
 	if (pOther->GetName() == L"Tile")
 	{
-		--m_floor;
+		if (pTile->GetGroup() == GROUP_TILE::GROUND)
+		{
+			--m_floor;
+		}
+		else if (pTile->GetGroup() == GROUP_TILE::PLATFORM)
+		{
+			--m_floor;
+		}
 	}
 }
 

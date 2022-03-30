@@ -4,6 +4,8 @@
 #include "CAnimator.h"
 #include "CScene.h"
 #include "CTile.h"
+#include "CGoblin.h"
+#include "CEffect.h"
 
 CMissile::CMissile()
 {
@@ -108,12 +110,20 @@ void CMissile::OnCollisionEnter(CCollider* pOther)
 {
 	vector<CGameObject*> pGroupMonsters = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::MONSTER);
 	CGameObject* pOtherObj = pOther->GetObj();
-
+	CGoblin* pGoblin = nullptr;
 	for (int i = 0; i < pGroupMonsters.size(); ++i)
 	{
 		if(pGroupMonsters[i]==pOtherObj
 			&& GetName()==L"Missile_Player")
 		{
+			if (pGroupMonsters[i]->GetName() == L"Goblin")
+			{
+				pGoblin = dynamic_cast<CGoblin*>(pOtherObj);
+				if(pGoblin->GetState()==eState_Goblin::BORN)
+				{
+					break;
+				}
+			}
 			DeleteObj(this);
 		}
 	}
@@ -129,6 +139,22 @@ void CMissile::OnCollisionEnter(CCollider* pOther)
 		if (pTile->GetGroup() == GROUP_TILE::GROUND
 			||pTile->GetGroup() == GROUP_TILE::WALL)
 		{//그라운드 타일과 wall타일에서만 미사일이 맞으면 사라지게
+			DeleteObj(this);
+		}
+	}
+	if (GetName() == L"Missile_GolemWood"
+		&&pOtherObj->GetName() == L"Tile")
+	{
+		CTile* pTile = dynamic_cast<CTile*>(pOtherObj);
+		if (pTile->GetGroup() == GROUP_TILE::MOVE)
+		{
+			//////////////////////이펙트///////////////
+			CEffect* effectDie = new CEffect(L"Die_Effect_Small", L"texture\\Animation\\Effect_Die_Small.png",
+				L"Die_Effect_Small", Vec2(0.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 10, false, false, L"Die_Effect_Small");
+			effectDie->SetPos(Vec2(GetPos()));
+			effectDie->SetDuration(1.f);
+			CreateObj(effectDie, GROUP_GAMEOBJ::EFFECT);
+			///////////////////////////////////////////
 			DeleteObj(this);
 		}
 	}

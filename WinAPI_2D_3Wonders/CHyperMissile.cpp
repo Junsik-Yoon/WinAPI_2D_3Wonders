@@ -14,7 +14,7 @@ CHyperMissile::CHyperMissile(Vec2 _dirVec)
 	m_fSpeed = 400.f;
 	m_fvDir = _dirVec;
 	m_gravity = 150.f;
-	SetName(L"Missile_Player");
+	SetName(L"Hyper_Missile_Player");
 
 	SetScale(Vec2(20.f, 20.f));
 	m_pImgHyper = CResourceManager::getInst()->LoadD2DImage(L"PlayerSPMissileImg", L"texture\\Animation\\Animation_Hyper_Missile.png");

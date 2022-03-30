@@ -113,6 +113,9 @@ CLou::CLou()
 
 	GetAnimator()->CreateAnimation(L"Lou_NULL", m_pClothedImg, Vec2(1280.f, 1280.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.1f, 1, false);
 
+	GetAnimator()->CreateAnimation(L"Lou_Climbing_R", m_pClothedImg, Vec2(1536.f, 1024.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.15f, 2, false);
+	GetAnimator()->CreateAnimation(L"Lou_Climbing_L", m_pClothedImg, Vec2(1536.f, 1024.f), Vec2(128.f, 128.f), Vec2(0.f, 128.f), 0.15f, 2, true);
+
 	
 	///////UNCLOTHED 애니메이션///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -163,6 +166,9 @@ CLou::CLou()
 	GetAnimator()->CreateAnimation(L"Lou_Down_Plat_N", m_pUnclothedImg, Vec2(6912.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 1.f, 1, true);
 
 	GetAnimator()->CreateAnimation(L"GetHealed", m_pUnclothedImg, Vec2(3456.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.125f, 8, false);
+
+	GetAnimator()->CreateAnimation(L"Lou_Climbing_R_N", m_pUnclothedImg, Vec2(5504.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 3, false);
+	GetAnimator()->CreateAnimation(L"Lou_Climbing_L_N", m_pUnclothedImg, Vec2(5504.f, 0.f), Vec2(128.f, 128.f), Vec2(128.f, 0.f), 0.1f, 3, true);
 
 	GetAnimator()->Play(L"Idle_Right");
 
@@ -791,14 +797,20 @@ void CLou::update_move()
 		break;
 	case eState::HOLDCLIFF:
 	{
+		vPos.y -= 700.f * fDT;
 		m_stateCounter += fDT;
-		if (KEYDOWN('Z'))
+		//if (KEYDOWN('Z'))
+		//{
+		//	CreateMissile();
+		//}
+		//if (KEYDOWN('X'))
+		//{
+		//	//TODO:타고올라가게
+		//}
+		if (m_stateCounter >= 0.3f)
 		{
-			CreateMissile();
-		}
-		if (KEYDOWN('X'))
-		{
-			//TODO:타고올라가게
+			m_stateCounter = 0.f;
+			SETSTATE::IDLE;
 		}
 		if (prevHP > GetHP())
 		{
@@ -1244,6 +1256,28 @@ void CLou::update_animation()
 		}break;
 		case eState::HOLDCLIFF:
 		{
+			if (isClothed)
+			{
+				if (isFacedRight)
+				{
+					GetAnimator()->Play(L"Lou_Climbing_R");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Lou_Climbing_L");
+				}
+			}
+			else
+			{
+				if (isFacedRight)
+				{
+					GetAnimator()->Play(L"Lou_Climbing_R_N");
+				}
+				else
+				{
+					GetAnimator()->Play(L"Lou_Climbing_L_N");
+				}
+			}
 
 		}break;
 		case eState::GOTHIT:
@@ -1685,11 +1719,11 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 			{
 				if (GetCollider()->GetFinalPos().x < _pOther->GetFinalPos().x)
 				{
-					vPos.x -= 4.f;
+					vPos.x -= 10.f;
 				}
 				else if (GetCollider()->GetFinalPos().x > _pOther->GetFinalPos().x)
 				{
-					vPos.x += 4.f;
+					vPos.x += 10.f;
 				}
 			}
 
@@ -1698,6 +1732,7 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 		{
 			if (m_platformCounter == 0)
 			{
+
 				if ((m_dir == eDir::DOWN ||
 					m_dir == eDir::LEFTDOWN ||
 					m_dir == eDir::RIGHTDOWN))//&&
@@ -1727,6 +1762,7 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 				{
 					++m_platformCounter;
 					++m_floor;
+
 				}
 			}
 
@@ -1866,14 +1902,19 @@ void CLou::OnCollision(CCollider* _pOther)
 			}
 			else if (m_platformCounter == 0)
 			{
-				if (m_dir == eDir::UP ||
-					m_dir == eDir::LEFTUP ||
-					m_dir == eDir::RIGHTUP)
+				//if (m_dir == eDir::UP ||
+				//	m_dir == eDir::LEFTUP ||
+				//	m_dir == eDir::RIGHTUP)
+				//{
+				//	if (KEY(VK_RIGHT)|| KEY(VK_LEFT))
+				//	{
+				//		m_state = eState::HOLDCLIFF;
+				//	}
+				//}
+				if (KEY(VK_UP) && KEYDOWN('X'))
 				{
-					if (KEYDOWN('C'))
-					{
-						m_state = eState::HOLDCLIFF;
-					}
+					m_stateCounter = 0.f;
+					SETSTATE::HOLDCLIFF;
 				}
 			}
 

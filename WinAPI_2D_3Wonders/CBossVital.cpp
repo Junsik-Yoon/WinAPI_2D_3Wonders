@@ -43,7 +43,7 @@ CBossVital::~CBossVital()
 void CBossVital::update()
 {
 	int bossHP = m_boss->GetHP();
-	m_vital = bossHP / 5;
+	m_vital = bossHP / 10;
 	switch (m_vital)
 	{
 	case 1:GetAnimator()->Play(L"Vital_1");

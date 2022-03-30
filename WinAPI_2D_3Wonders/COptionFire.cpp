@@ -158,7 +158,7 @@ void COptionFire::FireBreathing()
 	Vec2 fptFirePos = GetPos();
 	pShootFire->SetPos(fptFirePos);
 	pShootFire->SetStartPos(fptFirePos);
-	pShootFire->SetName(L"Missile_Player");
+	pShootFire->SetName(L"Fire_Player");
 
 	pShootFire->SetScale(Vec2(32.f, 32.f));
 	pShootFire->GetCollider()->SetScale(Vec2(pShootFire->GetScale().x, pShootFire->GetScale().y));

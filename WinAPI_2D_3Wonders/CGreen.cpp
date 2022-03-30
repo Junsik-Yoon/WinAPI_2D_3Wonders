@@ -14,7 +14,7 @@
 CGreen::CGreen()
 {
 	m_state = eState_Green::IDLE;
-	SetHP(10);
+	SetHP(20);
 	m_stateTimer = 0.f;
 	isShootingFire = 0;
 	isRight = false;
@@ -279,15 +279,27 @@ void CGreen::ShootFire()
 void CGreen::OnCollisionEnter(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
+	CTile* pTile = (CTile*)pOther;
+	Vec2 vPos = GetPos();
 	if (pOther->GetName() == L"Tile")
 	{
-		++m_floor;
+		if (pTile->GetGroup() == GROUP_TILE::GROUND)
+		{
+			++m_floor;
+		}
 	}
 	if (pOther->GetName() == L"Missile_Player")
 	{
 		int hp = GetHP();
-		SetHP(--hp);
+		hp -= 2;
+		SetHP(hp);
 		m_state = eState_Green::DAMAGED;
+	}
+	else if (pOther->GetName() == L"Hyper_Missile_Player"
+		|| pOther->GetName() == L"Fire_Player")
+	{
+		int hp = GetHP();
+		SetHP(--hp);
 	}
 
 }
@@ -315,9 +327,14 @@ void CGreen::OnCollision(CCollider* _pOther)
 void CGreen::OnCollisionExit(CCollider* _pOther)
 {
 	CGameObject* pOther = _pOther->GetObj();
+	CTile* pTile = (CTile*)pOther;
+	Vec2 vPos = GetPos();
 	if (pOther->GetName() == L"Tile")
 	{
-		--m_floor;
+		if (pTile->GetGroup() == GROUP_TILE::GROUND)
+		{
+			--m_floor;
+		}
 	}
 }
 

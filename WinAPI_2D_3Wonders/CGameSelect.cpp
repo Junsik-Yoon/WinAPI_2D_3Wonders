@@ -42,14 +42,14 @@ void CGameSelect::update()
 {
 	if(selectCounter==0.f)
 	{
-		CSoundManager::getInst()->Play(L"select_start");
+		CSoundManager::getInst()->Play(L"select_start",0.5f);
 		selectCounter += fDT;
 	}
 	if (false==isSelected)
 	{
 		if (KEYDOWN(VK_RIGHT))
 		{
-			CSoundManager::getInst()->Play(L"select_change");
+			CSoundManager::getInst()->Play(L"select_change",0.5f);
 			if (3 == select)
 				select = 1;
 			else
@@ -57,7 +57,7 @@ void CGameSelect::update()
 		}
 		if (KEYDOWN(VK_LEFT))
 		{
-			CSoundManager::getInst()->Play(L"select_change");
+			CSoundManager::getInst()->Play(L"select_change",0.5f);
 			if (1 == select)
 				select = 3;
 			else
@@ -85,7 +85,7 @@ void CGameSelect::update()
 	{
 		if (1 == select)
 		{
-			CSoundManager::getInst()->Play(L"select_scene_selected");			
+			CSoundManager::getInst()->Play(L"select_scene_selected",0.5f);			
 			GetAnimator()->Play(L"Action_Selected");
 			isSelected = true;			
 		}

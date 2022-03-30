@@ -279,7 +279,9 @@ void CBug::OnCollisionEnter(CCollider* _pOther)
 			++m_floor;
 		}
 	}
-	if (pOther->GetName() == L"Missile_Player")
+	if (pOther->GetName() == L"Missile_Player"||
+		pOther->GetName() == L"Hyper_Missile_Player"||
+		pOther->GetName() == L"Fire_Player")
 	{
 		int hp = GetHP();
 		SetHP(--hp);

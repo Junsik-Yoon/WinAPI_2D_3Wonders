@@ -80,7 +80,7 @@ void CShootFire::OnCollisionEnter(CCollider* _pOther)
 		DeleteObj(this);
 	}
 
-	if (GetName() == L"Missile_Player" &&
+	if (GetName() == L"Fire_Player" &&
 			pOther->GetName() != L"Tile"&&
 			pOther->GetName()!=L"Option_Fire")
 	{

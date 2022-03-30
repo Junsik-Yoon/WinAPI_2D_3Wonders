@@ -43,7 +43,7 @@ CGolemWood::CGolemWood()
 	pMovingTiles = {};
 	m_state = eState_GW::IDLE;
 	m_floor = 0;
-	SetHP(50);
+	SetHP(100);
 	m_gravity = D_GRAVITY;
 	m_dTileSpeed = D_TILESPEED;
 	m_bossTimer = 0.f;
@@ -522,6 +522,13 @@ void CGolemWood::OnCollisionEnter(CCollider* _pOther)
 		
 	}
 	if (pOther->GetName() == L"Missile_Player")
+	{
+		int hp = GetHP();
+		hp -= 2;
+		SetHP(hp);
+	}
+	else if (pOther->GetName() == L"Hyper_Missile_Player"
+		|| pOther->GetName() == L"Fire_Player")
 	{
 		int hp = GetHP();
 		SetHP(--hp);

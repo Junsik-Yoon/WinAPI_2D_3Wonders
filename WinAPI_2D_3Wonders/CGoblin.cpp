@@ -366,7 +366,21 @@ void CGoblin::OnCollisionEnter(CCollider* _pOther)
 				SetBackflipDir(false);
 			if (pOther->GetPos().x < GetPos().x)
 				SetBackflipDir(true);
+			hp -= 2;
+			SetHP(hp);
+		}
+	}
+	else if (pOther->GetName() == L"Hyper_Missile_Player"
+		||pOther->GetName() == L"Fire_Player")
+	{
+		if (m_state != eState_Goblin::BORN)
+		{
+			int hp = GetHP();
 
+			if (pOther->GetPos().x >= GetPos().x)
+				SetBackflipDir(false);
+			if (pOther->GetPos().x < GetPos().x)
+				SetBackflipDir(true);
 			SetHP(--hp);
 		}
 	}

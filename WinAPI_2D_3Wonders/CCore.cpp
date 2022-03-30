@@ -32,13 +32,17 @@ void CCore::update()
 
 void CCore::render()
 {
-	CRenderManager::getInst()->GetRenderTarget()->BeginDraw();
-	CRenderManager::getInst()->RenderFillRectangle(-1, -1, WINSIZEX + 1, WINSIZEY + 1, RGB(255, 255, 255));
-	CSceneManager::getInst()->render();
-	CCameraManager::getInst()->render();
-	render_information();
+	if (CGameManager::getInst()->GetRender())
+	{
+		CRenderManager::getInst()->GetRenderTarget()->BeginDraw();
+		CRenderManager::getInst()->RenderFillRectangle(-1, -1, WINSIZEX + 1, WINSIZEY + 1, RGB(255, 255, 255));
+		CSceneManager::getInst()->render();
+		CCameraManager::getInst()->render();
+		render_information();
 
-	CRenderManager::getInst()->GetRenderTarget()->EndDraw();
+		CRenderManager::getInst()->GetRenderTarget()->EndDraw();
+	}
+
 }
 
 void CCore::render_information()

@@ -61,6 +61,8 @@ private:
     eDir m_dir;
     COwl* pOwl;
 
+
+
     int moveTileCounter = 0;
     bool isJumpingDownPlatform;
     float dash;

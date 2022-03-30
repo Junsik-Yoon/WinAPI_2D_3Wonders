@@ -333,6 +333,7 @@ void CLou::update_move()
 	{
 		m_stateCounter += fDT;
 		GetCollider()->SetScale(Vec2(GetScale().x, GetScale().y - 30.f));
+		//GetCollider()->SetOffsetPos(Vec2(0, 15));
 		GetAnimator()->FindAnimation(L"Sit_Right")->SetOffset(Vec2(0.f, -20.f), 0);
 		GetAnimator()->FindAnimation(L"Sit_Left")->SetOffset(Vec2(0.f, -20.f), 0);
 		GetAnimator()->FindAnimation(L"Sit_Right_N")->SetOffset(Vec2(0.f, -10.f), 0);
@@ -1684,11 +1685,11 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 			{
 				if (GetCollider()->GetFinalPos().x < _pOther->GetFinalPos().x)
 				{
-					vPos.x -= 2.f;
+					vPos.x -= 4.f;
 				}
 				else if (GetCollider()->GetFinalPos().x > _pOther->GetFinalPos().x)
 				{
-					vPos.x += 2.f;
+					vPos.x += 4.f;
 				}
 			}
 
@@ -1697,13 +1698,24 @@ void CLou::OnCollisionEnter(CCollider* _pOther)
 		{
 			if (m_platformCounter == 0)
 			{
-				if (m_dir == eDir::DOWN ||
+				if ((m_dir == eDir::DOWN ||
 					m_dir == eDir::LEFTDOWN ||
-					m_dir == eDir::RIGHTDOWN)
+					m_dir == eDir::RIGHTDOWN))//&&
+					/*GetCollider()->GetFinalPos().y < _pOther->GetFinalPos().y&&
+					(abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y)
+					-( GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f)) <3.f)*/
 				{
 					++m_platformCounter;
 					++m_floor;
 				}
+				//È®ÀÎ¿ë
+				float a = GetCollider()->GetFinalPos().x - _pOther->GetFinalPos().x;
+				float b = GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y;
+				float c = GetCollider()->GetScale().x/2.f + _pOther->GetScale().x/2.f;
+				float d = GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f;
+				float e = GetCollider()->GetScale().y;
+				//if ((abs(GetCollider()->GetFinalPos().y - _pOther->GetFinalPos().y)
+				//	- GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f)<3.f)
 			}
 			else if (m_platformCounter > 0)
 			{
@@ -1824,6 +1836,8 @@ void CLou::OnCollision(CCollider* _pOther)
 			int sum = abs(a - b);
 			if (1 < sum)
 				--vPos.y;
+
+
 		}break;
 		case GROUP_TILE::MOVE:
 		{
@@ -1845,7 +1859,10 @@ void CLou::OnCollision(CCollider* _pOther)
 				int b = (int)(GetCollider()->GetScale().y / 2.f + _pOther->GetScale().y / 2.f);
 				int sum = abs(a - b);
 				if (1 < sum)
+				{
 					--vPos.y;
+				}
+					
 			}
 			else if (m_platformCounter == 0)
 			{
@@ -1862,9 +1879,16 @@ void CLou::OnCollision(CCollider* _pOther)
 
 
 		}break;
-		case GROUP_TILE::SLOPE:
+		case GROUP_TILE::SLOPEDOWN:
 		{
-
+			if (m_floor == 0)
+			{
+				m_gravity = 0.0001f;
+			}
+			else if (m_floor > 0)
+			{
+				m_gravity = 0.f;
+			}
 		}break;
 		}
 	}
@@ -1910,8 +1934,17 @@ void CLou::OnCollisionExit(CCollider* _pOther)
 				--m_floor;
 			}
 		}break;
-		case GROUP_TILE::SLOPE:
+		case GROUP_TILE::SLOPEDOWN:
 		{
+			if (m_floor == 0)
+			{
+				m_gravity = D_GRAVITY;
+			}
+			else
+			{
+				m_gravity = 0.f;
+			}
+
 
 		}break;
 		}

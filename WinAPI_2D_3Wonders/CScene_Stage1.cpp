@@ -32,6 +32,7 @@
 #include "CHalfMoon.h"
 #include "CBug.h"
 #include "CGolemWood.h"
+#include "CSlopeTile.h"
 
 
 CScene_Stage1::CScene_Stage1()
@@ -104,7 +105,7 @@ void CScene_Stage1::Enter()
 
 
 	CLou* pLou = new CLou();
-	pLou->SetPos(Vec2(200.f, 150.f));
+	pLou->SetPos(Vec2(200.f, 100.f));
 	AddObject(pLou, GROUP_GAMEOBJ::PLAYER);
 
 	CHalfMoon* pHalfMoon1 = new CHalfMoon();
@@ -225,6 +226,24 @@ void CScene_Stage1::Enter()
 	pTileTrigger->SetName(L"TileTrigger");
 	AddObject(pTileTrigger, GROUP_GAMEOBJ::TILE);
 
+
+	//CSlopeTile::create(1312.f, 300.f, 1344.f, 332.f,GROUP_TILE::GROUND);
+	//CSlopeTile::create(1344.f, 308.f, 1376.f, 340.f, GROUP_TILE::GROUND);
+	//CSlopeTile::create(1376.f, 316.f, 1408.f, 348.f, GROUP_TILE::GROUND);
+	//CSlopeTile::create(1408.f, 324.f, 1440.f, 356.f, GROUP_TILE::GROUND);
+
+	CSlopeTile::create(1312.f, 288.f, 1440.f, 320.f, GROUP_TILE::SLOPEDOWN);
+
+	//for (int i = 0; i < 128; ++i)
+	//{
+	//	CSlopeTile::create(1312.f+i, 288.f +i/4.f, 1313.f + i, 289.f+i / 4.f, GROUP_TILE::GROUND);
+	//}
+
+
+	CCameraManager::getInst()->SetTargetX(pLou);
+
+
+
 	CSoundManager::getInst()->AddSound(L"item_change", L"sound\\select_change.wav", false);
 	CSoundManager::getInst()->AddSound(L"stage1_1_bgm", L"sound\\stage1_1_bgm.wav", true);
 	CSoundManager::getInst()->AddSound(L"monster_die", L"sound\\monster_die.wav", false);
@@ -252,7 +271,7 @@ void CScene_Stage1::Enter()
 
 
 	//위치확인용
-	CCameraManager::getInst()->SetTargetX(pLou);
+	//CCameraManager::getInst()->SetTargetX(pLou);
 
 
 }

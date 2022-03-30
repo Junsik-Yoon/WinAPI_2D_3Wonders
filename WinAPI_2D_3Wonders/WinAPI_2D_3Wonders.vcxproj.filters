@@ -212,7 +212,7 @@
     <ClInclude Include="CGreen.h">
       <Filter>Things\01.Object\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="CTempTile.h">
+    <ClInclude Include="CSlopeTile.h">
       <Filter>Things\01.Object\Tile</Filter>
     </ClInclude>
     <ClInclude Include="CHalfMoon.h">
@@ -323,6 +323,12 @@
     <ClInclude Include="CBossVital.h">
       <Filter>Things\01.Object\UI</Filter>
     </ClInclude>
+    <ClInclude Include="CScene_Ending.h">
+      <Filter>Things\02.Scene\SCenes</Filter>
+    </ClInclude>
+    <ClInclude Include="CScene_Intro.h">
+      <Filter>Things\02.Scene\SCenes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinAPI_2D_3Wonders.rc">
@@ -426,7 +432,7 @@
     <ClCompile Include="CGreen.cpp">
       <Filter>Things\01.Object\Monster</Filter>
     </ClCompile>
-    <ClCompile Include="CTempTile.cpp">
+    <ClCompile Include="CSlopeTile.cpp">
       <Filter>Things\01.Object\Tile</Filter>
     </ClCompile>
     <ClCompile Include="CHalfMoon.cpp">
@@ -536,6 +542,12 @@
     </ClCompile>
     <ClCompile Include="CBossVital.cpp">
       <Filter>Things\01.Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CScene_Ending.cpp">
+      <Filter>Things\02.Scene\SCenes</Filter>
+    </ClCompile>
+    <ClCompile Include="CScene_Intro.cpp">
+      <Filter>Things\02.Scene\SCenes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

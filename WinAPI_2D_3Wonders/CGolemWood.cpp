@@ -71,7 +71,17 @@ CGolemWood::CGolemWood()
 
 CGolemWood::~CGolemWood()
 {
-
+	//for (int i = 0; i < pChestnuts.size(); ++i)
+	//{
+	//	if (pChestnuts[i]->GetHP() > 0)
+	//	{
+	//		DeleteObj(pChestnuts[i]);
+	//	}
+	//}pChestnuts.clear();
+	//for (int i = 0; i < pMovingTiles.size(); ++i)
+	//{
+	//	DeleteObj(pMovingTiles[i]);
+	//}
 }
 
 
@@ -283,19 +293,11 @@ void CGolemWood::update()
 
 		if (m_bossTimer >= 3.f)
 		{
+			//DeleteObj(this);
+			CSoundManager::getInst()->Stop(L"stage1_1_boss_bgm");
+			ChangeScn(GROUP_SCENE::ENDING);
 			m_bossTimer = 0.f;
-			for (int i = 0; i < pChestnuts.size(); ++i)
-			{
-				if (pChestnuts[i]->GetHP() > 0)
-				{
-					DeleteObj(pChestnuts[i]);
-				}
-			}pChestnuts.clear();
-			for (int i = 0; i < pMovingTiles.size(); ++i)
-			{
-				DeleteObj(pMovingTiles[i]);
-			}
-			DeleteObj(this);
+
 		}
 
 

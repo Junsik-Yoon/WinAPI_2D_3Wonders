@@ -3,6 +3,10 @@
 class CScene_Opening :
     public CScene
 {
+private:
+	HWND m_hVideo;
+public:
+	void Initialize();
 public:
 	virtual void update();
 	virtual void Enter();

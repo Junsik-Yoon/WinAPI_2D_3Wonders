@@ -197,6 +197,8 @@
     <ClInclude Include="CResourceManager.h" />
     <ClInclude Include="CScene.h" />
     <ClInclude Include="CSceneManager.h" />
+    <ClInclude Include="CScene_Ending.h" />
+    <ClInclude Include="CScene_Intro.h" />
     <ClInclude Include="CScene_Opening.h" />
     <ClInclude Include="CScene_Selection.h" />
     <ClInclude Include="CScene_Stage1.h" />
@@ -207,7 +209,7 @@
     <ClInclude Include="CSound.h" />
     <ClInclude Include="CSoundManager.h" />
     <ClInclude Include="CStatusUI.h" />
-    <ClInclude Include="CTempTile.h" />
+    <ClInclude Include="CSlopeTile.h" />
     <ClInclude Include="CTexture.h" />
     <ClInclude Include="CTile.h" />
     <ClInclude Include="CTileButton.h" />
@@ -269,6 +271,8 @@
     <ClCompile Include="CResourceManager.cpp" />
     <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CSceneManager.cpp" />
+    <ClCompile Include="CScene_Ending.cpp" />
+    <ClCompile Include="CScene_Intro.cpp" />
     <ClCompile Include="CScene_Opening.cpp" />
     <ClCompile Include="CScene_Selection.cpp" />
     <ClCompile Include="CScene_Stage1.cpp" />
@@ -279,7 +283,7 @@
     <ClCompile Include="CSound.cpp" />
     <ClCompile Include="CSoundManager.cpp" />
     <ClCompile Include="CStatusUI.cpp" />
-    <ClCompile Include="CTempTile.cpp" />
+    <ClCompile Include="CSlopeTile.cpp" />
     <ClCompile Include="CTexture.cpp" />
     <ClCompile Include="CTile.cpp" />
     <ClCompile Include="CTileButton.cpp" />

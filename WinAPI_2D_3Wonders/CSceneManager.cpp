@@ -4,6 +4,8 @@
 #include "CScene_Tool.h"
 #include "CScene_Selection.h"
 #include "CScene_Opening.h"
+#include "CScene_Ending.h"
+#include "CScene_Intro.h"
 
 CSceneManager::CSceneManager()
 {
@@ -44,6 +46,9 @@ void CSceneManager::init()
 {
 	//TODO: ¸ğµç ¾À »ı¼º
 
+	m_arrScene[(UINT)GROUP_SCENE::INTRO] = new CScene_Intro;
+	m_arrScene[(UINT)GROUP_SCENE::INTRO]->SetName(L"Intro_Scene");
+
 	m_arrScene[(UINT)GROUP_SCENE::SELECT] = new CScene_Selection;
 	m_arrScene[(UINT)GROUP_SCENE::SELECT]->SetName(L"Selection_Scene");
 
@@ -56,9 +61,11 @@ void CSceneManager::init()
 	m_arrScene[(UINT)GROUP_SCENE::TOOL] = new CScene_Tool;
 	m_arrScene[(UINT)GROUP_SCENE::TOOL]->SetName(L"Tool_Scene");
 
+	m_arrScene[(UINT)GROUP_SCENE::ENDING] = new CScene_Ending;
+	m_arrScene[(UINT)GROUP_SCENE::ENDING]->SetName(L"Ending_Scene");
 
 
-
+	
 
 	m_pCurScene = m_arrScene[(UINT)GROUP_SCENE::STAGE1];//ÇöÀç¾ÀÁöÁ¤
 	m_pCurScene->Enter();

@@ -24,11 +24,13 @@ enum class GROUP_GAMEOBJ
 enum class GROUP_SCENE
 {
 	DEFAULT,
+	INTRO,
 	START,
 	SELECT,
 	OPENING,
 	STAGE1,
 	STAGE2,
+	ENDING,
 	TOOL,
 	
 
@@ -79,6 +81,7 @@ enum class GROUP_TILE
 };
 
 //library
+
 #pragma comment(lib,"Msimg32.lib")
 
 

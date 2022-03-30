@@ -11,7 +11,7 @@ class CGameManager
 
 
 private:
-
+	bool g_isRendering;
 	CLou* g_pPlayer;
 	int g_gameScore;
 	int g_playerLife;
@@ -19,6 +19,8 @@ private:
 	wstring g_missiletype;
 
 public:
+	void	SetRender(bool _render) { g_isRendering = _render; }
+	bool	GetRender() { return g_isRendering; }
 	void	SetPlayer(CLou* _lou) { g_pPlayer = _lou; }
 	CLou*	GetPlayer() { return g_pPlayer; }
 	void	SetGameScore(int _score) { g_gameScore = _score; }

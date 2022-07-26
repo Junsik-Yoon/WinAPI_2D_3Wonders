@@ -132,6 +132,7 @@ private:											\
 #include "CSoundManager.h"
 #include "CEffectManager.h"
 #include "CRenderManager.h"
+#include "CGenerateManager.h"
 
 
 //macro

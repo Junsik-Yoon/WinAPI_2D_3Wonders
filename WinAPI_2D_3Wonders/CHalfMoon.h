@@ -23,6 +23,7 @@ private:
 	bool isRight;
 	bool isDead;
 	eState_HM m_state;
+	const int bugPool = 4;
 
 	bool isProducing;
 	float bugTimer;

@@ -28,6 +28,7 @@ void CCore::update()
 	CCameraManager::getInst()->update();
 	CUIManager::getInst()->update();
 	CGameManager::getInst()->update();
+	CGenerateManager::getInst()->update();
 }
 
 void CCore::render()
@@ -39,26 +40,20 @@ void CCore::render()
 		CSceneManager::getInst()->render();
 		CCameraManager::getInst()->render();
 		render_information();
-
 		CRenderManager::getInst()->GetRenderTarget()->EndDraw();
 	}
-
 }
 
 void CCore::render_information()
 {
-
 	if (CCore::getInst()->DebugMode())
 	{
 		CD2DImage* pImg = CResourceManager::getInst()->LoadD2DImage(L"BackInfo", L"texture\\BackInfo.png");
-
 		////////////////////////
 		wstring curScene = {};
 		////////////////////////
-		CScene* pCurScene = CSceneManager::getInst()->GetCurScene();
-		
+		CScene* pCurScene = CSceneManager::getInst()->GetCurScene();	
 		curScene = pCurScene->GetName();
-
 		CRenderManager::getInst()->RenderImage(
 			pImg,
 			WINSIZEX - 105.f,
@@ -66,7 +61,6 @@ void CCore::render_information()
 			WINSIZEX,
 			70.f,
 			0.1f);
-
 		CRenderManager::getInst()->RenderText(
 			L" FPS :   " + std::to_wstring(CTimeManager::getInst()->GetFPS()) + L"\n" +
 			L" "+ curScene + L"\n",

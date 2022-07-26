@@ -9,11 +9,8 @@
 
 CHalfMoon::CHalfMoon()
 {
-
-	isDead = false;
-	bugCounter = 0;
 	CBug* pBug = nullptr;
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < bugPool; ++i)
 	{
 		pBug = new CBug();
 		pBugs.push_back(pBug);
@@ -22,6 +19,9 @@ CHalfMoon::CHalfMoon()
 		CreateObj(pBug, GROUP_GAMEOBJ::MONSTER);
 	}
 
+
+	isDead = false;
+	bugCounter = 0;
 	bugTimer = 0.f;
 	m_summonTimer = 0.f;
 	SetHP(8);

@@ -113,6 +113,9 @@
     <Filter Include="Engine\02.Manager\13.GameManager">
       <UniqueIdentifier>{d91ee38a-815e-4d9f-be5c-3cc246d641f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\02.Manager\14.GenerateManager">
+      <UniqueIdentifier>{9116b678-3a1f-4d5c-87b7-1713fcba1c88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -328,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="CScene_Intro.h">
       <Filter>Things\02.Scene\SCenes</Filter>
+    </ClInclude>
+    <ClInclude Include="CGenerateManager.h">
+      <Filter>Engine\02.Manager\14.GenerateManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -548,6 +554,9 @@
     </ClCompile>
     <ClCompile Include="CScene_Intro.cpp">
       <Filter>Things\02.Scene\SCenes</Filter>
+    </ClCompile>
+    <ClCompile Include="CGenerateManager.cpp">
+      <Filter>Engine\02.Manager\14.GenerateManager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

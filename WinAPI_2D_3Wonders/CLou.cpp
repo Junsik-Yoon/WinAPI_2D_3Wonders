@@ -24,8 +24,7 @@
 #define D_DOWNFORCE 700
 #define D_VELOCITY 200
 #define D_UPFORCE 800
-#define D_FROMGOBMAX 400
-#define D_FROMGOBMIN 80
+
 
 #define SETSTATE m_state = eState
 
@@ -221,11 +220,11 @@ void CLou::update_move()
 
 
 	//n초마다 고블린 플레이어 주위에서 리젠
-	if (m_goblinCounter >= 4.f)
-	{
-		m_goblinCounter = 0.f;
-		GenerateGoblin();
-	}
+	//if (m_goblinCounter >= 4.f)
+	//{
+	//	m_goblinCounter = 0.f;
+	//	CGenerateManager.instance.GenerateGoblin();
+	//}
 
 	if (m_floor > 0)	//충돌on
 	{
@@ -1630,58 +1629,58 @@ void CLou::DirCheck(Vec2 _prevPos)
 	}
 }
 
-void CLou::GenerateGoblin()
-{
-	std::random_device rd;
-	std::mt19937 gen(rd());
-
-	vector<CTile*>pTiles;
-
-	Vec2 vPos = GetPos();
-	
-	vector<CGameObject*>pObj = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::TILE);
-	for (int i = 0; i < pObj.size(); ++i)
-	{
-		CTile* pTile = (CTile*)pObj[i];
-		if (D_FROMGOBMAX > abs(vPos.x - pTile->GetPos().x)&&
-			D_FROMGOBMIN < abs(vPos.x - pTile->GetPos().x))
-		{
-			if (pTile->GetGroup() == GROUP_TILE::GROUND ||
-				pTile->GetGroup() == GROUP_TILE::PLATFORM)
-			{
-				pTiles.push_back(pTile);
-			}		
-		}
-	}
-	if (pTiles.size() > 1)
-	{
-		std::uniform_int_distribution<int> dis(0, pTiles.size() - 1);
-		CGameObject* pTile = pTiles[dis(gen)];
-		Vec2 tilePos = pTile->GetPos();
-
-		CGoblin* pGoblin = new CGoblin();
-		tilePos.y -= (pGoblin->GetScale().y / 2.f + pTile->GetScale().y / 2.f);
-		pGoblin->SetPos(tilePos);
-		if (pGoblin->GetPos().x < GetPos().x)
-		{
-			pGoblin->SetFacedRight(true);
-		}
-		else
-		{
-			pGoblin->SetFacedRight(false);
-		}
-
-		//////////////////////이펙트///////////////
-		CEffect* effectGobGen = new CEffect(L"GoblinGenEff", L"texture\\Animation\\Effect_Goblin_Gen.png",
-			L"Goblin_Gen_Eff", Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.1f, 10, false, false, L"GoblinGenEff");
-		effectGobGen->SetPos(Vec2(pGoblin->GetPos().x, pGoblin->GetPos().y + 60.f));
-		effectGobGen->SetDuration(2.f);
-		CreateObj(effectGobGen, GROUP_GAMEOBJ::EFFECT);
-		///////////////////////////////////////////
-		CreateObj(pGoblin, GROUP_GAMEOBJ::MONSTER);
-	}	
-
-}
+//void CLou::GenerateGoblin()
+//{
+//	std::random_device rd;
+//	std::mt19937 gen(rd());
+//
+//	vector<CTile*>pTiles;
+//
+//	Vec2 vPos = GetPos();
+//	
+//	vector<CGameObject*>pObj = CSceneManager::getInst()->GetCurScene()->GetGroupObject(GROUP_GAMEOBJ::TILE);
+//	for (int i = 0; i < pObj.size(); ++i)
+//	{
+//		CTile* pTile = (CTile*)pObj[i];
+//		if (D_FROMGOBMAX > abs(vPos.x - pTile->GetPos().x)&&
+//			D_FROMGOBMIN < abs(vPos.x - pTile->GetPos().x))
+//		{
+//			if (pTile->GetGroup() == GROUP_TILE::GROUND ||
+//				pTile->GetGroup() == GROUP_TILE::PLATFORM)
+//			{
+//				pTiles.push_back(pTile);
+//			}		
+//		}
+//	}
+//	if (pTiles.size() > 1)
+//	{
+//		std::uniform_int_distribution<int> dis(0, pTiles.size() - 1);
+//		CGameObject* pTile = pTiles[dis(gen)];
+//		Vec2 tilePos = pTile->GetPos();
+//
+//		CGoblin* pGoblin = new CGoblin();
+//		tilePos.y -= (pGoblin->GetScale().y / 2.f + pTile->GetScale().y / 2.f);
+//		pGoblin->SetPos(tilePos);
+//		if (pGoblin->GetPos().x < GetPos().x)
+//		{
+//			pGoblin->SetFacedRight(true);
+//		}
+//		else
+//		{
+//			pGoblin->SetFacedRight(false);
+//		}
+//
+//		//////////////////////이펙트///////////////
+//		CEffect* effectGobGen = new CEffect(L"GoblinGenEff", L"texture\\Animation\\Effect_Goblin_Gen.png",
+//			L"Goblin_Gen_Eff", Vec2(0.f, 0.f), Vec2(64.f, 64.f), Vec2(64.f, 0.f), 0.1f, 10, false, false, L"GoblinGenEff");
+//		effectGobGen->SetPos(Vec2(pGoblin->GetPos().x, pGoblin->GetPos().y + 60.f));
+//		effectGobGen->SetDuration(2.f);
+//		CreateObj(effectGobGen, GROUP_GAMEOBJ::EFFECT);
+//		///////////////////////////////////////////
+//		CreateObj(pGoblin, GROUP_GAMEOBJ::MONSTER);
+//	}	
+//
+//}
 
 void CLou::OnCollisionEnter(CCollider* _pOther)
 {

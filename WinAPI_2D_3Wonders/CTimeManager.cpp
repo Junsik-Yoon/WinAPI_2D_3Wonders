@@ -25,7 +25,7 @@ void CTimeManager::update()
 	++updateCount;
 	updateOneSecond += m_dDT;
 
-	//if (m_dDT > 0.1)
+	//if (m_dDT > 0.1)//DT가 디버그모드 디포커스상태에서 일정 이상을 못넘기도록
 	//{
 	//	m_dDT = 0.1;
 	//}

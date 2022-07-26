@@ -399,7 +399,6 @@ void CGolemWood::MoveTiles()
 	vFirstTilePos.y = m_radius * (float)sin(m_fTheta);
 	vFirstTilePos.y += y_center;
 
-
 	pMovingTiles[pMovingTiles.size() - 4]->SetPos(vFirstTilePos);
 
 	for (int i = 0; i < pMovingTiles.size(); ++i)
